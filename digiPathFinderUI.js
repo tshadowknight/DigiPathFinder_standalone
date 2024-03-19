@@ -418,6 +418,7 @@ $(document).ready(function(){
 	});	
 });
 
+//game file management
 
 function fetchGameFiles(){	
 	const process = require('child_process');   
@@ -436,6 +437,46 @@ function fetchGameFiles(){
     });
 }
 
-function parseGameFile(){
+
+function parseGameFile(file){
+	return new Promise(function(resolve, reject){
+	
+		const fs = require('fs');
+		const { parse } = require('csv-parse');
+		const records = [];
+
+		var csvData=[];
+		fs.createReadStream("game_data/unpacked/"+file+".csv")
+			.pipe(parse({delimiter: ','}))
+			.on('data', function(csvrow) {
+				//console.log(csvrow);
+				//do something with csvrow
+				records.push(csvrow);        
+			})
+			.on('end',function() {
+			  //do something with csvData
+			  let headers = records.shift();
+			  let headerLookup = {};
+			  for(let i = 0; i < headers.length; i++){
+				  headerLookup[headers[i]] = i;
+			  }
+			  
+			  resolve({headerLookup: headerLookup, data: records});
+			});
+	});	
+}
+
+async function preparePathFinderData(){
+	let digimonNames = {};
+	const digimonListData = await parseGameFile("digimon_list.mbe/digimon");
+	const nameData = await parseGameFile("charname.mbe/Sheet1");
+	for(let entry of nameData.data){
+		let nameId = entry[nameData.headerLookup["ID"]];
+		if(nameId < 2000){
+			nameId = nameId.substr(1) * 1;
+			digimonNames[nameId] = entry[nameData.headerLookup["English"]];		
+		}
+		
+	}
 	
 }
