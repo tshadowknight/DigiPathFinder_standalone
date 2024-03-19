@@ -9,6 +9,7 @@
   "author": "The Shadow Knight",
   "license": "ISC",
   "dependencies": {
+    "child_process": "^1.0.2",
     "electron": "^29.1.4"
   }
 }

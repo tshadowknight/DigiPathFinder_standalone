@@ -419,3 +419,23 @@ $(document).ready(function(){
 });
 
 
+function fetchGameFiles(){	
+	const process = require('child_process');   
+    var ls = process.exec('DSCSTools\\unpack_game_files.bat \"C:/Program Files (x86)/Steam/steamapps/common/Digimon Story Cyber Sleuth Complete Edition/resources/DSDBP.steam.mvgl\"');
+    ls.stdout.on('data', function (data) {
+      console.log(data.toString());
+    });
+    ls.stderr.on('data', function (data) {
+      console.log(data.toString());
+    });
+    ls.on('close', function (code) {
+       if (code == 0)
+            console.log('Stop');
+       else
+            console.log('Start');
+    });
+}
+
+function parseGameFile(){
+	
+}
