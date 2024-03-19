@@ -1,0 +1,14 @@
+{
+  "name": "DigiPathFinder",
+  "version": "1.0.0",
+  "description": "A standalone version of the DigiPathFinder",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "The Shadow Knight",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^29.1.4"
+  }
+}
