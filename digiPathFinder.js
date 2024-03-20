@@ -63,38 +63,40 @@ DigiPathFinder.prototype.findRoute = function(path, skill, skillContext){
 	stack.push(source);
 	while(stack.length && !pathFound){
 		var current = stack.shift();		
-		var neighbours = _this.digiData[current].neighBours.prev.concat(_this.digiData[current].neighBours.next);
-		var ctr = 0;
-		var skillCandidate;
-		var skillCandidateRating = 0;
-		while(ctr < neighbours.length && !pathFound){
-			var neighbourId = neighbours[ctr];
-			if(!_this.isBanned(neighbourId) && !visited[neighbourId] && neighbourId != current){
-				if(skill && _this.skillToDigis[skill][neighbourId]){
-					var rating = 0;
-					var moves = pathFinder.digiData[neighbourId].moves; 
-					for(var k = 0; k < moves.length; k++){
-						if(skillContext[moves[k]]){
-							rating++;
+		if(_this.digiData[current]){
+			var neighbours = _this.digiData[current].neighBours.prev.concat(_this.digiData[current].neighBours.next);
+			var ctr = 0;
+			var skillCandidate;
+			var skillCandidateRating = 0;
+			while(ctr < neighbours.length && !pathFound){
+				var neighbourId = neighbours[ctr];
+				if(!_this.isBanned(neighbourId) && !visited[neighbourId] && neighbourId != current){
+					if(skill && _this.skillToDigis[skill][neighbourId]){
+						var rating = 0;
+						var moves = pathFinder.digiData[neighbourId].moves; 
+						for(var k = 0; k < moves.length; k++){
+							if(skillContext[moves[k]]){
+								rating++;
+							}
+						}
+						if(rating > skillCandidateRating){
+							skillCandidateRating = rating;
+							skillCandidate = neighbourId;
 						}
 					}
-					if(rating > skillCandidateRating){
-						skillCandidateRating = rating;
-						skillCandidate = neighbourId;
+					if(neighbourId == target){
+						pathFound = true;
+					} else {
+						stack.push(neighbourId);					
 					}
-				}
-				if(neighbourId == target){
-					pathFound = true;
-				} else {
-					stack.push(neighbourId);					
-				}
-				pathsToSource[neighbourId] = pathsToSource[current].concat([current]);				
-			}			
-			ctr++;
-		}
-		if(skillCandidate){
-			target = skillCandidate;
-			pathFound = true;
+					pathsToSource[neighbourId] = pathsToSource[current].concat([current]);				
+				}			
+				ctr++;
+			}
+			if(skillCandidate){
+				target = skillCandidate;
+				pathFound = true;
+			}
 		}
 		visited[current] = true;
 	}

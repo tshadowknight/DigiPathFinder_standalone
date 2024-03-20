@@ -4,7 +4,9 @@
   "description": "A standalone version of the DigiPathFinder",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "author": "The Shadow Knight",
   "license": "ISC",
@@ -12,11 +14,22 @@
     "child_process": "^1.0.2",
     "csv-parse": "^5.5.5",
     "decode-dxt": "^1.0.1",
-    "electron": "^29.1.4",
+    "electron-squirrel-startup": "^1.0.0",
     "jimp": "^0.22.12",
-    "xhr": "^2.6.0"
+    "xhr": "^2.6.0",
+    "parse-dds": "^1.2.1"
   },
   "devDependencies": {
-    "parse-dds": "^1.2.1"
+    "@electron-forge/cli": "^7.3.0",
+    "@electron-forge/maker-deb": "^7.3.0",
+    "@electron-forge/maker-rpm": "^7.3.0",
+    "@electron-forge/maker-squirrel": "^7.3.0",
+    "@electron-forge/maker-zip": "^7.3.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.3.0",
+    "@electron-forge/plugin-fuses": "^7.3.0",
+	"electron": "^29.1.4"
+  },
+  "build": {
+    "extraResources": ["./DSCSTools", "./game_data"]
   }
 }

@@ -146,6 +146,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', e
 	display: none;
 }
 
+
+
 .control_block .digi_select {
 	position: absolute;
 	bottom: 4px;		
@@ -557,6 +559,8 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 .db_link {
 	margin-left: 5px;
 	cursor: pointer;
+	display: none !important;
+	
 }
 
 #skills_container {
@@ -639,7 +643,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	align-items: center;
 	justify-content: center;
 	width: 100vw;
-	height: 100vh;
+	height: calc(100vh - 57px);
 	transition: 1s;
 	background-color: rgba(51,78,155,0.7);
 	font-size: 50px;

@@ -2,6 +2,15 @@
 //game file management
 var fs = require('fs');
 const os = require('os');
+var pathLib = require('path');
+
+function getResourcesFolder(){
+    if(__dirname.match(/.*\.asar$/)){
+        return pathLib.dirname(__dirname);
+    } else {
+        return __dirname;
+    }
+}
 
 const requiredFiles = [
     "charname.mbe/Sheet1.csv",
@@ -15,7 +24,7 @@ const requiredFiles = [
 function hasGameFiles(){
     let isKitValid = true;
     for(let file of requiredFiles){
-        if (!fs.existsSync('./game_data/unpacked/'+file)) {
+        if (!fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/unpacked', file))) {
             isKitValid = false;
         }
     }
@@ -23,14 +32,14 @@ function hasGameFiles(){
 }
 
 function checkDirectories(){
-    if (!fs.existsSync('./game_data')) {
-        fs.mkdirSync('./game_data');
+    if (!fs.existsSync(pathLib.join(getResourcesFolder(), './game_data'))) {
+        fs.mkdirSync(pathLib.join(getResourcesFolder(), './game_data'));
     }
-    if (!fs.existsSync('./game_data/packed')) {
-        fs.mkdirSync('./game_data/packed');
+    if (!fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/packed'))) {
+        fs.mkdirSync(pathLib.join(getResourcesFolder(), './game_data/packed'));
     }
-    if (!fs.existsSync('./game_data/unpacked')) {
-        fs.mkdirSync('./game_data/unpacked');
+    if (!fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/unpacked'))) {
+        fs.mkdirSync(pathLib.join(getResourcesFolder(), './game_data/unpacked'));
     }
 }
 
@@ -43,9 +52,11 @@ function fetchGameFiles(){
 
         let cmd;
         if(os.platform() === "win32"){
-            cmd = 'DSCSTools\\win\\unpack_game_files.bat \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
+            let cmdDir = pathLib.join(getResourcesFolder(), "DSCSTools/win")
+            cmd = "\""+getResourcesFolder()+""+'\\DSCSTools\\win\\unpack_game_files.bat\" \"'+cmdDir+'\" \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
         } else if(os.platform() === "linux"){
-            cmd = 'DSCSTools\\linux\\unpack_game_files.bat \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
+            let cmdDir = pathLib.join(getResourcesFolder(), "DSCSTools/linux")
+            cmd =  "\""+getResourcesFolder()+""+'\\DSCSTools\\linux\\unpack_game_files.bat\"  \"'+cmdDir+'\" \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
         } else {
             setLoaderError("Unsupported platform."); 
             throw("Unsupported platform.");
@@ -55,10 +66,10 @@ function fetchGameFiles(){
         ls.stdout.on('data', function (data) {
             const batchResult = data.toString();
             console.log(data.toString());
-            if(batchResult.indexOf("Error:") != -1){
+            /*if(batchResult.indexOf("Error:") != -1){
                 setLoaderError("Could not load the game files, please make sure the path is set correctly!");       
                 reject();
-            }
+            }*/
         });
         ls.stderr.on('data', function (data) {
           console.log(data.toString());
@@ -67,7 +78,7 @@ function fetchGameFiles(){
         ls.on('close', function (code) {
            if (code == 0) {
                 console.log('Stop');
-                fs.rm('./game_data/packed', { recursive: true, force: true });
+                fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
                 resolve();
            } else {
                 console.log('Start');
@@ -86,7 +97,7 @@ function parseGameFile(file){
 		const records = [];
 
 		var csvData=[];
-		fs.createReadStream("game_data/unpacked/"+file+".csv")
+		fs.createReadStream(pathLib.join(getResourcesFolder(), "game_data/unpacked/"+file+".csv"))
 			.pipe(parse({delimiter: ','}))
 			.on('data', function(csvrow) {
 				//console.log(csvrow);
@@ -109,24 +120,10 @@ function parseGameFile(file){
 async function preparePathFinderData(){
 	let digimonNames = {};
 	const digimonListData = await parseGameFile("digimon_list.mbe/digimon");
+    let validDigimon = {};
 	const nameData = await parseGameFile("charname.mbe/Sheet1");
 	
-	for(let entry of nameData.data){
-		let nameId = entry[nameData.headerLookup["ID"]];
-		if(nameId < 2000){
-			nameId = nameId.substr(1) * 1;
-    
-            for(let locale in localizationConfig){
-                if(!digimonNames[locale]){
-                    digimonNames[locale] = {};
-                }
-
-                digimonNames[locale][nameId] = entry[nameData.headerLookup[locale]];		
-            }
-			
-		}
-		
-	}
+	
 	let evolutions = {};
 	const evolutionData = await parseGameFile("evolution_next_para.mbe/digimon");
 	for(let entry of evolutionData.data){
@@ -140,6 +137,8 @@ async function preparePathFinderData(){
 		for(let i = 1; i <=6 ; i++){
 			let targetDigimonId = entry[evolutionData.headerLookup["digi"+i]]
 			if(targetDigimonId != 0){
+                validDigimon[digimonId] = true;
+                validDigimon[targetDigimonId] = true;
 				evolutions[digimonId].next.push(targetDigimonId);
 				if(!evolutions[targetDigimonId]){
 					evolutions[targetDigimonId] = {
@@ -150,6 +149,22 @@ async function preparePathFinderData(){
 				evolutions[targetDigimonId].prev.push(digimonId);
 			}
 		}
+	}
+
+    for(let entry of nameData.data){
+		let nameId = entry[nameData.headerLookup["ID"]];
+		if(nameId < 2000){
+			nameId = nameId.substr(1) * 1;
+            if(validDigimon[nameId]){
+                for(let locale in localizationConfig){
+                    if(!digimonNames[locale]){
+                        digimonNames[locale] = {};
+                    }
+    
+                    digimonNames[locale][nameId] = entry[nameData.headerLookup[locale]];		
+                }
+            }		
+		}		
 	}
 
 	let movesAvailable = {};
@@ -195,12 +210,14 @@ async function preparePathFinderData(){
     let digiData = {};
     for(let entry of digimonListData.data){
         const digimonId = entry[digimonListData.headerLookup["id"]];
-        digiData[digimonId] = {
-            id: digimonId,
-            name: digimonNames[digimonId],
-            moves: movesLearned[digimonId],
-            neighBours: evolutions[digimonId]
-        }
+        if(validDigimon[digimonId]){
+            digiData[digimonId] = {
+                id: digimonId,
+                name: digimonNames[digimonId],
+                moves: movesLearned[digimonId],
+                neighBours: evolutions[digimonId]
+            }
+        }        
     }
 
     return {digiData: digiData, moveNames: moveNames, digimonNames: digimonNames};

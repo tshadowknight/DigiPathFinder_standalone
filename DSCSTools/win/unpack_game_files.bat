@@ -1,6 +1,10 @@
-cd DSCSTools\win
+cd %1
 
-.\DSCSToolsCLI.exe --extract %1 ..\..\game_data\packed
+xcopy /s /Y ..\..\game_data\clean\text ..\..\game_data\unpacked
+
+xcopy /s /Y ..\..\game_data\clean\data ..\..\game_data\unpacked
+
+.\DSCSToolsCLI.exe --extract %2 ..\..\game_data\packed
 
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\data\digimon_list.mbe ..\..\game_data\unpacked
 

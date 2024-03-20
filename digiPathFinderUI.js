@@ -1,3 +1,4 @@
+var pathLib = require('path');
 var parse_dds = require('parse-dds');
 const { parse } = require('path');
 var xhr = require('xhr')
@@ -143,7 +144,7 @@ function copyToClipboard(val){
 
 function showBans(){
 	var bansContent = "";
-	Object.keys(pathFinder.bannedDigis).sort(function(a,b){return pathFinder.digiData[a].name.localeCompare( pathFinder.digiData[b].name)}).forEach(function(id){
+	Object.keys(pathFinder.bannedDigis).sort(function(a,b){return localizationData[currentLocale].digimon[a].localeCompare(localizationData[currentLocale].digimon[b])}).forEach(function(id){
 		bansContent+="<div class='ban_entry'><div data-digimonid='"+id+"' class='digi_name_placeholder banned_digi_name'></div><div style='width: 20px; display: inline-block;'><div data-id='"+id+"' class='remove_ban_button'><i class='fa fa-times' aria-hidden='true'></i></div></div></div>";
 	});
 	$("#bans_container").html(bansContent);
@@ -172,10 +173,10 @@ function showSkills(){
 async function setDDSImage(elem, digimonId){
 	
 	const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-	const path = "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img";
+	const imagePath = pathLib.join(getResourcesFolder(), "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img");
 
 	xhr({
-		uri: path,
+		uri: imagePath,
 		responseType: 'arraybuffer'
 	  }, function (err, resp, data) {
 		if(!err){
@@ -546,6 +547,9 @@ function toggleOptions(){
 var cachedGameData;
 
 function initPathFinder(forceReload){
+	if(forceReload){
+		cachedGameData = null;
+	}
 	checkDirectories();
 	if(!hasGameFiles() || forceReload){
 		showGameFileLoader();
@@ -573,13 +577,15 @@ function initPathFinder(forceReload){
 		}
 
 		function finalize(){
-			hideGameFileLoader();
+			
 			for(let locale in localizationConfig){
 				localizationData[locale].moves = gameData.moveNames[locale];
 				localizationData[locale].digimon = gameData.digimonNames[locale];
 			}	
 
 			pathFinder.init(gameData, createControls);	
+
+			hideGameFileLoader();
 			$("#worker_cancel").on("click", function(){	
 				if(digiWorker){
 					digiWorker.terminate();			
