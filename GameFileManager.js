@@ -1,6 +1,7 @@
 
 //game file management
 var fs = require('fs');
+const os = require('os');
 
 const requiredFiles = [
     "charname.mbe/Sheet1.csv",
@@ -39,7 +40,18 @@ var gameFilesPath = localStorage.getItem("DigiPathFinder_game_file_path") || def
 function fetchGameFiles(){	
     return new Promise(function(resolve, reject){
         const process = require('child_process');   
-        var ls = process.exec('DSCSTools\\unpack_game_files.bat \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\"');
+
+        let cmd;
+        if(os.platform() === "win32"){
+            cmd = 'DSCSTools\\win\\unpack_game_files.bat \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
+        } else if(os.platform() === "linux"){
+            cmd = 'DSCSTools\\linux\\unpack_game_files.bat \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
+        } else {
+            setLoaderError("Unsupported platform."); 
+            throw("Unsupported platform.");
+        }
+
+        var ls = process.exec(cmd);
         ls.stdout.on('data', function (data) {
             const batchResult = data.toString();
             console.log(data.toString());
@@ -55,7 +67,7 @@ function fetchGameFiles(){
         ls.on('close', function (code) {
            if (code == 0) {
                 console.log('Stop');
-               // fs.rm('./game_data/packed', { recursive: true, force: true });
+                fs.rm('./game_data/packed', { recursive: true, force: true });
                 resolve();
            } else {
                 console.log('Start');

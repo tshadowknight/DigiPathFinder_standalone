@@ -40,7 +40,9 @@ function showRoute(route){
 			
 			pathContent+="<div class='digi_header flex-item flex-container'>";
 			
-			pathContent+="<img class='flex-item' src='"+"images/"+route[i]+".png' />";
+			pathContent+="<div class='path_img_container'>";
+			pathContent+="<img class='path_img' class='flex-item' data-digimonid='"+route[i]+"'/>";
+			pathContent+="</div>";
 			pathContent+="<div data-digimonid='"+route[i]+"' class='flex-item digi_name digi_name_placeholder'>";
 			//pathContent+=pathFinder.digiData[route[i]].name;
 			pathContent+="</div>";
@@ -73,6 +75,14 @@ function showRoute(route){
 	$("#path_container_content").hide();
 	$("#path_container_content").html(pathContent);
 	$("#path_container_content").fadeIn("fast");
+
+	let images = $("#path_container_content")[0].querySelectorAll(".path_img");
+	for(let img of images){
+		setDDSImage(img, img.getAttribute("data-digimonid"))
+	}
+
+	
+
 	$(".set_start_button").on("click", function(){		
 		var source = $(this).data("id");
 		$("#start_digi").val(source);
@@ -169,6 +179,7 @@ async function setDDSImage(elem, digimonId){
 		responseType: 'arraybuffer'
 	  }, function (err, resp, data) {
 		if(!err){
+			elem.style.display = "block";
 			var dds = parse_dds(data)
 			console.log(dds.format)  // 'dxt1'
 			console.log(dds.shape)   // [ width, height ]
@@ -192,6 +203,8 @@ async function setDDSImage(elem, digimonId){
 				let dataUrl = await image.getBase64Async(Jimp.AUTO)
 				elem.src = dataUrl;
 			});
+		} else {
+			elem.style.display = "none";
 		}		
 	  });	
 }
@@ -305,7 +318,8 @@ function createControls(){
 	});
 	$("#end_digi").on("change", function(){
 		if($("#end_digi").val() && pathFinder.digiData[$("#end_digi").val()]){
-			$("#end_digi_icon").attr("src", "images/"+$("#end_digi").val()+".png");
+			//$("#end_digi_icon").attr("src", "images/"+$("#end_digi").val()+".png");
+			setDDSImage($("#end_digi_icon")[0], $("#end_digi").val());
 			$("#end_digi_db_link").data("target", $("#end_digi").val());
 			$("#end_digi_db_link").css("display", "inline");
 			$("#end_digi_db_link").show();
