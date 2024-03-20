@@ -11,3 +11,5 @@ cd DSCSTools
 .\DSCSToolsCLI.exe --mbeextract ..\game_data\packed\text\skill_name.mbe ..\game_data\unpacked
 
 .\DSCSToolsCLI.exe --mbeextract ..\game_data\packed\text\charname.mbe ..\game_data\unpacked
+
+xcopy /s ..\game_data\packed\images\ui_chara* ..\game_data\unpacked\images\

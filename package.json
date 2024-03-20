@@ -11,6 +11,12 @@
   "dependencies": {
     "child_process": "^1.0.2",
     "csv-parse": "^5.5.5",
-    "electron": "^29.1.4"
+    "decode-dxt": "^1.0.1",
+    "electron": "^29.1.4",
+    "jimp": "^0.22.12",
+    "xhr": "^2.6.0"
+  },
+  "devDependencies": {
+    "parse-dds": "^1.2.1"
   }
 }

@@ -1,43 +1,21 @@
-DigiPathFinder.prototype.loadJSON = function(path)
-{	
-	var _this = this;
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function()
-    {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200 || xhr.status === 0) {                
-                _this.JSONLoaded(path, JSON.parse(xhr.responseText));
-            } else {                
-                _this.JSONError(xhr);
-            }
-        }
-    };
-    xhr.open("GET", path, true);
-    xhr.send();
+function DigiPathFinder(){
+	this.initCallback = null;
 }
 
-DigiPathFinder.prototype.JSONError = function(request){
+DigiPathFinder.prototype.init = async function(gameData, callback){
+	var _this = this;
+	_this.initCallback = callback;
 	
-}
-
-DigiPathFinder.prototype.JSONLoaded = function(path, data){
-	var _this = this;
-	_this.JSONToLoad[path].status = 1;
-	_this[_this.JSONToLoad[path].targetVar] = data;
-	_this.allJSONLoaded();
-}
-
-DigiPathFinder.prototype.allJSONLoaded = function(){
-	var _this = this;
-	var allLoaded = true;
-	Object.keys(_this.JSONToLoad).forEach(function(file){
-		if(_this.JSONToLoad[file].status == -1){
-			allLoaded = false;
-		}
-	});	
-	if(!allLoaded){
-		return;
+	this.bannedDigis = {};
+	this.wantedSkills = {};
+	this.currentLookupMode = -1;
+	this.defaultBans = {
 	}
+
+	this.digiData = gameData.digiData;
+
+	
+
 	this.skillToDigis = {};
 	Object.keys(_this.digiData).forEach(function(digiId){
 		var moves = _this.digiData[digiId].moves;
@@ -49,30 +27,7 @@ DigiPathFinder.prototype.allJSONLoaded = function(){
 		}		
 	});
 	this.maxLookupSize = Object.keys(this.digiData).length;
-	if(_this.initCallback){
-		_this.initCallback();
-	}
-}
-
-function DigiPathFinder(){
-	this.JSONToLoad = {
-		"digiData.json": {status: -1, targetVar: "digiData"},
-		"moveNames.json": {status: -1, targetVar: "moveNames"}
-	};
-	this.initCallback = null;
-}
-
-DigiPathFinder.prototype.init = function(callback){
-	var _this = this;
-	_this.initCallback = callback;
-	Object.keys(_this.JSONToLoad).forEach(function(file){
-		_this.loadJSON(file);
-	});	
-	this.bannedDigis = {};
-	this.wantedSkills = {};
-	this.currentLookupMode = -1;
-	this.defaultBans = {
-	}
+	_this.initCallback();
 }
 
 DigiPathFinder.prototype.getParams = function(){
@@ -161,3 +116,5 @@ DigiPathFinder.prototype.isBanned = function(id){
 	}
 	return banned;
 }
+
+

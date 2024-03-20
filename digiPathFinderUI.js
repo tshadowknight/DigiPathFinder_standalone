@@ -1,3 +1,12 @@
+var parse_dds = require('parse-dds');
+const { parse } = require('path');
+var xhr = require('xhr')
+var decodeDXT = require('decode-dxt');
+var Jimp = require('jimp')
+
+//game file management
+var fs_promise = require('fs').promises
+
 function localizePage(){
 	$(".digi_name_placeholder").each(function(){
 		$(this).html(localizationData[currentLocale].digimon[$(this).data("digimonid")]);
@@ -150,6 +159,43 @@ function showSkills(){
 	localizePage();
 }
 
+async function setDDSImage(elem, digimonId){
+	
+	const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
+	const path = "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img";
+
+	xhr({
+		uri: path,
+		responseType: 'arraybuffer'
+	  }, function (err, resp, data) {
+		if(!err){
+			var dds = parse_dds(data)
+			console.log(dds.format)  // 'dxt1'
+			console.log(dds.shape)   // [ width, height ]
+			console.log(dds.images)  // [ ... mipmap level data ... ]
+	
+			// get the compressed texture data for gl.compressedTexImage2D
+			
+			var image = dds.images[0];
+			var imageWidth = image.shape[0];
+			var imageHeight = image.shape[1];
+			var imageDataView = new DataView(data, image.offset, image.length);
+	
+			var rgbaData = decodeDXT(imageDataView, imageWidth, imageHeight, dds.format);
+			//var url = URL.createObjectURL(blob);
+			//elem.src = url;
+
+			const pixelSize = 256
+			var image = new Jimp(pixelSize, pixelSize, async function (err, image) {
+				image.bitmap.data = rgbaData;
+
+				let dataUrl = await image.getBase64Async(Jimp.AUTO)
+				elem.src = dataUrl;
+			});
+		}		
+	  });	
+}
+
 function createControls(){
 	var content = "";
 	
@@ -164,7 +210,9 @@ function createControls(){
 	content+="</div>";
 	content+="<select class='digi_select' id='start_digi'>";		
 	content+="</select>";	
-	content+="<img class='controls_digi_icon' id='start_digi_icon' class='flex-item'/>";
+	content+="<div class='digi_icon_container'>";
+	content+="<img class='controls_digi_icon digi_icon' id='start_digi_icon' class='flex-item'/>";
+	content+="</div>";
 	content+="</div>";
 	content+="<div class='controls_arrow' ><i class='fa fa-chevron-right' aria-hidden='true' style='font-size:30px;'></i></div>";
 	content+="<div class='control_block' >";
@@ -174,8 +222,9 @@ function createControls(){
 	content+="</div>";
 	content+="<select class='digi_select' id='end_digi'>";	
 	content+="</select>";
-	content+="<img class='controls_digi_icon' id='end_digi_icon' class='flex-item'/>";
-	
+	content+="<div class='digi_icon_container'>";
+	content+="<img class='controls_digi_icon digi_icon' id='end_digi_icon' class='flex-item'/>";
+	content+="</div>";
 	content+="</div>";
 	content+="</div>";
 	content+="</div>";
@@ -204,6 +253,9 @@ function createControls(){
 	if(preferredLocale){
 		$("#locale_select").val(preferredLocale);
 		currentLocale = preferredLocale;
+		if(!localizationConfig[currentLocale]){
+			currentLocale = "English";
+		}
 	}
 	
 	
@@ -245,7 +297,8 @@ function createControls(){
 	});	
 	
 	$("#start_digi").on("change", function(){
-		$("#start_digi_icon").attr("src", "images/"+$("#start_digi").val()+".png");
+		//$("#start_digi_icon").attr("src", getImgPath($("#start_digi").val()));
+		setDDSImage($("#start_digi_icon")[0], $("#start_digi").val());
 		$("#start_digi_db_link").data("target",$("#start_digi").val());
 		$("#start_digi_db_link").css("display", "inline");
 		$("#start_digi_db_link").show();
@@ -271,6 +324,8 @@ function createControls(){
 		localizePage();
 	});
 	
+	
+
 	$(".db_link").off().on("click", function(){				;
 		window.open(pathFinder.digiData[$(this).data("target")].url, '_blank');
 	});
@@ -326,7 +381,7 @@ function findSkillRoute(){
 	var source = $("#start_digi").val();
 	var target = $("#end_digi").val();
 	digiWorker = new Worker('digiPathWorker.js');
-	digiWorker.postMessage([pathFinder.getParams(), source, target]);
+	digiWorker.postMessage([pathFinder.getParams(), source, target, cachedGameData]);
 	digiWorker.onmessage = function(e) {
 		pathFinder.currentLookupMode = "skill";		
 		if(e.data.type == "result"){
@@ -365,118 +420,185 @@ function clearOverlay(){
 }
 
 var pathFinder;
-var currentLocale = "ENG";
+var currentLocale = "English";
 var localizationConfig = {
-	ENG: {
+	English: {
 		moves: "moveNames.json",
 		digimon: "digiNames.json",
 		app: "appStrings.json"
 	},
-	JPN: {
+	/*JPN: {
 		moves: "moveNames_jp.json",
 		digimon: "digiNames_jp.json",
 		app: "appStrings_jp.json"	
-	}
+	}*/
 }
 var localizationData = {
-	ENG: {
+	English: {
 		moves: {},
 		digimon: {},
 		app: {}
 	},
-	JPN: {
+	/*JPN: {
 		moves: {},
 		digimon: {},
 		app: {}
-	}
+	}*/
 };
-$(document).ready(function(){
-	var deferreds = [];
-	Object.keys(localizationConfig).forEach(function(locale){
-		deferreds.push($.getJSON(localizationConfig[locale].moves, function(data){
-			localizationData[locale].moves = data;
-		}));
-		deferreds.push($.getJSON(localizationConfig[locale].digimon, function(data){
-			localizationData[locale].digimon = data;
-		}));
-		deferreds.push($.getJSON(localizationConfig[locale].app, function(data){
-			localizationData[locale].app = data;
-		}));
+
+function showGameFileLoader(){
+	let elem = document.getElementById("game_file_loader");
+	if(!elem){
+		elem = document.createElement("div");
+		elem.id = "game_file_loader";
+	}
+	elem.classList.remove("hidden");
+	elem.innerHTML = localizationData[currentLocale].app.loader_msg;
+	document.body.append(elem);
+
+	document.getElementById("particles").classList.add("game_loader");
+}
+
+function setLoaderError(error){
+	let elem = document.getElementById("game_file_loader");
+	if(elem){
+		elem.innerHTML = error;
+	}
+}
+
+function hideGameFileLoader(){
+	let elem = document.getElementById("game_file_loader");
+	if(elem){
+		elem.classList.add("hidden");
+	}
+
+	document.getElementById("particles").classList.remove("game_loader");
+}
+
+function createOptions(){
+	let elem = document.getElementById("options_pane");
+	let content = "";
+	content+="<div id='options_container'>";
+	content+="<div class='row'>";
+	content+="<div class='label'>";
+	content+=localizationData[currentLocale].app.game_path;
+	content+="</div>"
+	content+="<div class='value'>";
+	content+="<input id='gameFilesPath' value='"+gameFilesPath+"'></input>";
+	content+="</div>"
+	content+="<div class='value'>";
+	content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path' aria-hidden='true'></i>";
+	content+="</div>"
+	content+="</div>"
+	content+="<div class='row'>";
+	content+="<div class='label'>";
+	content+="<div id='reload_btn'>";
+	content+=localizationData[currentLocale].app.reload_game_files;
+	content+="</div>"
+	content+="</div>"
+	content+="</div>"
+	
+	elem.innerHTML = content;
+
+	elem.querySelector("#gameFilesPath").addEventListener("change", function(){
+		gameFilesPath = this.value;
+		localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
 	});
-	$.when.apply($, deferreds).then(function(){
+
+	elem.querySelector("#refresh_path").addEventListener("click", function(){
+		gameFilesPath = defaultGamePath;
+		localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
+		createOptions();
+	});
+
+	elem.querySelector("#reload_btn").addEventListener("click", function(){
+		toggleOptions();
+		$("#load_hider").show();	
+		initPathFinder(true)
+	});
+}
+
+function toggleOptions(){
+	let elem = document.getElementById("options_pane");
+	if(elem.style.display == "none" || elem.style.display == ""){
+		elem.style.display = "flex";
+		createOptions();
+	} else {
+		elem.style.display = "none";
+	}
+	
+}
+
+var cachedGameData;
+
+function initPathFinder(forceReload){
+	checkDirectories();
+	if(!hasGameFiles() || forceReload){
+		showGameFileLoader();
+		fetchGameFiles().then(function(){
+			phase2();
+		});
+		
+	} else {
+		phase2();
+	}
+
+	function phase2(){		
 		pathFinder = new DigiPathFinder();
-		pathFinder.init(createControls);	
-		$("#worker_cancel").on("click", function(){	
+
+		let gameData;
+		if(cachedGameData){
+			gameData = cachedGameData;
+			finalize();
+		} else {
+			preparePathFinderData().then(function(data){
+				gameData = data;
+				cachedGameData = data;
+				finalize();
+			});
+		}
+
+		function finalize(){
+			hideGameFileLoader();
+			for(let locale in localizationConfig){
+				localizationData[locale].moves = gameData.moveNames[locale];
+				localizationData[locale].digimon = gameData.digimonNames[locale];
+			}	
+
+			pathFinder.init(gameData, createControls);	
+			$("#worker_cancel").on("click", function(){	
 				if(digiWorker){
 					digiWorker.terminate();			
 				}
 				$("#overlay").fadeOut("fast");		
 			});
-			particlesJS.load('particles', 'particles.json', function() {
-			  console.log('callback - particles.js config loaded');
-		});		
+			
+		}
+	}
+}
+
+$(document).ready(function(){
+
+	$("#options").on("click", function(){
+		toggleOptions();
+	});
+
+	var deferreds = [];
+	Object.keys(localizationConfig).forEach(function(locale){
+		/*deferreds.push($.getJSON(localizationConfig[locale].moves, function(data){
+			localizationData[locale].moves = data;
+		}));
+		deferreds.push($.getJSON(localizationConfig[locale].digimon, function(data){
+			localizationData[locale].digimon = data;
+		}));*/
+		deferreds.push($.getJSON("appStrings/"+localizationConfig[locale].app, function(data){
+			localizationData[locale].app = data;
+		}));
+	});
+	$.when.apply($, deferreds).then(function(){
+		particlesJS.load('particles', 'particles.json', function() {
+			console.log('callback - particles.js config loaded');
+		});	
+		initPathFinder();	
 	});	
 });
-
-//game file management
-
-function fetchGameFiles(){	
-	const process = require('child_process');   
-    var ls = process.exec('DSCSTools\\unpack_game_files.bat \"C:/Program Files (x86)/Steam/steamapps/common/Digimon Story Cyber Sleuth Complete Edition/resources/DSDBP.steam.mvgl\"');
-    ls.stdout.on('data', function (data) {
-      console.log(data.toString());
-    });
-    ls.stderr.on('data', function (data) {
-      console.log(data.toString());
-    });
-    ls.on('close', function (code) {
-       if (code == 0)
-            console.log('Stop');
-       else
-            console.log('Start');
-    });
-}
-
-
-function parseGameFile(file){
-	return new Promise(function(resolve, reject){
-	
-		const fs = require('fs');
-		const { parse } = require('csv-parse');
-		const records = [];
-
-		var csvData=[];
-		fs.createReadStream("game_data/unpacked/"+file+".csv")
-			.pipe(parse({delimiter: ','}))
-			.on('data', function(csvrow) {
-				//console.log(csvrow);
-				//do something with csvrow
-				records.push(csvrow);        
-			})
-			.on('end',function() {
-			  //do something with csvData
-			  let headers = records.shift();
-			  let headerLookup = {};
-			  for(let i = 0; i < headers.length; i++){
-				  headerLookup[headers[i]] = i;
-			  }
-			  
-			  resolve({headerLookup: headerLookup, data: records});
-			});
-	});	
-}
-
-async function preparePathFinderData(){
-	let digimonNames = {};
-	const digimonListData = await parseGameFile("digimon_list.mbe/digimon");
-	const nameData = await parseGameFile("charname.mbe/Sheet1");
-	for(let entry of nameData.data){
-		let nameId = entry[nameData.headerLookup["ID"]];
-		if(nameId < 2000){
-			nameId = nameId.substr(1) * 1;
-			digimonNames[nameId] = entry[nameData.headerLookup["English"]];		
-		}
-		
-	}
-	
-}

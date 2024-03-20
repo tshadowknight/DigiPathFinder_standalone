@@ -95,7 +95,7 @@ onmessage = function(e) {
 	console.log('Posting message back to main script');
 	self.workerParams = e.data;
 	self.pathFinder = new DigiPathFinder();
-	self.pathFinder.init(pathFinderLoaded);	
+	self.pathFinder.init(self.workerParams[3], pathFinderLoaded);	
 }
 
 pathFinderLoaded = function(){
