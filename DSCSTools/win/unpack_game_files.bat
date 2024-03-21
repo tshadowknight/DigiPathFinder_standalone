@@ -14,7 +14,16 @@ xcopy /s /Y ..\..\game_data\clean\data ..\..\game_data\unpacked
 
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\skill_name.mbe ..\..\game_data\unpacked
 
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\skill_content_name.mbe ..\..\game_data\unpacked
+
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\charname.mbe ..\..\game_data\unpacked
+
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\support_skill_name.mbe ..\..\game_data\unpacked
+
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\support_skill_content_name.mbe ..\..\game_data\unpacked
+
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\digimon_book_explanation.mbe ..\..\game_data\unpacked
+
 
 xcopy /s /Y ..\..\game_data\clean\images\ui_chara* ..\..\game_data\unpacked\images\
 

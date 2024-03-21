@@ -1,9 +1,10 @@
 var pathLib = require('path');
-var parse_dds = require('parse-dds');
+var parse_dds = require('./lib/parseDDS');
 const { parse } = require('path');
 var xhr = require('xhr')
 var decodeDXT = require('decode-dxt');
 var Jimp = require('jimp')
+var DDSUtils = require('./lib/DDSUtils');
 
 //game file management
 var fs_promise = require('fs').promises
@@ -175,6 +176,8 @@ async function setDDSImage(elem, digimonId){
 	const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
 	const imagePath = pathLib.join(getResourcesFolder(), "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img");
 
+	
+
 	xhr({
 		uri: imagePath,
 		responseType: 'arraybuffer'
@@ -188,17 +191,29 @@ async function setDDSImage(elem, digimonId){
 	
 			// get the compressed texture data for gl.compressedTexImage2D
 			
-			var image = dds.images[0];
-			var imageWidth = image.shape[0];
-			var imageHeight = image.shape[1];
-			var imageDataView = new DataView(data, image.offset, image.length);
+			let imageInfo = dds.images[0];
+			let imageWidth = imageInfo.shape[0];
+			let imageHeight = imageInfo.shape[1];
+			let imageDataView = new DataView(data, imageInfo.offset, imageInfo.length);
 	
-			var rgbaData = decodeDXT(imageDataView, imageWidth, imageHeight, dds.format);
+			let rgbaData;
+			
+			if(dds.format){
+				rgbaData = decodeDXT(imageDataView, imageWidth, imageHeight, dds.format);
+			} else {
+				const buffer= Buffer.from(data)
+				
+				const header = buffer.slice(0, 128);
+				const headerInfo = DDSUtils.summarizeHeader(header);
+
+				let imageData = buffer.slice(128);
+				imageData = DDSUtils.correctFromDXGI(imageData, headerInfo.DXGIFormat);				
+
+				rgbaData = imageData;
+			}
 			//var url = URL.createObjectURL(blob);
 			//elem.src = url;
-
-			const pixelSize = 256
-			var image = new Jimp(pixelSize, pixelSize, async function (err, image) {
+			var image = new Jimp(imageWidth, imageHeight, async function (err, image) {
 				image.bitmap.data = rgbaData;
 
 				let dataUrl = await image.getBase64Async(Jimp.AUTO)
@@ -580,7 +595,11 @@ function initPathFinder(forceReload){
 			
 			for(let locale in localizationConfig){
 				localizationData[locale].moves = gameData.moveNames[locale];
+				localizationData[locale].moveDesc = gameData.moveNames[locale].moveDescriptions;
 				localizationData[locale].digimon = gameData.digimonNames[locale];
+				localizationData[locale].digimonDesc = gameData.digimonNames[locale].digimonDescriptions;
+				localizationData[locale].supportSkills = gameData.digimonNames[locale].supportSkillNames;
+				localizationData[locale].supportSkillDesc = gameData.digimonNames[locale].supportSkillDescriptions;
 			}	
 
 			pathFinder.init(gameData, createControls);	
