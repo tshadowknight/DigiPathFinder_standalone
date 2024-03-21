@@ -33,7 +33,7 @@ function findSkillRoute_(pathFinder, source, target){
 						//register all relevant skills learned by the current waypoint digi
 						var moves = pathFinder.digiData[currentSource].moves; 
 						for(var k = 0; k < moves.length; k++){
-							coveredSkills[moves[k]] = true;
+							coveredSkills[moves[k].id] = true;
 						}
 						currentSkillPath = currentSkillPath.concat(skillNodePath.slice(0, -1));
 					}

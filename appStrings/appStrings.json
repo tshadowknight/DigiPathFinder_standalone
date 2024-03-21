@@ -14,5 +14,19 @@
 	"txt_evolve_to": "Evolve to",
 	"loader_msg": "Loading Game Files...",
 	"game_path": "Game Files Location",
-	"reload_game_files": "Reload Game Files"
+	"reload_game_files": "Reload Game Files",
+	"DEX_header_stats": "Stats",
+	"DEX_label_baseHP": "HP",
+	"DEX_label_baseSP": "SP",
+	"DEX_label_baseATK": "ATK",
+	"DEX_label_baseDEF": "DEF",
+	"DEX_label_baseINT": "INT",
+	"DEX_label_baseSPD": "SPD",
+	"DEX_label_equipSlots": "Equip Slots",
+	"DEX_label_lv1": "Lv. 1",
+	"DEX_label_lv50": "Lv. 50",
+	"DEX_label_lv99": "Lv. 99",
+	"DEX_header_moves": "Attacks",
+	"DEX_moves_label_name": "Name",
+	"DEX_moves_label_level": "Level"
 }

@@ -22,6 +22,7 @@ const requiredFiles = [
     "skill_content_name.mbe/Sheet1.csv",
     "support_skill_name.mbe/Sheet1.csv",
     "support_skill_content_name.mbe/Sheet1.csv",
+    "lvup_para.mbe/table.csv",
     "images"
 ];
 
@@ -131,7 +132,7 @@ async function preparePathFinderData(){
 	let evolutions = {};
 	const evolutionData = await parseGameFile("evolution_next_para.mbe/digimon");
 	for(let entry of evolutionData.data){
-		const digimonId = entry[evolutionData.headerLookup["id"]];
+		const digimonId = escapeHTML(entry[evolutionData.headerLookup["id"]]);
 		if(!evolutions[digimonId]){
 			evolutions[digimonId] = {
 				prev: [],
@@ -139,7 +140,7 @@ async function preparePathFinderData(){
 			}
 		}
 		for(let i = 1; i <=6 ; i++){
-			let targetDigimonId = entry[evolutionData.headerLookup["digi"+i]]
+			let targetDigimonId = escapeHTML(entry[evolutionData.headerLookup["digi"+i]])
 			if(targetDigimonId != 0){
                 validDigimon[digimonId] = true;
                 validDigimon[targetDigimonId] = true;
@@ -165,7 +166,7 @@ async function preparePathFinderData(){
                         digimonNames[locale] = {};
                     }
     
-                    digimonNames[locale][nameId] = entry[nameData.headerLookup[locale]];		
+                    digimonNames[locale][nameId] = escapeHTML(entry[nameData.headerLookup[locale]]);		
                 }
             }		
 		}		
@@ -179,13 +180,15 @@ async function preparePathFinderData(){
             if(!digimonDescriptions[locale]){
                 digimonDescriptions[locale] = {};
             }
-            digimonDescriptions[locale][entryId] = entry[digmonDescData.headerLookup[locale]];	
+            digimonDescriptions[locale][entryId] = escapeHTML(entry[digmonDescData.headerLookup[locale]]);	
         }		
     }
 
 	let movesAvailable = {};
 	let moveNames = {};
 	let movesLearned = {};
+    let movesLearnedDetail = {};
+    let sigMoves = {};
     let baseStats = {};
     const baseStatFields = ["memoryUse","growthType","unk3","baseHP","baseSP","baseATK","baseDEF","baseINT","baseSPD","maxLevel","equipSlots","supportSkill"];
 	const farmData = await parseGameFile("digimon_farm_para.mbe/digimon");
@@ -194,19 +197,36 @@ async function preparePathFinderData(){
 		if(!movesLearned[digimonId]){
 			movesLearned[digimonId] = [];
 		}
+        if(!movesLearnedDetail[digimonId]){
+			movesLearnedDetail[digimonId] = {
+                inherited: {},
+                signature: {}
+            };
+		}
 		for(let i = 1; i <=6 ; i++){
-			let moveId = entry[farmData.headerLookup["move"+i]];
+			let moveId = escapeHTML(entry[farmData.headerLookup["move"+i]]);
+            let moveLevel = escapeHTML(entry[farmData.headerLookup["move"+i+"Level"]]);
 			if(moveId != 0){
 				movesAvailable[moveId] = true;
 				movesLearned[digimonId].push(moveId);
+
+                movesLearnedDetail[digimonId].inherited[moveId] = {level: moveLevel};
 			}
 		}
+
+        for(let i = 1; i <=2 ; i++){
+            let moveId = escapeHTML(entry[farmData.headerLookup["sMove"+i]]);
+            let moveLevel = escapeHTML(entry[farmData.headerLookup["sMove"+i+"Level"]]);
+			if(moveId != 0){
+                movesLearnedDetail[digimonId].signature[moveId] = {level: moveLevel};
+			}
+        }
 
         if(!baseStats[digimonId]){
 			baseStats[digimonId] = {};
 		}
         for(let field of baseStatFields){
-            baseStats[digimonId][field] =  entry[farmData.headerLookup[field]];
+            baseStats[digimonId][field] =  escapeHTML(entry[farmData.headerLookup[field]]);
         }
 
 	}
@@ -220,7 +240,7 @@ async function preparePathFinderData(){
             if(!moveNamesFull[locale]){
                 moveNamesFull[locale] = {};
             }
-            moveNamesFull[locale][entryId] = entry[moveNameData.headerLookup[locale]];	
+            moveNamesFull[locale][entryId] = escapeHTML(entry[moveNameData.headerLookup[locale]]);	
         }				
 	}
 
@@ -241,7 +261,7 @@ async function preparePathFinderData(){
             if(!moveDescriptions[locale]){
                 moveDescriptions[locale] = {};
             }
-            moveDescriptions[locale][entryId] = entry[moveDescData.headerLookup[locale]];	
+            moveDescriptions[locale][entryId] = escapeHTML(entry[moveDescData.headerLookup[locale]]);	
         }		
     }
     
@@ -253,7 +273,7 @@ async function preparePathFinderData(){
             if(!supportSkillNames[locale]){
                 supportSkillNames[locale] = {};
             }
-            supportSkillNames[locale][entryId] = entry[supportSkillNameData.headerLookup[locale]];	
+            supportSkillNames[locale][entryId] = escapeHTML(entry[supportSkillNameData.headerLookup[locale]]);	
         }		
     }
 
@@ -265,10 +285,24 @@ async function preparePathFinderData(){
             if(!supportSkillDescriptions[locale]){
                 supportSkillDescriptions[locale] = {};
             }
-            supportSkillDescriptions[locale][entryId] = entry[supportSkillDescData.headerLookup[locale]];	
+            supportSkillDescriptions[locale][entryId] = escapeHTML(entry[supportSkillDescData.headerLookup[locale]]);	
         }		
     }
+    let levellUpGrowths = {};
+    const growthRateData = await parseGameFile("lvup_para.mbe/table");
+	for(let entry of growthRateData.data){
+        const curveId = escapeHTML(entry[growthRateData.headerLookup["id"]]);
+        levellUpGrowths[curveId] = {
+            HP: escapeHTML(entry[growthRateData.headerLookup["HP"]]),
+            SP: escapeHTML(entry[growthRateData.headerLookup["SP"]]),
+            ATK: escapeHTML(entry[growthRateData.headerLookup["ATK"]]),
+            DEF: escapeHTML(entry[growthRateData.headerLookup["DEF"]]),
+            INT: escapeHTML(entry[growthRateData.headerLookup["INT"]]),
+            SPD: escapeHTML(entry[growthRateData.headerLookup["SPD"]])
+        };        		
+    }
 
+   
     
 
     let digiData = {};
@@ -280,10 +314,11 @@ async function preparePathFinderData(){
                 name: digimonNames[digimonId],
                 moves: movesLearned[digimonId],
                 neighBours: evolutions[digimonId],
-                baseStats: baseStats[digimonId]
+                baseStats: baseStats[digimonId],
+                moveDetails: movesLearnedDetail[digimonId]
             }
         }        
     }
 
-    return {digiData: digiData, moveNames: moveNames, moveDescriptions: moveDescriptions, digimonNames: digimonNames, digimonDescriptions: digimonDescriptions, supportSkillNames: supportSkillNames, supportSkillDescriptions: supportSkillDescriptions};
+    return {digiData: digiData, levellUpGrowths: levellUpGrowths, moveNames: moveNames, moveDescriptions: moveDescriptions, digimonNames: digimonNames, digimonDescriptions: digimonDescriptions, supportSkillNames: supportSkillNames, supportSkillDescriptions: supportSkillDescriptions};
 }

@@ -5,16 +5,25 @@ var xhr = require('xhr')
 var decodeDXT = require('decode-dxt');
 var Jimp = require('jimp')
 var DDSUtils = require('./lib/DDSUtils');
-
-//game file management
+const DexPane = require('./DexPane');
 var fs_promise = require('fs').promises
+
+
+const dexPane = new DexPane("details_pane");
 
 function localizePage(){
 	$(".digi_name_placeholder").each(function(){
 		$(this).html(localizationData[currentLocale].digimon[$(this).data("digimonid")]);
 	});
 	$(".move_name_placeholder").each(function(){
-		$(this).html(localizationData[currentLocale].moves[$(this).data("moveid")]);
+		const digimonId = $(this).data("digimonid");
+		const moveId = $(this).data("moveid");
+		if(digimonId){			
+			const moveLevel = getDigiData()[digimonId].moveDetails.inherited[moveId].level;
+			$(this).html(localizationData[currentLocale].moves[moveId] + "(Lv. "+moveLevel+")");
+		} else {
+			$(this).html(localizationData[currentLocale].moves[moveId]);
+		}				
 	});
 	$("[data-appstring!='']").each(function(){
 		$(this).html(localizationData[currentLocale].app[$(this).data("appstring")]);
@@ -55,7 +64,7 @@ function showRoute(route){
 			pathContent+="</div>";
 			pathContent+="<div class='flex-container moves_list'>";
 			for(var j = 0; j < moves.length; j++){
-				pathContent+="<center data-moveid='"+moves[j]+"' class='listed_move move_name_placeholder flex-item'></center>";
+				pathContent+="<center data-moveid='"+moves[j]+"' class='listed_move move_name_placeholder flex-item' data-digimonid='"+route[i]+"'></center>";
 			}
 			pathContent+="</div>";			
 			pathContent+="<div title='Set as starting point' class='set_start_button' data-id='"+route[i]+"'><i class='fa fa-forward' aria-hidden='true'></i></div>";
@@ -105,7 +114,8 @@ function showRoute(route){
 		showBans();
 	});
 	$(".db_link").off().on("click", function(){				;
-		window.open(pathFinder.digiData[$(this).data("target")].url, '_blank');
+		//window.open(pathFinder.digiData[$(this).data("target")].url, '_blank');
+		dexPane.showDigimon($(this).data("target"));
 	});	
 	
 	$("#copy_to_clipboard").on("click", function(){		
@@ -357,7 +367,8 @@ function createControls(){
 	
 
 	$(".db_link").off().on("click", function(){				;
-		window.open(pathFinder.digiData[$(this).data("target")].url, '_blank');
+		//window.open(pathFinder.digiData[$(this).data("target")].url, '_blank');
+		dexPane.showDigimon($(this).data("target"));
 	});
 	
 	$("#start_digi").val($("#start_digi option:first").val());
@@ -476,6 +487,8 @@ var localizationData = {
 	}*/
 };
 
+
+
 function showGameFileLoader(){
 	let elem = document.getElementById("game_file_loader");
 	if(!elem){
@@ -561,6 +574,21 @@ function toggleOptions(){
 
 var cachedGameData;
 
+function getDigiData(){
+	if(cachedGameData){
+		return cachedGameData.digiData;
+	}
+	return {};
+}
+
+function getGrowthCurveInfo(){
+	if(cachedGameData){
+		return cachedGameData.levellUpGrowths;
+	}
+	return {};
+}
+
+
 function initPathFinder(forceReload){
 	if(forceReload){
 		cachedGameData = null;
@@ -595,12 +623,13 @@ function initPathFinder(forceReload){
 			
 			for(let locale in localizationConfig){
 				localizationData[locale].moves = gameData.moveNames[locale];
-				localizationData[locale].moveDesc = gameData.moveNames[locale].moveDescriptions;
+				localizationData[locale].moveDesc = gameData.moveDescriptions[locale];
 				localizationData[locale].digimon = gameData.digimonNames[locale];
-				localizationData[locale].digimonDesc = gameData.digimonNames[locale].digimonDescriptions;
-				localizationData[locale].supportSkills = gameData.digimonNames[locale].supportSkillNames;
-				localizationData[locale].supportSkillDesc = gameData.digimonNames[locale].supportSkillDescriptions;
+				localizationData[locale].digimonDesc = gameData.digimonDescriptions[locale];
+				localizationData[locale].supportSkills = gameData.supportSkillNames[locale];
+				localizationData[locale].supportSkillDesc = gameData.supportSkillDescriptions[locale];
 			}	
+
 
 			pathFinder.init(gameData, createControls);	
 

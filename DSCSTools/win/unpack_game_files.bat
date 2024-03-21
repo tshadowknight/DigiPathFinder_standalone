@@ -12,6 +12,8 @@ xcopy /s /Y ..\..\game_data\clean\data ..\..\game_data\unpacked
 
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\data\digimon_farm_para.mbe ..\..\game_data\unpacked
 
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\data\lvup_para.mbe ..\..\game_data\unpacked
+
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\skill_name.mbe ..\..\game_data\unpacked
 
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\skill_content_name.mbe ..\..\game_data\unpacked
