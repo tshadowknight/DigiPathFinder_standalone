@@ -28,5 +28,18 @@
 	"DEX_label_lv99": "Lv. 99",
 	"DEX_header_moves": "Attacks",
 	"DEX_moves_label_name": "Name",
-	"DEX_moves_label_level": "Level"
+	"DEX_moves_label_level": "Level",
+	"DEX_header_evos": "Evolutions",
+	"DEX_evos_label_level": "level",
+	"DEX_evos_label_ATK": "ATK",
+	"DEX_evos_label_DEF": "DEF",
+	"DEX_evos_label_HP": "HP",
+	"DEX_evos_label_INT": "INT",
+	"DEX_evos_label_SP": "SP",
+	"DEX_evos_label_SPD": "SPD",
+	"DEX_evos_label_ABI": "ABI",
+	"DEX_evos_label_CAM": "CAM",
+	"DEX_evos_label_additional": "Additional",
+	"DEX_evos_label_has_additional": "Yes",
+	"DEX_header_evos_reqs": "Requirements"
 }

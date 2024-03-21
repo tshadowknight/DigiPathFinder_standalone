@@ -23,6 +23,7 @@ const requiredFiles = [
     "support_skill_name.mbe/Sheet1.csv",
     "support_skill_content_name.mbe/Sheet1.csv",
     "lvup_para.mbe/table.csv",
+    "evolution_condition_para.mbe/digimon.csv",
     "images"
 ];
 
@@ -83,7 +84,7 @@ function fetchGameFiles(){
         ls.on('close', function (code) {
            if (code == 0) {
                 console.log('Stop');
-                //fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
+                fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
                 resolve();
            } else {
                 console.log('Start');
@@ -302,7 +303,38 @@ async function preparePathFinderData(){
         };        		
     }
 
-   
+   const evoCondTypes ={
+        1: "LVL",
+        2: "HP", 
+        3: "SP",
+        4: "ATK",
+        5: "DEF",
+        6: "INT",
+        7: "SPD",
+        8: "ABI",
+        9: "CAM",
+        10: "Other"
+   }
+
+   let evoConditions = {};
+   const evoConditionData = await parseGameFile("evolution_condition_para.mbe/digimon");
+   for(let entry of evoConditionData.data){
+       const digimonId = escapeHTML(entry[evoConditionData.headerLookup["id"]]);
+       let conditions = {};
+       for(let i = 1; i <= 10; i++){
+            let type = escapeHTML(entry[evoConditionData.headerLookup["condType"+i]]);
+            if(type > 0){
+                const value = escapeHTML(entry[evoConditionData.headerLookup["condValue"+i]]);
+                if(type > 9){
+                    type = 10;
+                    conditions[evoCondTypes[type]] = 1;
+                } else {
+                    conditions[evoCondTypes[type]] = value;
+                } 
+            }                      
+       }  		
+       evoConditions[digimonId] = conditions;
+   }
     
 
     let digiData = {};
@@ -315,7 +347,8 @@ async function preparePathFinderData(){
                 moves: movesLearned[digimonId],
                 neighBours: evolutions[digimonId],
                 baseStats: baseStats[digimonId],
-                moveDetails: movesLearnedDetail[digimonId]
+                moveDetails: movesLearnedDetail[digimonId],
+                conditions: evoConditions[digimonId]
             }
         }        
     }

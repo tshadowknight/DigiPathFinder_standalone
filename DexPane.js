@@ -29,7 +29,8 @@ DexPane.prototype.show = function(){
             "equipSlots": 0,
             "supportSkill": -1
         },
-        moves: []
+        moves: [],
+        evosReqs: {}
     };
     if(this._activeId != -1){
         monInfo = {
@@ -37,7 +38,8 @@ DexPane.prototype.show = function(){
             name: localizationData[currentLocale].digimon[this._activeId],
             description: localizationData[currentLocale].digimonDesc[this._activeId],
             baseStats: getDigiData()[this._activeId].baseStats,
-            moves: getDigiData()[this._activeId].moveDetails
+            moves: getDigiData()[this._activeId].moveDetails,
+            evosReqs: getDigiData()[this._activeId].conditions,
         };
     }
     let content = "";
@@ -70,6 +72,8 @@ DexPane.prototype.show = function(){
     content+=this.createStatsBlock(monInfo);
 
     content+=this.createMovesBlock(monInfo);
+
+    content+=this.createEvosBlock(monInfo);
 
     content+="</div>";
     content+="</div>";
@@ -106,10 +110,12 @@ DexPane.prototype.arrayToTableContent = function(array){
 DexPane.prototype.createStatsBlock = function(monInfo){
     let content = "";
     content+="<div class='section'>";
-
+   
     content+="<div class='section_header'>";
+   
     content+=localizationData[currentLocale].app.DEX_header_stats;
     content+="</div>";
+    content+="<div class='inner'>";
 
     let stats = [     
         {item: "baseHP", label:localizationData[currentLocale].app.DEX_label_baseHP},
@@ -163,6 +169,7 @@ DexPane.prototype.createStatsBlock = function(monInfo){
     content+="</div>";
 
     content+="</div>";
+    content+="</div>";
 
     return content;
 }
@@ -171,11 +178,12 @@ DexPane.prototype.createStatsBlock = function(monInfo){
 DexPane.prototype.createMovesBlock = function(monInfo){
     let content = "";
     content+="<div class='section'>";
-
+    
     content+="<div class='section_header'>";
+    
     content+=localizationData[currentLocale].app.DEX_header_moves;
     content+="</div>";
-
+    content+="<div class='inner'>";
     content+="<div class='row moves'>";
     content+="<table id='moves_table' class='stats'>";  
 
@@ -203,6 +211,96 @@ DexPane.prototype.createMovesBlock = function(monInfo){
 
     content+="</div>";
 
+    content+="</div>";
+    content+="</div>";
+
+    return content;
+}
+
+
+DexPane.prototype.createEvosBlock = function(monInfo){
+    let content = "";
+    content+="<div class='section evos'>";
+    
+    content+="<div class='section_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_header_evos;
+    content+="</div>";
+    content+="<div class='inner'>";
+    content+="<div class='section_sub_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_header_evos_reqs;
+    content+="</div>";
+    content+="<div class='row evos'>";
+
+    
+    content+="<table id='evo_reqs_table' class='stats'>";  
+
+    const evoCondTypes ={
+        1: "LVL",
+        2: "HP", 
+        3: "SP",
+        4: "ATK",
+        5: "DEF",
+        6: "INT",
+        7: "SPD",
+        8: "ABI",
+        9: "CAM",
+        10: "Other"
+   }
+
+    const condList = [
+        "LVL",
+        "HP", 
+        "SP",
+        "ATK",
+        "DEF",
+        "INT",
+        "SPD",
+        "ABI",
+        "CAM",
+        "Other"
+    ];
+
+    let tableContent = [];
+    tableContent.push([
+        localizationData[currentLocale].app.DEX_evos_label_level,
+        localizationData[currentLocale].app.DEX_evos_label_HP,
+        localizationData[currentLocale].app.DEX_evos_label_SP,
+        localizationData[currentLocale].app.DEX_evos_label_ATK,
+        localizationData[currentLocale].app.DEX_evos_label_DEF,        
+        localizationData[currentLocale].app.DEX_evos_label_INT,        
+        localizationData[currentLocale].app.DEX_evos_label_SPD,
+        localizationData[currentLocale].app.DEX_evos_label_ABI,
+        localizationData[currentLocale].app.DEX_evos_label_CAM,
+        localizationData[currentLocale].app.DEX_evos_label_additional
+    ])
+    
+    let requirements = monInfo.evosReqs;
+    let row = [];
+    for(let condition of condList){
+        if(requirements[condition]){
+            if(condition == "Other"){
+                row.push( localizationData[currentLocale].app.DEX_evos_label_has_additional);
+            } else {
+                row.push(requirements[condition]);
+            }
+            
+        } else {
+            row.push("-");
+        }
+    }
+    tableContent.push(row);
+
+    content+=this.arrayToTableContent(tableContent);
+
+    content+="</table>";
+    
+
+
+    content+="</div>";
+
+    content+="</div>";
     content+="</div>";
 
     return content;

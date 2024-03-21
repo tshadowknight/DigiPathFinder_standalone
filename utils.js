@@ -11,5 +11,5 @@ function escapeHTML(str) {
         return tagsToReplace[tag] || tag;
     }
 
-    return str.replace(/[&<>]/g, replaceTag);
+    return String(str).replace(/[&<>]/g, replaceTag);
 }

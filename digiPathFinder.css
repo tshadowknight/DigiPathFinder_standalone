@@ -731,6 +731,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	width: 100%;
     display: flex;
     flex-wrap: wrap;
+	justify-content: center;
 }
 
 .dex_pane .section {
@@ -739,8 +740,12 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     width: calc(50% - 24px);
     overflow: hidden;
     min-width: 450px;
+	background-color: rgba(0, 0, 0, 0.05);
 }
 
+.dex_pane .section .inner{
+	overflow: auto;
+}
 .dex_pane .row{
 	display: flex;
 	align-items: center;
@@ -830,6 +835,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	text-align: right;
 	font-weight: bold;
 	color: #476dd9;
+	width: 30px;
 }
 
 .dex_pane table.stats tr td{
@@ -840,7 +846,27 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	padding: 6px 10px;
 }
 
+.dex_pane table.stats tr th{
+	padding: 6px 10px;
+}
+
 .dex_pane #moves_table tr td:first-child{
 	text-align: left;
 }
 
+.dex_pane #moves_table tr th:first-child{
+	text-align: left;
+}
+
+
+.dex_pane .section.evos {
+	width: calc(100% - 24px);
+}
+
+.dex_pane .section_sub_header {
+	color: #334e9b;
+    font-size: 20px;
+    text-align: center;
+    font-style: italic;
+    margin-bottom: -13px;
+}
