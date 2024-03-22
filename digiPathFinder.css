@@ -212,6 +212,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+	position: relative;
 }
 
 .set_start_button{
@@ -995,6 +996,10 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	padding: 6px 10px;
 }
 
+.evo_reqs_flex .block .value.difficult{
+	color:#c62e2e;
+}
+
 #moves_table .skill_entry {
 	color: #000;
 	background-color: rgba(0,0,0,0);
@@ -1035,4 +1040,30 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 .support_skill_container .value {
 	margin-left: 20px;
 	text-align: left;
+}
+
+.evo_warning {
+	font-size: 25px;
+    position: absolute;
+    color: #c62e2e;
+    top: 6px;
+    right: 110px;
+}
+
+.row.encounters {
+	justify-content: center;
+	align-items: flex-start;
+}
+
+.row.encounters .enc_block {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.row.encounters .stats {
+	margin-top: 20px;
+}
+
+.section.encounters {
+	width: calc(60% - 24px);
 }

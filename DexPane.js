@@ -3,6 +3,7 @@ module.exports = DexPane;
 function DexPane(containerId){
     this._containerId = containerId;
     this._activeId = -1;
+    this._lastScroll = 0;
 }
 
 DexPane.prototype.setActiveId = function(id){
@@ -98,7 +99,7 @@ DexPane.prototype.show = function(context){
         {
             item: "attribute",
             label: localizationData[currentLocale].app.DEX_general_attribute,
-            localizer: localizationData[currentLocale].app.atributes
+            localizer: localizationData[currentLocale].app.attributes
         },
         {
             item: "memoryUse",
@@ -160,6 +161,10 @@ DexPane.prototype.show = function(context){
 
     content+=this.createEvosBlock(monInfo);
 
+    content+=this.createEncountersBlock(monInfo);
+
+    
+
     content+="</div>";
     content+="</div>";
     
@@ -186,6 +191,12 @@ DexPane.prototype.show = function(context){
             _this.showDigimon(monId, "evos");
         })
     }
+
+    const scrollPane = contentContainer.querySelector(".dex_pane_scroll");
+    scrollPane.scrollTop = this._lastScroll;
+    scrollPane.addEventListener("scroll", function(){
+        _this._lastScroll = this.scrollTop;
+    });
 }
 
 DexPane.prototype.arrayToTableContent = function(array, headless){
@@ -361,7 +372,7 @@ DexPane.prototype.createMovesBlock = function(monInfo){
     return content;
 }
 
-DexPane.prototype.createEvoReqs = function(monInfo){
+DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
     let content = "";
     const condList = [
         "LVL",
@@ -399,7 +410,13 @@ DexPane.prototype.createEvoReqs = function(monInfo){
         content+="<div class='label'>"
         content+=labels[condition];
         content+="</div>";
-        content+="<div class='value'>"
+        let errorClass = "";
+        if(maxStats){
+            if(maxStats[condition] < requirements[condition]){
+                errorClass = "difficult";
+            }
+        }
+        content+="<div class='value "+errorClass+"'>"
         if(requirements[condition]){
             if(condition == "Other"){
                 content+="<div class='block'>"
@@ -517,7 +534,7 @@ DexPane.prototype.createEvosBlock = function(monInfo){
 
       
 
-        content+=this.createEvoReqs(targetMonInfo);
+        content+=this.createEvoReqs(targetMonInfo, getDigiData()[monInfo.id].maxBaseStats);
     
        
         content+="</div>";
@@ -529,6 +546,85 @@ DexPane.prototype.createEvosBlock = function(monInfo){
 
     return content;
 }
+
+DexPane.prototype.createEncountersBlock = function(monInfo){
+    const _this = this;
+    let content = "";
+    content+="<div class='section encounters'>";
+    
+    content+="<div class='section_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_header_encounters;
+    content+="</div>";
+    content+="<div class='inner'>";
+  
+    content+="<div class='row encounters'>";
+
+    function createEncountersTable(encounters){
+        let content = "";
+        content+="<table id='encounters_table' class='stats'>";  
+
+        let tableContent = [];
+        tableContent.push([localizationData[currentLocale].app.DEX_encounters_area, localizationData[currentLocale].app.DEX_encounters_level, localizationData[currentLocale].app.DEX_encounters_rate]);
+    
+        let compressedEncounters = {};
+        for(let entry of encounters){
+            let key = entry.fieldNameId + "_" + entry.level;
+            if(!compressedEncounters[key]){
+                compressedEncounters[key] = {
+                    rate: 0,
+                    level: entry.level,
+                    fieldNameId: entry.fieldNameId,
+                    fieldName: localizationData[currentLocale].fieldNames[entry.fieldNameId]
+                }
+            }
+            compressedEncounters[key].rate+=entry.rate * 1;
+        }
+        let sortedKeys = Object.keys(compressedEncounters);
+        sortedKeys = sortedKeys.sort((a, b) => compressedEncounters[a].level - compressedEncounters[b].level);
+    
+        for(let key of sortedKeys){
+            const entry = compressedEncounters[key];
+            let row = [];
+            row.push(entry.fieldName);
+            row.push(entry.level);
+            row.push(entry.rate+"%");
+            tableContent.push(row);
+        }
+    
+        content+=_this.arrayToTableContent(tableContent);
+    
+        content+="</table>";
+        return content;
+    }
+    content+="<div class='enc_block'>";
+    content+="<div class='section_sub_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_encounters_base;
+    content+="</div>";
+
+   
+    content+=createEncountersTable(getDigiData()[monInfo.id].encounters.base);
+    content+="</div>";
+    content+="<div class='enc_block'>";
+    content+="<div class='section_sub_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_encounters_hame;
+    content+="</div>";
+
+    
+    content+=createEncountersTable(getDigiData()[monInfo.id].encounters.hame);
+    content+="</div>";
+    content+="</div>";
+
+    content+="</div>";
+
+    content+="</div>";
+
+
+    return content;
+}
+
 
 DexPane.prototype.showDigimon = function(id, context){
     this.setActiveId(id);

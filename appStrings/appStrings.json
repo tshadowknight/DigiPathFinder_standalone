@@ -79,5 +79,13 @@
 	"DEX_moves_signature": "Signature",
 	"DEX_moves_inheritable": "Inheritable",
 	"DEX_general_description": "Description",
-	"DEX_general_support_skill": "Support Skill"
+	"DEX_general_support_skill": "Support Skill",
+	"warn_special_evo": "This evolution has special requirements!",
+	"warn_difficult_evo": "This evolution requires stats higher than can be reached without additional stat points or the correct personality!",
+	"DEX_header_encounters": "Encounters",
+	"DEX_encounters_area": "Area",
+	"DEX_encounters_level": "Level",
+	"DEX_encounters_rate": "Rate",
+	"DEX_encounters_base": "Base Game",
+	"DEX_encounters_hame": "Hacker's Memory"
 }

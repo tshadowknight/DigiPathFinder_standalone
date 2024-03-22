@@ -33,6 +33,8 @@ function localizePage(){
 	});
 }
 
+
+
 function showRoute(route){	
 	var pathContent = "";
 	if(route && route.length){	
@@ -74,7 +76,27 @@ function showRoute(route){
 				if(pathFinder.digiData[route[i]].neighBours.prev.indexOf(String(route[i+1])) != -1){			
 					pathContent+="<div class='path_arrow' style='color: #ff4f41'><i class='fa fa-chevron-down' aria-hidden='true' style='font-size:30px;'></i></div>";
 				} else {
-					pathContent+="<div class='path_arrow' style='color:#3cb367'><i class='fa fa-chevron-down' aria-hidden='true' style='font-size:30px;'></i></div>";
+					let warnings = [];
+					let maxStats = getDigiData()[route[i]].maxBaseStats;
+					let reqs =  getDigiData()[route[i + 1]].conditions;
+					for(let condType in reqs){
+						if(reqs[condType]){
+							if(condType == "Other"){
+								warnings.push(localizationData[currentLocale].app.warn_special_evo);
+								//warn_difficult_evo
+							} else if(["LVL", "CAM", "ABI"].indexOf(condType) == -1){
+								if(maxStats[condType] < reqs[condType]){
+									warnings.push(localizationData[currentLocale].app.warn_difficult_evo);
+								}
+							}
+						}
+					}
+					let warningElem = "";
+					if(warnings.length){
+						warningElem = "<div title='"+(warnings.join("\n"))+"' class='evo_warning'><i class='fa fa-warning' aria-hidden='true'></i></div>"
+					}
+					
+					pathContent+="<div class='path_arrow' style='color:#3cb367'><i class='fa fa-chevron-down' aria-hidden='true' style='font-size:30px;'></i>"+warningElem+"</div>";
 				}
 			}
 		}
@@ -629,6 +651,7 @@ function initPathFinder(forceReload){
 				localizationData[locale].supportSkills = gameData.supportSkillNames[locale];
 				localizationData[locale].supportSkillDesc = gameData.supportSkillDescriptions[locale];
 				localizationData[locale].sigMoves = gameData.sigMoves[locale];
+				localizationData[locale].fieldNames = gameData.fieldNames[locale];
 			}	
 
 
