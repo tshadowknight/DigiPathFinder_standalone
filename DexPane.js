@@ -419,7 +419,6 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
         content+="<div class='value "+errorClass+"'>"
         if(requirements[condition]){
             if(condition == "Other"){
-                content+="<div class='block'>"
                 content+= (localizationData[currentLocale].app.DEX_evos_label_has_additional);
             } else {
                 content+=(requirements[condition]);
@@ -581,7 +580,15 @@ DexPane.prototype.createEncountersBlock = function(monInfo){
             compressedEncounters[key].rate+=entry.rate * 1;
         }
         let sortedKeys = Object.keys(compressedEncounters);
-        sortedKeys = sortedKeys.sort((a, b) => compressedEncounters[a].level - compressedEncounters[b].level);
+        sortedKeys = sortedKeys.sort((a, b) => {
+            let aVal = compressedEncounters[a];
+            let bVal = compressedEncounters[b];
+            if(aVal.fieldName != bVal.fieldName){
+                return aVal.fieldName.localeCompare(bVal.fieldName);
+            } else {
+                return aVal.level - bVal.level;
+            }
+        });
     
         for(let key of sortedKeys){
             const entry = compressedEncounters[key];
