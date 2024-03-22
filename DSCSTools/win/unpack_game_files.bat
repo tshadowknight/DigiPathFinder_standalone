@@ -24,6 +24,8 @@ xcopy /s /Y ..\..\game_data\clean\data ..\..\game_data\unpacked
 
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\data\map_encount_param_add.mbe ..\..\game_data\unpacked
 
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\data\battle_command.mbe ..\..\game_data\unpacked
+
 
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\data\field_area_para.mbe ..\..\game_data\unpacked
 

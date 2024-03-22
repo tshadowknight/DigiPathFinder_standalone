@@ -37,7 +37,7 @@ DexPane.prototype.getMonInfo = function(monId){
         monInfo = {
             id: monId,
             name: localizationData[currentLocale].digimon[monId],
-            description: localizationData[currentLocale].digimonDesc[monId],
+            description: localizationData[currentLocale].digimonDesc[getDigiData()[monId].baseStats.profile],
             baseStats: getDigiData()[monId].baseStats,
             moves: getDigiData()[monId].moveDetails,
             evosReqs: getDigiData()[monId].conditions,
@@ -172,9 +172,7 @@ DexPane.prototype.show = function(context){
 
     contentContainer.innerHTML = content;   
 
-    if(context){
-        contentContainer.querySelector(".section ."+context).scrollIntoView()
-    }
+    
 
     let monImgs = contentContainer.querySelectorAll(".icon img");
     for(let img of monImgs){
@@ -197,6 +195,10 @@ DexPane.prototype.show = function(context){
     scrollPane.addEventListener("scroll", function(){
         _this._lastScroll = this.scrollTop;
     });
+
+    if(context){
+        contentContainer.querySelector(".section ."+context).scrollIntoView()
+    }
 }
 
 DexPane.prototype.arrayToTableContent = function(array, headless){
@@ -319,8 +321,8 @@ DexPane.prototype.createMovesBlock = function(monInfo){
         sortedSigMoves.push({id: moveId});
     }
     for(let entry of sortedSigMoves){
-        let nameContent = "<div class='skill_entry'>" + localizationData[currentLocale].sigMoves[entry.id] + "</div>";
-        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[entry.id]]);
+        let nameContent = "<div class='skill_entry'>" + localizationData[currentLocale].sigMoves[getSkillTextIdInfo()[entry.id]] + "</div>";
+        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[getSkillTextIdInfo()[entry.id]]]);
     }
 
     content+=this.arrayToTableContent(tableContent);
@@ -354,8 +356,8 @@ DexPane.prototype.createMovesBlock = function(monInfo){
 
     for(let entry of sortedMoves){
         let isWanted = pathFinder.wantedSkills[entry.id];
-        let nameContent = "<div class='skill_entry "+(isWanted ? "wanted" : "")+"'>" + localizationData[currentLocale].moves[entry.id] + "</div>";
-        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[entry.id], entry.level]);
+        let nameContent = "<div class='skill_entry "+(isWanted ? "wanted" : "")+"'>" + localizationData[currentLocale].moves[getSkillTextIdInfo()[entry.id]] + "</div>";
+        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[getSkillTextIdInfo()[entry.id]], entry.level]);
     }
 
     content+=this.arrayToTableContent(tableContent);

@@ -610,6 +610,12 @@ function getGrowthCurveInfo(){
 	return {};
 }
 
+function getSkillTextIdInfo(){
+	if(cachedGameData){
+		return cachedGameData.skillTextIds;
+	}
+	return {};
+}
 
 function initPathFinder(forceReload){
 	if(forceReload){

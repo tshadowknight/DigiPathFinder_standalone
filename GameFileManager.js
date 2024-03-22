@@ -31,6 +31,7 @@ const requiredFiles = [
     "field_area_para_add.mbe/Field_List.csv",
     "fieldname.mbe/Sheet1.csv",
     "map_encount_param_add.mbe/Field.csv",
+    "battle_command.mbe/Command.csv",
     "images"
 ];
 
@@ -101,6 +102,16 @@ function fetchGameFiles(){
     
 }
 
+const textStringHeaders = {
+    ID: 0,
+    Japanese: 1,
+    English: 2,
+    Chinese: 3,
+    EnglishCensored: 4,
+    Korean: 5,
+    German: 6
+}
+
 
 function parseGameFile(file){
 	return new Promise(function(resolve, reject){
@@ -118,16 +129,35 @@ function parseGameFile(file){
 				records.push(csvrow);        
 			})
 			.on('end',function() {
-			  //do something with csvData
-			  let headers = records.shift();
-			  let headerLookup = {};
-			  for(let i = 0; i < headers.length; i++){
-				  headerLookup[headers[i]] = i;
-			  }
-			  
-			  resolve({headerLookup: headerLookup, data: records});
-			});
+            //do something with csvData
+                let headers = records.shift();
+                let headerLookup;
+                let fileKey = file+".csv";
+                if(hardDefinedHeaders[fileKey] && Object.keys(hardDefinedHeaders[fileKey]).length){
+                    headerLookup = hardDefinedHeaders[fileKey]
+                } else {
+                    throw "No header information for " + fileKey;
+                }
+
+                resolve({headerLookup: headerLookup, data: records});
+            });
 	});	
+}
+
+async function generateHeaders(){
+    let result = {};
+    for(let file of requiredFiles){
+        try {
+            if(file != "images"){
+                result[file] = (await parseGameFile(file.replace(".csv", ""))).headerLookup;
+            }
+            
+        } catch(e){
+            
+        }
+        
+    }
+    console.log(result);
 }
 
 async function preparePathFinderData(){
@@ -198,7 +228,7 @@ async function preparePathFinderData(){
     let movesLearnedDetail = {};
     let sigMoves = {};
     let baseStats = {};
-    const baseStatFields = ["memoryUse","growthType","unk3","baseHP","baseSP","baseATK","baseDEF","baseINT","baseSPD","maxLevel","equipSlots","supportSkill"];
+    const baseStatFields = ["memoryUse","growthType","unk3","baseHP","baseSP","baseATK","baseDEF","baseINT","baseSPD","maxLevel","equipSlots","supportSkill", "profile"];
 	const farmData = await parseGameFile("digimon_farm_para.mbe/digimon");
 	for(let entry of farmData.data){
 		const digimonId = escapeHTML(entry[farmData.headerLookup["id"]]);
@@ -454,6 +484,7 @@ async function preparePathFinderData(){
 
 
    let digimonToEncounters = {};
+   let digimonToUsedAreas = {}; 
    const encounterParamData = await parseGameFile("map_encount_param.mbe/Field");
    for(let entry of encounterParamData.data){
         const mapId = escapeHTML(entry[encounterParamData.headerLookup["map_id"]]);
@@ -466,21 +497,28 @@ async function preparePathFinderData(){
                     if(!digimonToEncounters[digimonId]){
                         digimonToEncounters[digimonId] = [];
                     }
+                    if(!digimonToUsedAreas[digimonId]){
+                        digimonToUsedAreas[digimonId] = {};                   
+                    }
                     
                     let areaPara = mapId.substring(0, mapId.length - 2);
                     areaPara = "d" + areaPara.padStart(2, 0);
-                    digimonToEncounters[digimonId].push({
-                        level: digimonIdToCouplings[digimonId][couplingId].level,
-                        rate: rate,
-                        mapId: mapId,
-                        fieldNameId: areaParaToFieldId[areaPara]
-                    });
+                    if(!digimonToUsedAreas[digimonId][areaPara+ "_" + i]){
+                        digimonToUsedAreas[digimonId][areaPara+ "_" + i] = true;
+                        digimonToEncounters[digimonId].push({
+                            level: digimonIdToCouplings[digimonId][couplingId].level,
+                            rate: rate,
+                            mapId: mapId,
+                            fieldNameId: areaParaToFieldId[areaPara]
+                        });
+                    }                    
                 }
             }            
         }
    }
 
    let digimonToEncountersHame = {};
+   let digimonToUsedAreasHame = {}; 
    const encounterParamDataHame = await parseGameFile("map_encount_param_add.mbe/Field");
    for(let entry of encounterParamDataHame.data){
         const mapId = escapeHTML(entry[encounterParamDataHame.headerLookup["map_id"]]);
@@ -493,24 +531,36 @@ async function preparePathFinderData(){
                     if(!digimonToEncountersHame[digimonId]){
                         digimonToEncountersHame[digimonId] = [];
                     }
+                    if(!digimonToUsedAreasHame[digimonId]){
+                        digimonToUsedAreasHame[digimonId] = [];
+                    }
                     
                     let areaPara = mapId.substring(0, mapId.length - 2);
                     areaPara = "d" + areaPara.padStart(2, 0);
-                    digimonToEncountersHame[digimonId].push({
-                        level: digimonIdToCouplings[digimonId][couplingId].level,
-                        rate: rate,
-                        mapId: mapId,
-                        fieldNameId: areaParaToFieldIdHame[areaPara]
-                    });
+                    if(!digimonToUsedAreasHame[digimonId][areaPara+ "_" + i]){
+                        digimonToUsedAreasHame[digimonId][areaPara+ "_" + i] = true;
+                        
+                        digimonToEncountersHame[digimonId].push({
+                            level: digimonIdToCouplings[digimonId][couplingId].level,
+                            rate: rate,
+                            mapId: mapId,
+                            fieldNameId: areaParaToFieldIdHame[areaPara]
+                        });
+                    }
                 }
             }            
         }
    }
 
    
-
-
    
+    let skillTextIds = {};
+    const skillTextIdData = await parseGameFile("battle_command.mbe/Command");
+    for(let entry of skillTextIdData.data){
+        const skillId = escapeHTML(entry[skillTextIdData.headerLookup["ID"]]);
+        const skillTextId = escapeHTML(entry[skillTextIdData.headerLookup["TextId"]]);
+        skillTextIds[skillId] = skillTextId;
+    }
     const maxLevel = 99;
 
     let digiData = {};
@@ -548,7 +598,8 @@ async function preparePathFinderData(){
         digimonNames: digimonNames, 
         digimonDescriptions: digimonDescriptions, 
         supportSkillNames: supportSkillNames, 
-        supportSkillDescriptions: supportSkillDescriptions
+        supportSkillDescriptions: supportSkillDescriptions,
+        skillTextIds: skillTextIds
     };
 }
 
