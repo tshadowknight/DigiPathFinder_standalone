@@ -35,7 +35,7 @@ function localizePage(){
 
 function showRoute(route){	
 	var pathContent = "";
-	if(route.length){	
+	if(route && route.length){	
 		for(var i = 0; i < route.length; i++){
 			var moves = [];
 			Object.keys(pathFinder.wantedSkills).forEach(function(skillId){
@@ -628,6 +628,7 @@ function initPathFinder(forceReload){
 				localizationData[locale].digimonDesc = gameData.digimonDescriptions[locale];
 				localizationData[locale].supportSkills = gameData.supportSkillNames[locale];
 				localizationData[locale].supportSkillDesc = gameData.supportSkillDescriptions[locale];
+				localizationData[locale].sigMoves = gameData.sigMoves[locale];
 			}	
 
 

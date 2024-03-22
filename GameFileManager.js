@@ -15,6 +15,7 @@ function getResourcesFolder(){
 const requiredFiles = [
     "charname.mbe/Sheet1.csv",
     "digimon_farm_para.mbe/digimon.csv",
+    "digimon_common_para.mbe/digimon.csv",
     "digimon_list.mbe/digimon.csv",
     "digimon_book_explanation.mbe/Sheet1.csv",
     "evolution_next_para.mbe/digimon.csv",
@@ -84,7 +85,7 @@ function fetchGameFiles(){
         ls.on('close', function (code) {
            if (code == 0) {
                 console.log('Stop');
-                fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
+                //fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
                 resolve();
            } else {
                 console.log('Start');
@@ -194,7 +195,7 @@ async function preparePathFinderData(){
     const baseStatFields = ["memoryUse","growthType","unk3","baseHP","baseSP","baseATK","baseDEF","baseINT","baseSPD","maxLevel","equipSlots","supportSkill"];
 	const farmData = await parseGameFile("digimon_farm_para.mbe/digimon");
 	for(let entry of farmData.data){
-		const digimonId = entry[farmData.headerLookup["id"]];
+		const digimonId = escapeHTML(entry[farmData.headerLookup["id"]]);
 		if(!movesLearned[digimonId]){
 			movesLearned[digimonId] = [];
 		}
@@ -230,12 +231,54 @@ async function preparePathFinderData(){
             baseStats[digimonId][field] =  escapeHTML(entry[farmData.headerLookup[field]]);
         }
 
+        
 	}
+
+    const commonFieldTranslations = {    
+        attribute: {
+            0: "neutral",
+            1: "fire",
+            2: "water",
+            3: "plant",
+            4: "electric",
+            5: "earth",
+            6: "wind",
+            7: "light",
+            8: "dark"
+        },
+        type: {
+            0: "free",
+            1: "virus", 
+            2: "vaccine",
+            3: "data"
+        },
+        level: {
+            1: "training_1",
+            2: "training_2",
+            3: "child",
+            4: "adult",
+            5: "perfect",
+            6: "ultimate",
+            7: "ultra"
+        }
+    };
+
+    const commonStatFields = ["level", "attribute","type"];
+	const commonData = await parseGameFile("digimon_common_para.mbe/digimon");
+	for(let entry of commonData.data){
+        const digimonId = escapeHTML(entry[farmData.headerLookup["id"]]);
+        if(!baseStats[digimonId]){
+			baseStats[digimonId] = {};
+		}
+        for(let field of commonStatFields){
+            baseStats[digimonId][field] =  commonFieldTranslations[field][escapeHTML(entry[commonData.headerLookup[field]])];
+        }
+    }
 
 	let moveNamesFull = {};
 	const moveNameData = await parseGameFile("skill_name.mbe/Sheet1");
 	for(let entry of moveNameData.data){
-		const entryId = entry[moveNameData.headerLookup["ID"]];		
+		const entryId = escapeHTML(entry[moveNameData.headerLookup["ID"]]);		
 
         for(let locale in localizationConfig){
             if(!moveNamesFull[locale]){
@@ -335,6 +378,8 @@ async function preparePathFinderData(){
        }  		
        evoConditions[digimonId] = conditions;
    }
+
+   
     
 
     let digiData = {};
@@ -353,5 +398,5 @@ async function preparePathFinderData(){
         }        
     }
 
-    return {digiData: digiData, levellUpGrowths: levellUpGrowths, moveNames: moveNames, moveDescriptions: moveDescriptions, digimonNames: digimonNames, digimonDescriptions: digimonDescriptions, supportSkillNames: supportSkillNames, supportSkillDescriptions: supportSkillDescriptions};
+    return {digiData: digiData, levellUpGrowths: levellUpGrowths, moveNames: moveNames, sigMoves: moveNamesFull, moveDescriptions: moveDescriptions, digimonNames: digimonNames, digimonDescriptions: digimonDescriptions, supportSkillNames: supportSkillNames, supportSkillDescriptions: supportSkillDescriptions};
 }

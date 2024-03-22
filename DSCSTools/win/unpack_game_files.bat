@@ -16,6 +16,8 @@ xcopy /s /Y ..\..\game_data\clean\data ..\..\game_data\unpacked
 
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\data\evolution_condition_para.mbe ..\..\game_data\unpacked
 
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\data\digimon_common_para.mbe ..\..\game_data\unpacked
+
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\skill_name.mbe ..\..\game_data\unpacked
 
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data\packed\text\skill_content_name.mbe ..\..\game_data\unpacked

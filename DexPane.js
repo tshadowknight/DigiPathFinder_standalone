@@ -9,8 +9,7 @@ DexPane.prototype.setActiveId = function(id){
     this._activeId = id;
 }
 
-DexPane.prototype.show = function(){
-    const contentContainer = document.getElementById(this._containerId);
+DexPane.prototype.getMonInfo = function(monId){
     let monInfo = {
         id: -1,
         name: "???",
@@ -30,28 +29,37 @@ DexPane.prototype.show = function(){
             "supportSkill": -1
         },
         moves: [],
-        evosReqs: {}
+        evosReqs: {},
+        neighBours: {prev: [], next: []}
     };
-    if(this._activeId != -1){
+    if(monId != -1){
         monInfo = {
-            id: this._activeId,
-            name: localizationData[currentLocale].digimon[this._activeId],
-            description: localizationData[currentLocale].digimonDesc[this._activeId],
-            baseStats: getDigiData()[this._activeId].baseStats,
-            moves: getDigiData()[this._activeId].moveDetails,
-            evosReqs: getDigiData()[this._activeId].conditions,
+            id: monId,
+            name: localizationData[currentLocale].digimon[monId],
+            description: localizationData[currentLocale].digimonDesc[monId],
+            baseStats: getDigiData()[monId].baseStats,
+            moves: getDigiData()[monId].moveDetails,
+            evosReqs: getDigiData()[monId].conditions,
+            neighBours: getDigiData()[monId].neighBours,
+
         };
     }
+    return monInfo;
+}
+
+
+DexPane.prototype.show = function(context){
+    const _this = this;
+    const contentContainer = document.getElementById(this._containerId);
+    let monInfo = this.getMonInfo(this._activeId);
     let content = "";
 
-    content+="<div class='dex_pane_scroll'>"; 
-    content+="<div class='dex_pane'>";
-    content+="<div class='section'>";
-    content+="<div class='name_desc'>";
+    content+="<div class='dex_pane_header'>"; 
+
     content+="<div class='row name_info'>";
     content+="<div class='banner'>";
     content+="<div class='icon dex_img_container'>";
-    content+="<img class='dex_img'/>";
+    content+="<img data-id='"+monInfo.id+"' class='dex_img'/>";
     content+="</div>";
     
     content+="<div class='name'>";
@@ -61,11 +69,88 @@ DexPane.prototype.show = function(){
     
     content+="</div>";
 
+    content+="</div>";
+
+    content+="<div class='dex_pane_scroll'>"; 
+    content+="<div class='dex_pane'>";
+    content+="<div class='section'>";
+
+
+    content+="<div class='section_header'>";
+   
+    content+=localizationData[currentLocale].app.DEX_header_general;
+    content+="</div>";
+
+    content+="<div class='name_desc'>";
+    
+
+    const listedAttributes = [
+        {
+            item: "level",
+            label: localizationData[currentLocale].app.DEX_general_level,
+            localizer: localizationData[currentLocale].app.levels
+        },
+        {
+            item: "type",
+            label: localizationData[currentLocale].app.DEX_general_type,
+            localizer: localizationData[currentLocale].app.types
+        },
+        {
+            item: "attribute",
+            label: localizationData[currentLocale].app.DEX_general_attribute,
+            localizer: localizationData[currentLocale].app.atributes
+        },
+        {
+            item: "memoryUse",
+            label: localizationData[currentLocale].app.DEX_general_memoryUse
+        },
+        {
+            item: "equipSlots",
+            label: localizationData[currentLocale].app.DEX_general_equipSlots
+        },        
+
+    ];
+    let tableContent = [];
+    for(let attr of listedAttributes){
+        let value = monInfo.baseStats[attr.item];
+        if(attr.localizer){
+            value = attr.localizer[value];
+        } 
+        tableContent.push(["<div class='row_label'>"+attr.label+"</div>", value]);
+    }
+    content+="<table id='general_table' class='stats'>";  
+    content+=this.arrayToTableContent(tableContent, true);
+    content+="</table>";
+
+    content+="<div class='section_sub_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_general_support_skill;
+    content+="</div>";
+
+    content+="<div class='support_skill_container'>";
+    content+="<div class='row'>";
+    content+="<div class='label'>";
+    content+=localizationData[currentLocale].supportSkills[monInfo.baseStats.supportSkill];
+    content+="</div>";
+    content+="<div class='value'>";
+    content+=localizationData[currentLocale].supportSkillDesc[monInfo.baseStats.supportSkill];
+    content+="</div>";
+    content+="</div>";
+    content+="</div>";
+
+    content+="<div class='section_sub_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_general_description;
+    content+="</div>";
+
+    
+
     content+="<div class='row digi_desc'>";
     content+="<div class='desc'>";
     content+=monInfo.description;
     content+="</div>";
     content+="</div>";
+
     content+="</div>";
     content+="</div>";
 
@@ -80,24 +165,43 @@ DexPane.prototype.show = function(){
     
 
 
-    contentContainer.innerHTML = content;
+    contentContainer.innerHTML = content;   
 
-    if(monInfo.id != -1){
-        setDDSImage(contentContainer.querySelector(".icon img"), monInfo.id);
+    if(context){
+        contentContainer.querySelector(".section ."+context).scrollIntoView()
     }
-    
+
+    let monImgs = contentContainer.querySelectorAll(".icon img");
+    for(let img of monImgs){
+        const monId = img.getAttribute("data-id");
+        if(monId != -1){
+            setDDSImage(img, monId);
+        }
+    }    
+
+    let dbLinks = contentContainer.querySelectorAll(".db_link");
+    for(let link of dbLinks){
+        link.addEventListener("click", function(){
+            let monId = this.getAttribute("data-id");
+            _this.showDigimon(monId, "evos");
+        })
+    }
 }
 
-DexPane.prototype.arrayToTableContent = function(array){
-
-    
+DexPane.prototype.arrayToTableContent = function(array, headless){
+    let headerElem;
+    if(headless){
+        headerElem = "td";
+    } else {
+        headerElem = "th";
+    }  
 
     let result = "";
     for(var i=0; i<array.length; i++) {
         result += "<tr>";
         for(var j=0; j<array[i].length; j++){
             if(i == 0){
-                result += "<th>"+array[i][j]+"</th>";
+                result += "<"+headerElem+">"+array[i][j]+"</"+headerElem+">";
             } else {
                 result += "<td>"+array[i][j]+"</td>";
             }            
@@ -177,18 +281,56 @@ DexPane.prototype.createStatsBlock = function(monInfo){
 
 DexPane.prototype.createMovesBlock = function(monInfo){
     let content = "";
-    content+="<div class='section'>";
+    content+="<div class='section moves'>";
     
     content+="<div class='section_header'>";
     
     content+=localizationData[currentLocale].app.DEX_header_moves;
     content+="</div>";
     content+="<div class='inner'>";
+
+    content+="<div class='section_sub_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_moves_signature;
+    content+="</div>";
+
     content+="<div class='row moves'>";
     content+="<table id='moves_table' class='stats'>";  
 
     let tableContent = [];
-    tableContent.push([localizationData[currentLocale].app.DEX_moves_label_name, localizationData[currentLocale].app.DEX_moves_label_level])
+    tableContent.push([localizationData[currentLocale].app.DEX_moves_label_name, localizationData[currentLocale].app.DEX_general_description])
+    
+    let sigMoves = monInfo.moves.signature;
+    let sortedSigMoves = [];
+    for(let moveId in sigMoves){
+        //let row = [localizationData[currentLocale].moves[move]];
+        //tableContent.push(row)
+        sortedSigMoves.push({id: moveId});
+    }
+    for(let entry of sortedSigMoves){
+        let nameContent = "<div class='skill_entry'>" + localizationData[currentLocale].sigMoves[entry.id] + "</div>";
+        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[entry.id]]);
+    }
+
+    content+=this.arrayToTableContent(tableContent);
+
+    content+="</table>";
+    
+    
+
+    content+="</div>";
+
+
+    content+="<div class='section_sub_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_moves_inheritable;
+    content+="</div>";
+
+    content+="<div class='row moves'>";
+    content+="<table id='moves_table' class='stats'>";  
+
+    tableContent = [];
+    tableContent.push([localizationData[currentLocale].app.DEX_moves_label_name, localizationData[currentLocale].app.DEX_general_description, localizationData[currentLocale].app.DEX_moves_label_level])
     
     let moves = monInfo.moves;
     let sortedMoves = [];
@@ -200,18 +342,79 @@ DexPane.prototype.createMovesBlock = function(monInfo){
     sortedMoves = sortedMoves.sort((a,b) => a.level - b.level);
 
     for(let entry of sortedMoves){
-        tableContent.push([localizationData[currentLocale].moves[entry.id], entry.level]);
+        let isWanted = pathFinder.wantedSkills[entry.id];
+        let nameContent = "<div class='skill_entry "+(isWanted ? "wanted" : "")+"'>" + localizationData[currentLocale].moves[entry.id] + "</div>";
+        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[entry.id], entry.level]);
     }
 
     content+=this.arrayToTableContent(tableContent);
 
     content+="</table>";
     
-
-
-    content+="</div>";
+    
 
     content+="</div>";
+
+    content+="</div>";
+    content+="</div>";
+
+    return content;
+}
+
+DexPane.prototype.createEvoReqs = function(monInfo){
+    let content = "";
+    const condList = [
+        "LVL",
+        "HP", 
+        "SP",
+        "ATK",
+        "DEF",
+        "INT",
+        "SPD",
+        "ABI",
+        "CAM",
+        "Other"
+    ];
+
+    const labels = {
+        "LVL": localizationData[currentLocale].app.DEX_evos_label_level,
+        "HP": localizationData[currentLocale].app.DEX_evos_label_HP,
+        "SP": localizationData[currentLocale].app.DEX_evos_label_SP,
+        "ATK": localizationData[currentLocale].app.DEX_evos_label_ATK,
+        "DEF": localizationData[currentLocale].app.DEX_evos_label_DEF,        
+        "INT": localizationData[currentLocale].app.DEX_evos_label_INT,        
+        "SPD": localizationData[currentLocale].app.DEX_evos_label_SPD,
+        "ABI": localizationData[currentLocale].app.DEX_evos_label_ABI,
+        "CAM": localizationData[currentLocale].app.DEX_evos_label_CAM,
+        "Other": localizationData[currentLocale].app.DEX_evos_label_additional
+    }
+        
+
+    content+="<div class='evo_reqs_flex'>";
+
+    let requirements = monInfo.evosReqs;
+    let row = [];
+    for(let condition of condList){
+        content+="<div class='block'>"
+        content+="<div class='label'>"
+        content+=labels[condition];
+        content+="</div>";
+        content+="<div class='value'>"
+        if(requirements[condition]){
+            if(condition == "Other"){
+                content+="<div class='block'>"
+                content+= (localizationData[currentLocale].app.DEX_evos_label_has_additional);
+            } else {
+                content+=(requirements[condition]);
+            }
+            
+        } else {
+            content+=("-");
+        }
+        content+="</div>";
+        content+="</div>";
+    }
+
     content+="</div>";
 
     return content;
@@ -234,79 +437,100 @@ DexPane.prototype.createEvosBlock = function(monInfo){
     content+="<div class='row evos'>";
 
     
-    content+="<table id='evo_reqs_table' class='stats'>";  
+    //content+="<table id='evo_reqs_table' class='stats'>";  
 
-    const evoCondTypes ={
-        1: "LVL",
-        2: "HP", 
-        3: "SP",
-        4: "ATK",
-        5: "DEF",
-        6: "INT",
-        7: "SPD",
-        8: "ABI",
-        9: "CAM",
-        10: "Other"
-   }
+    content+=this.createEvoReqs(monInfo);
 
-    const condList = [
-        "LVL",
-        "HP", 
-        "SP",
-        "ATK",
-        "DEF",
-        "INT",
-        "SPD",
-        "ABI",
-        "CAM",
-        "Other"
-    ];
-
-    let tableContent = [];
-    tableContent.push([
-        localizationData[currentLocale].app.DEX_evos_label_level,
-        localizationData[currentLocale].app.DEX_evos_label_HP,
-        localizationData[currentLocale].app.DEX_evos_label_SP,
-        localizationData[currentLocale].app.DEX_evos_label_ATK,
-        localizationData[currentLocale].app.DEX_evos_label_DEF,        
-        localizationData[currentLocale].app.DEX_evos_label_INT,        
-        localizationData[currentLocale].app.DEX_evos_label_SPD,
-        localizationData[currentLocale].app.DEX_evos_label_ABI,
-        localizationData[currentLocale].app.DEX_evos_label_CAM,
-        localizationData[currentLocale].app.DEX_evos_label_additional
-    ])
-    
-    let requirements = monInfo.evosReqs;
-    let row = [];
-    for(let condition of condList){
-        if(requirements[condition]){
-            if(condition == "Other"){
-                row.push( localizationData[currentLocale].app.DEX_evos_label_has_additional);
-            } else {
-                row.push(requirements[condition]);
-            }
-            
-        } else {
-            row.push("-");
-        }
-    }
-    tableContent.push(row);
-
-    content+=this.arrayToTableContent(tableContent);
-
-    content+="</table>";
+   // content+="</table>";
     
 
 
     content+="</div>";
 
+    content+="</div>";
+
+    content+="<div class='row evos_summary'>";
+    content+="<div class='section_prev'>";
+
+    content+="<div class='section_sub_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_header_evos_previous;
+    content+="</div>";
+
+    content+="<div class='evo_entries'>";
+    for(let monId of monInfo.neighBours.prev){
+        let targetMonInfo = this.getMonInfo(monId)
+        content+="<div class='evo_entry'>";
+
+        content+="<div class='row'>";
+        content+="<div class='icon dex_img_container'>";
+        content+="<img data-id='"+monId+"' class='dex_img'/>";
+        content+="</div>";
+        
+        content+="<div class='name'>";
+        content+=targetMonInfo.name;
+
+        content+="<div data-id='"+monId+"' class='db_link flex-item'>";
+        content+="<i class='fa fa-external-link' aria-hidden='true'></i>";
+        content+="</div>";
+
+        content+="</div>";
+        content+="</div>";
+
+        /*content+="<table id='evo_reqs_table' class='stats'>";  
+
+        content+=this.createEvoReqs(targetMonInfo);
+    
+        content+="</table>";*/
+        content+="</div>";
+    }
+    content+="</div>";
+
+    content+="</div>";
+
+    content+="<div class='section_next'>";
+    content+="<div class='section_sub_header'>";
+    
+    content+=localizationData[currentLocale].app.DEX_header_evos_next;
+    content+="</div>";
+
+    content+="<div class='evo_entries'>";
+    for(let monId of monInfo.neighBours.next){
+        let targetMonInfo = this.getMonInfo(monId)
+        content+="<div class='evo_entry'>";
+
+        content+="<div class='row'>";
+        content+="<div class='icon dex_img_container'>";
+        content+="<img data-id='"+monId+"' class='dex_img'/>";
+        content+="</div>";
+        
+        content+="<div class='name'>";
+        content+=targetMonInfo.name;
+
+        content+="<div data-id='"+monId+"'  class='db_link flex-item'>";
+        content+="<i class='fa fa-external-link' aria-hidden='true'></i>";
+        content+="</div>";
+
+        content+="</div>";
+        
+        content+="</div>";
+
+      
+
+        content+=this.createEvoReqs(targetMonInfo);
+    
+       
+        content+="</div>";
+    }
+    content+="</div>";
+    content+="</div>";
     content+="</div>";
     content+="</div>";
 
     return content;
 }
 
-DexPane.prototype.showDigimon = function(id){
+DexPane.prototype.showDigimon = function(id, context){
     this.setActiveId(id);
-    this.show();
+    this.show(context);
 }

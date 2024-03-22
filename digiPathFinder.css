@@ -724,7 +724,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	overflow-x: hidden;
     overflow-y: scroll;
 	width: 100%;
-	height: 100%;
+	height: calc(100% - 90px);
 }
 
 .dex_pane {
@@ -743,6 +743,10 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	background-color: rgba(0, 0, 0, 0.05);
 }
 
+.dex_pane .section.moves{
+	width: calc(100% - 24px)
+}
+
 .dex_pane .section .inner{
 	overflow: auto;
 }
@@ -752,22 +756,6 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	padding: 10px;
 }
 
-.dex_pane .banner {
-	display: flex;
-    align-items: center;
-    width: 100%;
-    background-color: #334e9b;
-    color: #FFFFFF;
-	padding: 0px 10px;
-}
-
-.dex_pane .name {
-	margin-left: auto;
-    margin-right: 40;
-    font-size: 40;
-    font-weight: bold;
-    font-style: italic;
-}
 
 .dex_pane .row.name_info {
 	padding: 0;
@@ -784,11 +772,12 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     background-color: #F1F1F1;
     padding: 8px;
     border-radius: 15px;
+	margin-top: 8px;
 }
 
 .dex_img_container {
-	width: 90px;
-	height: 90px;
+	width: 70px;
+	height: 70px;
 	margin: 3px;
 	top: 4px;
 	right: 4px;
@@ -797,6 +786,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	overflow: hidden;
 	background-color: rgba(200, 200, 200, 0.8);
 	flex-shrink: 0;
+	overflow: hidden;
 }
 
 .dex_img_container .dex_img{
@@ -858,6 +848,13 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	text-align: left;
 }
 
+.dex_pane #moves_table tr td{
+	text-align: left;
+}
+
+.dex_pane #moves_table tr th{
+	text-align: left;
+}
 
 .dex_pane .section.evos {
 	width: calc(100% - 24px);
@@ -869,4 +866,173 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     text-align: center;
     font-style: italic;
     margin-bottom: -13px;
+}
+
+.dex_pane .evo_entry {
+	white-space: nowrap;
+    flex-wrap: wrap;
+	display: flex;
+}
+
+.dex_pane .evo_entries {
+	width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    padding: 10;
+    background-color: #F1F1F1;
+    margin: 10;
+    border: 2px solid #E0E0E0;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20;
+	width: calc(100% - 40px);
+	overflow: auto;
+}
+
+.dex_pane .evo_entry .row{
+	align-items: center;
+	flex-shrink: 0;
+	white-space: nowrap;
+	width: calc(35% - 20px);
+}
+
+.dex_pane .evo_entry .dex_img_container {
+	width: 50px;
+    height: 50px;
+}
+
+.dex_pane .evo_entry .name {
+	font-size: 19px;
+	margin-left: 10px;
+	color: #476dd9;
+}
+
+.dex_pane .evos_summary {
+	justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.dex_pane .section_prev {
+	width: 28%;
+}
+
+.dex_pane .section_next {
+	width: 72%;
+}
+
+.dex_pane_header {
+	display: flex;
+	align-items: center;
+	padding: 4px;
+	background-color: #334e9b;
+}
+
+.dex_pane_header .row{
+	display: flex;
+	align-items: center;
+	padding: 0px;
+}
+
+
+.dex_pane_header .banner {
+	display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: #334e9b;
+    color: #FFFFFF;
+	padding: 0px 10px;
+}
+
+.dex_pane_header .name {
+	margin-left: 40;
+    margin-right: 40;
+    font-size: 40;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.row.evos {
+	width: 60%;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.row.evos .evo_reqs_flex{
+	margin-right: auto;
+	margin-left: auto;
+	min-width: 60%;
+}
+
+.evo_reqs_flex {
+	display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    text-align: center;
+    padding: 10;
+    background-color: #F1F1F1;
+    margin: 10;
+    border: 2px solid #E0E0E0;
+    border-radius: 20px;
+    margin-left: auto;
+    /* margin-right: auto; */
+    min-width: calc(65% - 34px);
+    justify-content: space-around;
+    flex-grow: 1;
+}
+
+.evo_reqs_flex .block{
+	border-bottom: 1px solid #F1F1F1;
+}
+
+.evo_reqs_flex .block .label{
+	padding: 6px 10px;
+	color: #476dd9;
+}
+
+.evo_reqs_flex .block .value{
+	padding: 6px 10px;
+}
+
+#moves_table .skill_entry {
+	color: #000;
+	background-color: rgba(0,0,0,0);
+}
+
+#moves_table .skill_entry.wanted {
+	background-color: #3bc384;
+    color: white;
+}
+
+#general_table {
+	width: 60%;
+}
+
+.row_label {
+	color: #476dd9;	
+	font-weight: bold;
+}
+
+.support_skill_container {
+	text-align: center;
+    padding: 10;
+    background-color: #F1F1F1;
+    margin: 10;
+    border: 2px solid #E0E0E0;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: calc(100% - 40px);
+	margin-top: 20px;
+}
+
+.support_skill_container .label {
+	color: #476dd9;
+	font-weight: bold;
+}
+
+.support_skill_container .value {
+	margin-left: 20px;
+	text-align: left;
 }

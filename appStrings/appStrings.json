@@ -15,6 +15,7 @@
 	"loader_msg": "Loading Game Files...",
 	"game_path": "Game Files Location",
 	"reload_game_files": "Reload Game Files",
+	"DEX_header_general": "General",
 	"DEX_header_stats": "Stats",
 	"DEX_label_baseHP": "HP",
 	"DEX_label_baseSP": "SP",
@@ -39,7 +40,44 @@
 	"DEX_evos_label_SPD": "SPD",
 	"DEX_evos_label_ABI": "ABI",
 	"DEX_evos_label_CAM": "CAM",
-	"DEX_evos_label_additional": "Additional",
+	"DEX_evos_label_additional": "Add.",
 	"DEX_evos_label_has_additional": "Yes",
-	"DEX_header_evos_reqs": "Requirements"
+	"DEX_header_evos_reqs": "Requirements",
+	"DEX_header_evos_previous": "Previous",
+	"DEX_header_evos_next": "Next",
+	"DEX_general_level": "Stage",
+	"DEX_general_type": "Type",
+    "DEX_general_attribute": "Attribute",
+    "DEX_general_equipSlots": "Equip Slots",
+    "DEX_general_memoryUse": "Memory Usage",
+	"types": {       
+		"free": "Free",
+		"virus": "Virus", 
+		"vaccine": "Vaccine",
+		"data": "Data"
+	},
+	"attributes": {
+		"neutral": "Neutral",
+		"fire": "Fightclub",
+		"water": "Water",
+		"plant": "Plant",
+		"electric": "Electric",
+		"earth": "Earth",
+		"wind": "Wind",
+		"dark": "Dark"
+	},
+	"levels": {
+		"training_1": "Training 1",
+		"training_2": "Training 2",
+		"child": "Rookie",
+		"adult": "Champion",
+		"perfect": "Ultimate",
+		"ultimate": "Mega",
+		"ultra": "Ultra"
+
+	},
+	"DEX_moves_signature": "Signature",
+	"DEX_moves_inheritable": "Inheritable",
+	"DEX_general_description": "Description",
+	"DEX_general_support_skill": "Support Skill"
 }
