@@ -9,7 +9,7 @@ function findSkillRoute_(pathFinder, source, target){
 	try {		
 		if(Object.keys(pathFinder.wantedSkills).length){		
 			Object.keys(pathFinder.wantedSkills).forEach(function(id){
-				if(!pathFinder.skillToDigis[id] || (!pathFinder.skillToDigis[id][target] && !pathFinder.skillToDigis[id][source])){//skills learned by the target and source don't need to be searched
+				if(pathFinder.skillToDigis[id]){//skills learned by the target and source don't need to be searched
 					skillPath.push(id);		
 					skillContext[id] = true;	
 				}				
