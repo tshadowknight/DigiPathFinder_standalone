@@ -34,14 +34,20 @@ DexPane.prototype.getMonInfo = function(monId){
         neighBours: {prev: [], next: []}
     };
     if(monId != -1){
+        let name;
+        if(getDigiData(monId).isUndefined){
+            name = localizationData[currentLocale].app.DEF_undef_mon + monId;
+        } else {
+            name = localizationData[currentLocale].digimon[monId];
+        }
         monInfo = {
             id: monId,
-            name: localizationData[currentLocale].digimon[monId],
-            description: localizationData[currentLocale].digimonDesc[getDigiData()[monId].baseStats.profile],
-            baseStats: getDigiData()[monId].baseStats,
-            moves: getDigiData()[monId].moveDetails,
-            evosReqs: getDigiData()[monId].conditions,
-            neighBours: getDigiData()[monId].neighBours,
+            name: name,
+            description: localizationData[currentLocale].digimonDesc[getDigiData(monId).baseStats.profile],
+            baseStats: getDigiData(monId).baseStats,
+            moves: getDigiData(monId).moveDetails,
+            evosReqs: getDigiData(monId).conditions,
+            neighBours: getDigiData(monId).neighBours,
 
         };
     }
@@ -356,7 +362,7 @@ DexPane.prototype.createMovesBlock = function(monInfo){
 
     for(let entry of sortedMoves){
         let isWanted = pathFinder.wantedSkills[entry.id];
-        let nameContent = "<div class='skill_entry "+(isWanted ? "wanted" : "")+"'>" + localizationData[currentLocale].moves[getSkillTextIdInfo()[entry.id]] + "</div>";
+        let nameContent = "<div class='skill_entry "+(isWanted ? "wanted" : "")+"'>" + localizationData[currentLocale].sigMoves[getSkillTextIdInfo()[entry.id]] + "</div>";
         tableContent.push([nameContent, localizationData[currentLocale].moveDesc[getSkillTextIdInfo()[entry.id]], entry.level]);
     }
 
@@ -535,7 +541,7 @@ DexPane.prototype.createEvosBlock = function(monInfo){
 
       
 
-        content+=this.createEvoReqs(targetMonInfo, getDigiData()[monInfo.id].maxBaseStats);
+        content+=this.createEvoReqs(targetMonInfo, getDigiData(monInfo.id).maxBaseStats);
     
        
         content+="</div>";
@@ -613,7 +619,7 @@ DexPane.prototype.createEncountersBlock = function(monInfo){
     content+="</div>";
 
    
-    content+=createEncountersTable(getDigiData()[monInfo.id].encounters.base);
+    content+=createEncountersTable(getDigiData(monInfo.id).encounters.base);
     content+="</div>";
     content+="<div class='enc_block'>";
     content+="<div class='section_sub_header'>";
@@ -622,7 +628,7 @@ DexPane.prototype.createEncountersBlock = function(monInfo){
     content+="</div>";
 
     
-    content+=createEncountersTable(getDigiData()[monInfo.id].encounters.hame);
+    content+=createEncountersTable(getDigiData(monInfo.id).encounters.hame);
     content+="</div>";
     content+="</div>";
 

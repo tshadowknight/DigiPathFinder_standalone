@@ -60,6 +60,8 @@ function checkDirectories(){
 var defaultGamePath = "C:/Program Files (x86)/Steam/steamapps/common/Digimon Story Cyber Sleuth Complete Edition";
 var gameFilesPath = localStorage.getItem("DigiPathFinder_game_file_path") || defaultGamePath;
 
+var potentialLoadError = false;
+
 function fetchGameFiles(){	
     return new Promise(function(resolve, reject){
         const process = require('child_process');   
@@ -80,10 +82,9 @@ function fetchGameFiles(){
         ls.stdout.on('data', function (data) {
             const batchResult = data.toString();
             console.log(data.toString());
-            /*if(batchResult.indexOf("Error:") != -1){
-                setLoaderError("Could not load the game files, please make sure the path is set correctly!");       
-                reject();
-            }*/
+            if(batchResult.indexOf("Error:") != -1){
+                potentialLoadError = true;
+            }
         });
         ls.stderr.on('data', function (data) {
           console.log(data.toString());
@@ -96,22 +97,14 @@ function fetchGameFiles(){
                 resolve();
            } else {
                 console.log('Start');
+                potentialLoadError = true;
+                fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
+                resolve();
            }             
         });
     });	
     
 }
-
-const textStringHeaders = {
-    ID: 0,
-    Japanese: 1,
-    English: 2,
-    Chinese: 3,
-    EnglishCensored: 4,
-    Korean: 5,
-    German: 6
-}
-
 
 function parseGameFile(file){
 	return new Promise(function(resolve, reject){
@@ -569,12 +562,12 @@ async function preparePathFinderData(){
         if(validDigimon[digimonId]){
             digiData[digimonId] = {
                 id: digimonId,
-                name: digimonNames[digimonId],
-                moves: movesLearned[digimonId],
-                neighBours: evolutions[digimonId],
-                baseStats: baseStats[digimonId],
-                moveDetails: movesLearnedDetail[digimonId],
-                conditions: evoConditions[digimonId],
+                name: digimonNames[digimonId] || "",
+                moves: movesLearned[digimonId] || [],
+                neighBours: evolutions[digimonId] || {},
+                baseStats: baseStats[digimonId] || {},
+                moveDetails: movesLearnedDetail[digimonId] || {},
+                conditions: evoConditions[digimonId] || {},
                 maxBaseStats: {//used for checking difficult evolutions
                     "HP": getStatValueAtLevel(baseStats[digimonId], levellUpGrowths, "HP", maxLevel),
                     "SP": getStatValueAtLevel(baseStats[digimonId], levellUpGrowths, "SP", maxLevel),

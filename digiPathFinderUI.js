@@ -19,7 +19,7 @@ function localizePage(){
 		const digimonId = $(this).data("digimonid");
 		const moveId = $(this).data("moveid");
 		if(digimonId){			
-			const moveLevel = getDigiData()[digimonId].moveDetails.inherited[moveId].level;
+			const moveLevel = getDigiData(digimonId).moveDetails.inherited[moveId].level;
 			$(this).html(localizationData[currentLocale].moves[moveId] + "(Lv. "+moveLevel+")");
 		} else {
 			$(this).html(localizationData[currentLocale].moves[moveId]);
@@ -77,8 +77,8 @@ function showRoute(route){
 					pathContent+="<div class='path_arrow' style='color: #ff4f41'><i class='fa fa-chevron-down' aria-hidden='true' style='font-size:30px;'></i></div>";
 				} else {
 					let warnings = [];
-					let maxStats = getDigiData()[route[i]].maxBaseStats;
-					let reqs =  getDigiData()[route[i + 1]].conditions;
+					let maxStats = getDigiData(route[i]).maxBaseStats;
+					let reqs =  getDigiData(route[i + 1]).conditions;
 					for(let condType in reqs){
 						if(reqs[condType]){
 							if(condType == "Other"){
@@ -177,7 +177,7 @@ function copyToClipboard(val){
 
 function showBans(){
 	var bansContent = "";
-	Object.keys(pathFinder.bannedDigis).sort(function(a,b){return localizationData[currentLocale].digimon[a].localeCompare(localizationData[currentLocale].digimon[b])}).forEach(function(id){
+	Object.keys(pathFinder.bannedDigis).sort(function(a,b){return String(localizationData[currentLocale].digimon[a]).localeCompare(localizationData[currentLocale].digimon[b])}).forEach(function(id){
 		bansContent+="<div class='ban_entry'><div data-digimonid='"+id+"' class='digi_name_placeholder banned_digi_name'></div><div style='width: 20px; display: inline-block;'><div data-id='"+id+"' class='remove_ban_button'><i class='fa fa-times' aria-hidden='true'></i></div></div></div>";
 	});
 	$("#bans_container").html(bansContent);
@@ -408,7 +408,7 @@ function populateDigimonList(target, includeEmpty){
 	if(includeEmpty){
 		content+="<option selected value='-1'></option>";
 	}
-	Object.keys(digimonNames).sort(function(a,b){return digimonNames[a].localeCompare( digimonNames[b])}).forEach(function(id){
+	Object.keys(digimonNames).sort(function(a,b){return String(digimonNames[a]).localeCompare( digimonNames[b])}).forEach(function(id){
 		content+="<option value='"+id+"'>"+digimonNames[id]+"</option>";
 	});	
 	var currentVal = $("#"+target).val();
@@ -420,7 +420,7 @@ function populateMoveList(){
 	var content = "";
 	var moveNames = localizationData[currentLocale].moves;
 	content+="<option value='-1'></option>";
-	Object.keys(moveNames).sort(function(a,b){return moveNames[a].localeCompare(moveNames[b])}).forEach(function(id){
+	Object.keys(moveNames).sort(function(a,b){return String(moveNames[a]).localeCompare(moveNames[b])}).forEach(function(id){
 		content+="<option value='"+id+"'>"+moveNames[id]+"</option>";
 	});	
 	var currentVal = $("#end_move").val();
@@ -596,9 +596,31 @@ function toggleOptions(){
 
 var cachedGameData;
 
-function getDigiData(){
+function getDigiData(digiId){
 	if(cachedGameData){
-		return cachedGameData.digiData;
+		if(cachedGameData.digiData[digiId]){
+			return cachedGameData.digiData[digiId];
+		} else {
+			return {
+				id: digiId,
+                name: null,
+                moves: [],
+                neighBours: {},
+                baseStats: {},
+                moveDetails: {},
+                conditions: {},
+                maxBaseStats: {//used for checking difficult evolutions
+                    "HP": 0,
+                    "SP": 0,
+                    "ATK": 0,
+                    "DEF": 0,
+                    "INT": 0,
+                    "SPD": 0,
+                },
+                encounters: {base: [], hame: []},
+				isUndefined: true
+			};
+		}		
 	}
 	return {};
 }

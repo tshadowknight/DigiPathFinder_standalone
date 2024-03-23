@@ -64,7 +64,8 @@
 		"electric": "Electric",
 		"earth": "Earth",
 		"wind": "Wind",
-		"dark": "Dark"
+		"dark": "Dark",
+		"light": "Light"
 	},
 	"levels": {
 		"training_1": "Training 1",
@@ -87,5 +88,6 @@
 	"DEX_encounters_level": "Level",
 	"DEX_encounters_rate": "Rate",
 	"DEX_encounters_base": "Base Game",
-	"DEX_encounters_hame": "Hacker's Memory"
+	"DEX_encounters_hame": "Hacker's Memory",
+	"DEF_undef_mon": "Undefined Digimon: "
 }

@@ -892,10 +892,14 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	overflow: auto;
 }
 
+.dex_pane .section_prev .evo_entry .row {
+	width: calc(100% - 20px);
+}
+
 .dex_pane .evo_entry .row{
 	align-items: center;
 	flex-shrink: 0;
-	white-space: nowrap;
+	white-space: normal;
 	width: calc(35% - 20px);
 }
 
