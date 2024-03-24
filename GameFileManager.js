@@ -94,15 +94,31 @@ function fetchGameFiles(){
            if (code == 0) {
                 console.log('Stop');
                 fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
-                resolve();
+                finalize();
            } else {
                 console.log('Start');
                 potentialLoadError = true;
                 fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
-                resolve();
+                finalize();
            }             
         });
+
+        async function finalize(){
+            await cachceDDSImages();
+            resolve();
+        }
     });	
+    
+}
+
+async function cachceDDSImages(){
+    const digimonListData = await parseGameFile("digimon_list.mbe/digimon");
+    DDSCache = {};
+    for(let entry of digimonListData.data){
+        const digimonId = entry[digimonListData.headerLookup["id"]];
+        await convertDDSImage(digimonId);//prepopulate cache
+    }
+    fs.writeFileSync(pathLib.join(getResourcesFolder(), './game_data/', 'dds_cache.json'), JSON.stringify(DDSCache));
     
 }
 
@@ -152,6 +168,35 @@ async function generateHeaders(){
     }
     console.log(result);
 }
+
+const commonFieldTranslations = {    
+    attribute: {
+        0: "neutral",
+        1: "fire",
+        2: "water",
+        3: "plant",
+        4: "electric",
+        5: "earth",
+        6: "wind",
+        7: "light",
+        8: "dark"
+    },
+    type: {
+        0: "free",
+        1: "virus", 
+        2: "vaccine",
+        3: "data"
+    },
+    level: {
+        1: "training_1",
+        2: "training_2",
+        3: "child",
+        4: "adult",
+        5: "perfect",
+        6: "ultimate",
+        7: "ultra"
+    }
+};
 
 async function preparePathFinderData(){
 	let digimonNames = {};
@@ -263,34 +308,7 @@ async function preparePathFinderData(){
         
 	}
 
-    const commonFieldTranslations = {    
-        attribute: {
-            0: "neutral",
-            1: "fire",
-            2: "water",
-            3: "plant",
-            4: "electric",
-            5: "earth",
-            6: "wind",
-            7: "light",
-            8: "dark"
-        },
-        type: {
-            0: "free",
-            1: "virus", 
-            2: "vaccine",
-            3: "data"
-        },
-        level: {
-            1: "training_1",
-            2: "training_2",
-            3: "child",
-            4: "adult",
-            5: "perfect",
-            6: "ultimate",
-            7: "ultra"
-        }
-    };
+    
 
     const commonStatFields = ["level", "attribute","type"];
 	const commonData = await parseGameFile("digimon_common_para.mbe/digimon");
@@ -556,9 +574,19 @@ async function preparePathFinderData(){
     }
     const maxLevel = 99;
 
+    if (!fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/', 'dds_cache.json'))) {
+        showGameFileLoader(localizationData[currentLocale].app.loader_msg_imgs);
+        await cachceDDSImages();
+        hideGameFileLoader();
+    } else {
+        DDSCache = JSON.parse(fs.readFileSync(pathLib.join(getResourcesFolder(), './game_data/', 'dds_cache.json')));
+    }
+    
+
     let digiData = {};
     for(let entry of digimonListData.data){
         const digimonId = entry[digimonListData.headerLookup["id"]];
+        
         if(validDigimon[digimonId]){
             digiData[digimonId] = {
                 id: digimonId,

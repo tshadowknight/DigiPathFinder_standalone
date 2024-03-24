@@ -13,6 +13,7 @@
 	"txt_devolve_to": "Devolve to",
 	"txt_evolve_to": "Evolve to",
 	"loader_msg": "Loading Game Files...",
+	"loader_msg_imgs": "Loading Digmon Images...",
 	"game_path": "Game Files Location",
 	"reload_game_files": "Reload Game Files",
 	"DEX_header_general": "General",
@@ -82,12 +83,14 @@
 	"DEX_general_description": "Description",
 	"DEX_general_support_skill": "Support Skill",
 	"warn_special_evo": "This evolution has special requirements!",
-	"warn_difficult_evo": "This evolution requires stats higher than can be reached without additional stat points or the correct personality!",
+	"warn_difficult_evo": "The evolution has a stat requirement above the natural limit for ",
 	"DEX_header_encounters": "Encounters",
 	"DEX_encounters_area": "Area",
 	"DEX_encounters_level": "Level",
 	"DEX_encounters_rate": "Rate",
 	"DEX_encounters_base": "Base Game",
 	"DEX_encounters_hame": "Hacker's Memory",
-	"DEF_undef_mon": "Undefined Digimon: "
+	"DEF_undef_mon": "Undefined Digimon: ",
+	"label_types_filter": "Types",
+	"label_levels_filter": "Levels"
 }

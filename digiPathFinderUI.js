@@ -5,7 +5,8 @@ var xhr = require('xhr')
 var decodeDXT = require('decode-dxt');
 var Jimp = require('jimp')
 var DDSUtils = require('./lib/DDSUtils');
-const DexPane = require('./DexPane');
+const DexPane = require('./components/DexPane');
+const MonSelector = require('./components/MonSelector');
 var fs_promise = require('fs').promises
 
 
@@ -86,7 +87,7 @@ function showRoute(route){
 								//warn_difficult_evo
 							} else if(["LVL", "CAM", "ABI"].indexOf(condType) == -1){
 								if(maxStats[condType] < reqs[condType]){
-									warnings.push(localizationData[currentLocale].app.warn_difficult_evo);
+									warnings.push(localizationData[currentLocale].app.warn_difficult_evo+condType+"!");
 								}
 							}
 						}
@@ -203,58 +204,76 @@ function showSkills(){
 	localizePage();
 }
 
-async function setDDSImage(elem, digimonId){
-	
-	const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-	const imagePath = pathLib.join(getResourcesFolder(), "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img");
+var DDSCache = {};
 
-	
-
-	xhr({
-		uri: imagePath,
-		responseType: 'arraybuffer'
-	  }, function (err, resp, data) {
-		if(!err){
-			elem.style.display = "block";
-			var dds = parse_dds(data)
-			console.log(dds.format)  // 'dxt1'
-			console.log(dds.shape)   // [ width, height ]
-			console.log(dds.images)  // [ ... mipmap level data ... ]
-	
-			// get the compressed texture data for gl.compressedTexImage2D
-			
-			let imageInfo = dds.images[0];
-			let imageWidth = imageInfo.shape[0];
-			let imageHeight = imageInfo.shape[1];
-			let imageDataView = new DataView(data, imageInfo.offset, imageInfo.length);
-	
-			let rgbaData;
-			
-			if(dds.format){
-				rgbaData = decodeDXT(imageDataView, imageWidth, imageHeight, dds.format);
-			} else {
-				const buffer= Buffer.from(data)
+async function convertDDSImage(digimonId){
+	return new Promise(function(resolve, reject){
+		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
+		const imagePath = pathLib.join(getResourcesFolder(), "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img");
+		xhr({
+			uri: imagePath,
+			responseType: 'arraybuffer'
+		}, function (err, resp, data) {
+			if(!err){
 				
-				const header = buffer.slice(0, 128);
-				const headerInfo = DDSUtils.summarizeHeader(header);
+						
+					var dds = parse_dds(data)
+					console.log(dds.format)  // 'dxt1'
+					console.log(dds.shape)   // [ width, height ]
+					console.log(dds.images)  // [ ... mipmap level data ... ]
+			
+					// get the compressed texture data for gl.compressedTexImage2D
+					
+					let imageInfo = dds.images[0];
+					let imageWidth = imageInfo.shape[0];
+					let imageHeight = imageInfo.shape[1];
+					let imageDataView = new DataView(data, imageInfo.offset, imageInfo.length);
+			
+					let rgbaData;
+					
+					if(dds.format){
+						rgbaData = decodeDXT(imageDataView, imageWidth, imageHeight, dds.format);
+					} else {
+						const buffer= Buffer.from(data)
+						
+						const header = buffer.slice(0, 128);
+						const headerInfo = DDSUtils.summarizeHeader(header);
 
-				let imageData = buffer.slice(128);
-				imageData = DDSUtils.correctFromDXGI(imageData, headerInfo.DXGIFormat);				
+						let imageData = buffer.slice(128);
+						imageData = DDSUtils.correctFromDXGI(imageData, headerInfo.DXGIFormat);				
 
-				rgbaData = imageData;
-			}
-			//var url = URL.createObjectURL(blob);
-			//elem.src = url;
-			var image = new Jimp(imageWidth, imageHeight, async function (err, image) {
-				image.bitmap.data = rgbaData;
+						rgbaData = imageData;
+					}
+					var image = new Jimp(imageWidth, imageHeight, async function (err, image) {
+						image.bitmap.data = rgbaData;
+						let dataUrl = await image.getBase64Async(Jimp.AUTO);
+						DDSCache[digimonId] = dataUrl;
+						resolve(dataUrl);
+						
+					});
+				
+			} else {
+				resolve("");
+			}		
+		});	
+	});
+}
 
-				let dataUrl = await image.getBase64Async(Jimp.AUTO)
-				elem.src = dataUrl;
-			});
-		} else {
-			elem.style.display = "none";
-		}		
-	  });	
+async function setDDSImage(elem, digimonId){
+		
+	let imgData;
+	if(DDSCache[digimonId]){
+		imgData = DDSCache[digimonId];
+	} else {
+		imgData = await convertDDSImage(digimonId);
+	}
+
+	if(imgData){
+		elem.src = imgData;
+		elem.style.display = "block";
+	} else {
+		elem.style.display = "none";
+	}
 }
 
 function createControls(){
@@ -269,8 +288,13 @@ function createControls(){
 	content+="<i class='fa fa-external-link' aria-hidden='true'></i>";
 	content+="</div>";
 	content+="</div>";
-	content+="<select class='digi_select' id='start_digi'>";		
-	content+="</select>";	
+
+	content+="<div class='digi_btn' id='start_digi_btn'>";		
+	content+="</div>";	
+
+	content+="<div class='' id='start_digi'>";		
+	content+="</div>";	
+
 	content+="<div class='digi_icon_container'>";
 	content+="<img class='controls_digi_icon digi_icon' id='start_digi_icon' class='flex-item'/>";
 	content+="</div>";
@@ -281,8 +305,12 @@ function createControls(){
 	content+="<div id='end_digi_db_link' class='db_link flex-item'>";
 	content+="<i class='fa fa-external-link' aria-hidden='true'></i>";
 	content+="</div>";
-	content+="<select class='digi_select' id='end_digi'>";	
-	content+="</select>";
+	content+="<div class='digi_btn' id='end_digi_btn'>";		
+	content+="None";
+	content+="</div>";	
+
+	content+="<div class='' id='end_digi'>";		
+	content+="</div>";	
 	content+="<div class='digi_icon_container'>";
 	content+="<img class='controls_digi_icon digi_icon' id='end_digi_icon' class='flex-item'/>";
 	content+="</div>";
@@ -321,8 +349,8 @@ function createControls(){
 	
 	
 	populateMoveList();
-	populateDigimonList("start_digi");
-	populateDigimonList("end_digi", true);
+	populateDigimonList("start_digi_btn", "start_digi", true);
+	populateDigimonList("end_digi_btn", "end_digi");
 	//secondary control pane
 	content = "";
 	
@@ -355,27 +383,7 @@ function createControls(){
 			}
 			showSkills();
 		}		
-	});	
-	
-	$("#start_digi").on("change", function(){
-		//$("#start_digi_icon").attr("src", getImgPath($("#start_digi").val()));
-		setDDSImage($("#start_digi_icon")[0], $("#start_digi").val());
-		$("#start_digi_db_link").data("target",$("#start_digi").val());
-		$("#start_digi_db_link").css("display", "inline");
-		$("#start_digi_db_link").show();
-	});
-	$("#end_digi").on("change", function(){
-		if($("#end_digi").val() && pathFinder.digiData[$("#end_digi").val()]){
-			//$("#end_digi_icon").attr("src", "images/"+$("#end_digi").val()+".png");
-			setDDSImage($("#end_digi_icon")[0], $("#end_digi").val());
-			$("#end_digi_db_link").data("target", $("#end_digi").val());
-			$("#end_digi_db_link").css("display", "inline");
-			$("#end_digi_db_link").show();
-		} else {
-			$("#end_digi_icon").attr("src", "");
-			$("#end_digi_db_link").hide();
-		}		
-	});
+	});		
 	
 	$("#locale_select").on("change", function(){
 		currentLocale = $(this).val();
@@ -392,29 +400,48 @@ function createControls(){
 		//window.open(pathFinder.digiData[$(this).data("target")].url, '_blank');
 		dexPane.showDigimon($(this).data("target"));
 	});
-	
-	$("#start_digi").val($("#start_digi option:first").val());
-	$("#start_digi").trigger("change");
-	
-	$("#end_digi").val($("#end_digi option:first").val());
-	$("#end_digi").trigger("change");
+
 	
 	$("#load_hider").hide();	
 }
 
-function populateDigimonList(target, includeEmpty){
+var currentPathSelections = {
+
+}
+
+function populateDigimonList(btnTarget, target, prepopulate){
 	var content = "";
 	var digimonNames = localizationData[currentLocale].digimon;
-	if(includeEmpty){
-		content+="<option selected value='-1'></option>";
+	
+	const btn = document.querySelector("#"+btnTarget);
+	
+	function updateSelection(monId){
+		setDDSImage(btn.closest(".control_block").querySelector(".digi_icon"), monId);
+		btn.innerHTML = digimonNames[monId];
+		const link = btn.closest(".control_block").querySelector(".db_link");
+		link.setAttribute("data-target", monId);
+		link.style.display = "inline";
+		selector.hide()
+		currentPathSelections[target] = monId
 	}
-	Object.keys(digimonNames).sort(function(a,b){return String(digimonNames[a]).localeCompare( digimonNames[b])}).forEach(function(id){
-		content+="<option value='"+id+"'>"+digimonNames[id]+"</option>";
-	});	
-	var currentVal = $("#"+target).val();
-	$("#"+target).html(content);
-	$("#"+target).val(currentVal);
+
+	
+
+	let selector = new MonSelector(target, {
+		selected: function(monId){
+			updateSelection(monId);
+		}
+	}, getFullDigiData());
+
+	btn.addEventListener("click", function(){
+		selector.toggle(currentPathSelections[target]);
+	});
+
+	if(prepopulate){
+		updateSelection(Object.keys(digimonNames).sort(function(a,b){return String(digimonNames[a]).localeCompare( digimonNames[b])})[0]);
+	}
 }
+
 
 function populateMoveList(){
 	var content = "";
@@ -441,8 +468,8 @@ function findSkillRoute(){
 	$("#path_container_content").fadeOut("fast");
 	overlayTimer = (new Date).getTime();
 	$("#overlay").fadeIn("fast");
-	var source = $("#start_digi").val();
-	var target = $("#end_digi").val();
+	var source = currentPathSelections["start_digi"];
+	var target = currentPathSelections["end_digi"];
 	digiWorker = new Worker('digiPathWorker.js');
 	digiWorker.postMessage([pathFinder.getParams(), source, target, cachedGameData]);
 	digiWorker.onmessage = function(e) {
@@ -511,14 +538,14 @@ var localizationData = {
 
 
 
-function showGameFileLoader(){
+function showGameFileLoader(msg){
 	let elem = document.getElementById("game_file_loader");
 	if(!elem){
 		elem = document.createElement("div");
 		elem.id = "game_file_loader";
 	}
 	elem.classList.remove("hidden");
-	elem.innerHTML = localizationData[currentLocale].app.loader_msg;
+	elem.innerHTML = msg;
 	document.body.append(elem);
 
 	document.getElementById("particles").classList.add("game_loader");
@@ -596,6 +623,13 @@ function toggleOptions(){
 
 var cachedGameData;
 
+function getFullDigiData(){
+	if(cachedGameData){
+		return cachedGameData.digiData;
+	} 
+	return {};
+}
+
 function getDigiData(digiId){
 	if(cachedGameData){
 		if(cachedGameData.digiData[digiId]){
@@ -645,7 +679,7 @@ function initPathFinder(forceReload){
 	}
 	checkDirectories();
 	if(!hasGameFiles() || forceReload){
-		showGameFileLoader();
+		showGameFileLoader(localizationData[currentLocale].app.loader_msg);
 		fetchGameFiles().then(function(){
 			phase2();
 		});

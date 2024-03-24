@@ -545,7 +545,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 }
 
 .digi_name {
-	text-align: center;
+	text-align: left;
 	font-size: 20px;
 	margin-left: 35px;
 }
@@ -1070,4 +1070,129 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 .section.encounters {
 	width: calc(60% - 24px);
+}
+
+.mon_selector {
+	text-align: center;
+    padding: 10;
+    background-color: #F1F1F1;
+    margin: 10;
+    border: 2px solid #E0E0E0;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+	z-index: 5;
+	position: absolute;
+	top: 76px;
+
+	-webkit-box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.75);
+    box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
+}
+
+.mon_selector.hidden {
+	display: none;
+}
+
+.mon_selector .controls{
+	justify-content: flex-start;
+	padding: 10px;
+}
+
+.mon_selector .scroll{
+	max-height: 500px;
+	overflow-y: scroll;
+}
+
+.mon_selector .scroll .entry{
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	height: 80px;
+}
+
+.mon_selector .scroll .entry:nth-child(even){
+	background-color: #E0E0E0;
+}
+
+.mon_selector .scroll .entry:hover{
+	color: #476dd9;
+	background-color: #bcc3d9;
+}
+
+.digi_btn {
+	padding: 5px;
+    margin: 5px;
+    position: absolute;
+    cursor: pointer;
+    border-radius: 99px;
+    border: 2px solid #E0E0E0;
+    width: 65%;
+    font-weight: bold;
+    text-align: center;
+    top: 36px;
+    left: 3px;
+}
+
+.digi_btn:hover {
+	background-color: #476dd9;
+	color: #FFF;
+	border-color: #334e9b ;
+}
+
+.row.filter {
+	margin-top: 4px;
+	padding: 2px;
+	background-color: #E0E0E0;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	font-size: 12px;
+	padding-left: 4px;
+	padding-right: 4px;
+	
+	width: 100%;
+}
+
+.row.filter .label{
+	margin-right: 9px;
+	font-weight: bold;
+	margin-left: 4px;
+	color: #476dd9;
+}
+
+.row.filter .filter_entry {
+	margin: 2px;
+	display: flex;
+	align-items: center;
+	width: 44%;
+}
+
+.row.filter .filter_entry .label{
+	margin-right: 4px;
+}
+
+.row.filter .filter_entry .filter_label {
+	margin-right: auto;
+}
+
+.row.filter .reset {
+	cursor: pointer;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+#mon_search {
+	margin-bottom: 4px;
+}
+
+.row.filter .options {
+	display: flex;
+	flex-wrap: wrap;
+	width: 71%;
+}
+
+.row.filter .controls i {
+	cursor: pointer;
 }

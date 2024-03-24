@@ -1,3 +1,4 @@
 ./game_data/unpacked/
 ./game_data/packed/
 ./out/
+./game_data/dds_cache.json
