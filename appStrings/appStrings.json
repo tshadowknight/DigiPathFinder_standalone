@@ -15,6 +15,7 @@
 	"loader_msg": "Loading Game Files...",
 	"loader_msg_imgs": "Loading Digmon Images...",
 	"game_path": "Game Files Location",
+	"no_game_files": "The Game Files could not be found!",
 	"reload_game_files": "Reload Game Files",
 	"DEX_header_general": "General",
 	"DEX_header_stats": "Stats",

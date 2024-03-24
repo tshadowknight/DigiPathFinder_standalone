@@ -1196,3 +1196,17 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 .row.filter .controls i {
 	cursor: pointer;
 }
+
+.label.no_files {
+	color: red;
+	font-weight: bold;
+}
+
+#no_game_files_warning {
+	color: red;
+	width: 18px;
+}
+
+.row.no_files {
+	padding: 0;
+}

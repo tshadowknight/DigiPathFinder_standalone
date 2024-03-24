@@ -219,7 +219,7 @@ MonSelector.prototype.getSortedIds = function(){
         const name = localizationData[currentLocale].digimon[x];
         let isValid = true;
         if(_this._filters.text){
-            if(name.toLowerCase().indexOf(_this._filters.text) == -1){
+            if(String(name).toLowerCase().indexOf(String(_this._filters.text).toLowerCase()) == -1){
                 isValid = false;
             }
         }

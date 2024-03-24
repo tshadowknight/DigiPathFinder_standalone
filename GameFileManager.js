@@ -45,6 +45,20 @@ function hasGameFiles(){
     return isKitValid;
 }
 
+const requiredGameFiles = [
+    "DSDBP.steam.mvgl",
+];
+
+function hasInstalledGameFiles(){
+    let isKitValid = true;
+    for(let file of requiredGameFiles){
+        if (!fs.existsSync(pathLib.join(gameFilesPath, './resources', file))) {
+            isKitValid = false;
+        }
+    }
+    return isKitValid;
+}
+
 function checkDirectories(){
     if (!fs.existsSync(pathLib.join(getResourcesFolder(), './game_data'))) {
         fs.mkdirSync(pathLib.join(getResourcesFolder(), './game_data'));
@@ -209,6 +223,7 @@ async function preparePathFinderData(){
 	const evolutionData = await parseGameFile("evolution_next_para.mbe/digimon");
 	for(let entry of evolutionData.data){
 		const digimonId = escapeHTML(entry[evolutionData.headerLookup["id"]]);
+        validDigimon[digimonId] = true; //remove filtering to accomodate more mod types
 		if(!evolutions[digimonId]){
 			evolutions[digimonId] = {
 				prev: [],

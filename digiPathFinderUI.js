@@ -419,7 +419,7 @@ function populateDigimonList(btnTarget, target, prepopulate){
 		setDDSImage(btn.closest(".control_block").querySelector(".digi_icon"), monId);
 		btn.innerHTML = digimonNames[monId];
 		const link = btn.closest(".control_block").querySelector(".db_link");
-		link.setAttribute("data-target", monId);
+		$(link).data("target", monId);
 		link.style.display = "inline";
 		selector.hide()
 		currentPathSelections[target] = monId
@@ -582,6 +582,16 @@ function createOptions(){
 	content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path' aria-hidden='true'></i>";
 	content+="</div>"
 	content+="</div>"
+
+	content+="<div class='row no_files'>";
+	if(!hasInstalledGameFiles()){
+		content+="<div class='label no_files'>";
+		content+=localizationData[currentLocale].app.no_game_files;
+		content+="</div>"
+	}
+	
+	content+="</div>"
+
 	content+="<div class='row'>";
 	content+="<div class='label'>";
 	content+="<div id='reload_btn'>";
@@ -595,19 +605,31 @@ function createOptions(){
 	elem.querySelector("#gameFilesPath").addEventListener("change", function(){
 		gameFilesPath = this.value;
 		localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
+		createOptions();
+		refreshWarnings();
 	});
 
 	elem.querySelector("#refresh_path").addEventListener("click", function(){
 		gameFilesPath = defaultGamePath;
 		localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
 		createOptions();
+		refreshWarnings();
 	});
 
 	elem.querySelector("#reload_btn").addEventListener("click", function(){
 		toggleOptions();
 		$("#load_hider").show();	
 		initPathFinder(true)
+		refreshWarnings();
 	});
+}
+
+function refreshWarnings(){
+	if(!hasInstalledGameFiles()){
+		$("#no_game_files_warning").show();	
+	} else {
+		$("#no_game_files_warning").hide();	
+	}
 }
 
 function toggleOptions(){
@@ -754,5 +776,6 @@ $(document).ready(function(){
 			console.log('callback - particles.js config loaded');
 		});	
 		initPathFinder();	
+		refreshWarnings();
 	});	
 });
