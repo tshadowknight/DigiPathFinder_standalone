@@ -76,22 +76,11 @@ var gameFilesPath = localStorage.getItem("DigiPathFinder_game_file_path") || def
 
 var potentialLoadError = false;
 
-function fetchGameFiles(){	
+function runCmd(cmd){
+    const process = require('child_process');   
+    let potentialLoadError = false;
+    let exitCode;
     return new Promise(function(resolve, reject){
-        const process = require('child_process');   
-
-        let cmd;
-        if(os.platform() === "win32"){
-            let cmdDir = pathLib.join(getResourcesFolder(), "DSCSTools/win")
-            cmd = "\""+getResourcesFolder()+""+'\\DSCSTools\\win\\unpack_game_files.bat\" \"'+cmdDir+'\" \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
-        } else if(os.platform() === "linux"){
-            let cmdDir = pathLib.join(getResourcesFolder(), "DSCSTools/linux")
-            cmd =  "\""+getResourcesFolder()+""+'\\DSCSTools\\linux\\unpack_game_files.bat\"  \"'+cmdDir+'\" \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
-        } else {
-            setLoaderError("Unsupported platform."); 
-            throw("Unsupported platform.");
-        }
-
         var ls = process.exec(cmd);
         ls.stdout.on('data', function (data) {
             const batchResult = data.toString();
@@ -101,27 +90,55 @@ function fetchGameFiles(){
             }
         });
         ls.stderr.on('data', function (data) {
-          console.log(data.toString());
-          
+        console.log(data.toString());
+        
         });
         ls.on('close', function (code) {
-           if (code == 0) {
-                console.log('Stop');
-                fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
-                finalize();
-           } else {
-                console.log('Start');
-                potentialLoadError = true;
-                fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
-                finalize();
-           }             
+            exitCode = code;           
+            finalize();
         });
-
         async function finalize(){
-            await cachceDDSImages();
-            resolve();
+            resolve({
+                potentialLoadError: potentialLoadError,
+                exitCode: exitCode
+            });
         }
-    });	
+    });
+}
+
+async function fetchGameFiles(){	
+  
+        const process = require('child_process');   
+        if(!hasInstalledGameFiles()){
+            return;
+        }
+
+        let cmd;
+        if(os.platform() === "win32"){
+            let cmdDir = pathLib.join(getResourcesFolder(), "DSCSTools/win")
+            cmd = "\""+getResourcesFolder()+""+'\\DSCSTools\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
+            
+            const mainExtractCmd = ".\\DSCSTools\\win\\DSCSToolsCLI.exe --extract \""+gameFilesPath+'/resources/DSDBP.steam.mvgl'+"\" .\\game_data\\packed";
+            await runCmd(mainExtractCmd);
+            if (!fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/packed/data')) && !fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/packed/text'))  && !fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/packed/images'))) {
+                setLoaderError(localizationData[currentLocale].app.warn_no_extract); 
+                throw("Failed extract.");
+            }
+            
+            let result = await runCmd(cmd);
+        } else if(os.platform() === "linux"){
+            let cmdDir = pathLib.join(getResourcesFolder(), "DSCSTools/linux")
+            cmd =  "\""+getResourcesFolder()+""+'\\DSCSTools\\linux\\unpack_game_files.bat\"  \"'+cmdDir+'\" \"'+gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
+        } else {
+            setLoaderError("Unsupported platform."); 
+            throw("Unsupported platform.");
+        }
+
+        
+
+        
+        fs.rm(pathLib.join(getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
+        await cachceDDSImages();    
     
 }
 

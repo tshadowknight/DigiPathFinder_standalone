@@ -653,6 +653,8 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	color: #F1F1F1;
 	z-index: 11;
 	top: 57px;
+	padding-left: 50;
+    padding-right: 50;
 }
 
 @keyframes glow {
@@ -742,6 +744,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     overflow: hidden;
     min-width: 450px;
 	background-color: rgba(0, 0, 0, 0.05);
+	flex-grow: 1;
 }
 
 .dex_pane .section.moves{
@@ -1209,4 +1212,13 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 .row.no_files {
 	padding: 0;
+}
+
+#applyLocale {
+	margin: 5px;
+
+}
+
+#options_container .row.locale {
+	justify-content: flex-start;
 }

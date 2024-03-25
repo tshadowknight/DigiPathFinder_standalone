@@ -231,8 +231,11 @@ async function convertDDSImage(digimonId){
 			
 					let rgbaData;
 					
+					let alignedWidth = Math.floor(imageWidth / 4) * 4;
+					let alignedHeight = Math.floor(imageHeight / 4) * 4;
+
 					if(dds.format){
-						rgbaData = decodeDXT(imageDataView, imageWidth, imageHeight, dds.format);
+						rgbaData = decodeDXT(imageDataView, alignedWidth, alignedHeight, dds.format);
 					} else {
 						const buffer= Buffer.from(data)
 						
@@ -338,14 +341,7 @@ function createControls(){
 	
 	$("#controls").html(content);
 	
-	var preferredLocale = localStorage.getItem("DigiPathFinder_locale");
-	if(preferredLocale){
-		$("#locale_select").val(preferredLocale);
-		currentLocale = preferredLocale;
-		if(!localizationConfig[currentLocale]){
-			currentLocale = "English";
-		}
-	}
+	
 	
 	
 	populateMoveList();
@@ -510,12 +506,19 @@ function clearOverlay(){
 }
 
 var pathFinder;
-var currentLocale = "English";
+
 var localizationConfig = {
 	English: {
-		moves: "moveNames.json",
-		digimon: "digiNames.json",
-		app: "appStrings.json"
+		app: "appStrings_en.json"
+	},
+	Chinese: {
+		app: "appStrings_ch.json"
+	},
+	Korean: {
+		app: "appStrings_ko.json"
+	},
+	German: {
+		app: "appStrings_de.json"
 	},
 	/*JPN: {
 		moves: "moveNames_jp.json",
@@ -523,8 +526,30 @@ var localizationConfig = {
 		app: "appStrings_jp.json"	
 	}*/
 }
+
+var preferredLocale = localStorage.getItem("DigiPathFinder_locale");
+var currentLocale = preferredLocale || "English";
+if(!localizationConfig[currentLocale]){
+	currentLocale =  "English";
+}
+
 var localizationData = {
 	English: {
+		moves: {},
+		digimon: {},
+		app: {}
+	},
+	Chinese: {
+		moves: {},
+		digimon: {},
+		app: {}
+	},
+	Korean: {
+		moves: {},
+		digimon: {},
+		app: {}
+	},
+	German: {
 		moves: {},
 		digimon: {},
 		app: {}
@@ -571,6 +596,25 @@ function createOptions(){
 	let elem = document.getElementById("options_pane");
 	let content = "";
 	content+="<div id='options_container'>";
+
+	content+="<div class='row locale'>";
+	content+="<div class='label'>";
+	content+=localizationData[currentLocale].app.label_language;
+	content+="</div>"
+	content+="<div class='value'>";
+	content+="<select id='appLang'>";
+	for(let option in localizationConfig){
+		content+="<option value='"+option+"' "+((option == currentLocale) ? "selected" : "")+">"+option+"</option>";
+	}
+	content+="</select>"
+
+	content+="<button id='applyLocale'>";
+	content+="Apply"
+	content+="</button>"
+	content+="This will reload the app."
+	content+="</div>"
+	content+="</div>"
+
 	content+="<div class='row'>";
 	content+="<div class='label'>";
 	content+=localizationData[currentLocale].app.game_path;
@@ -589,8 +633,12 @@ function createOptions(){
 		content+=localizationData[currentLocale].app.no_game_files;
 		content+="</div>"
 	}
+
+	
 	
 	content+="</div>"
+
+	
 
 	content+="<div class='row'>";
 	content+="<div class='label'>";
@@ -598,7 +646,12 @@ function createOptions(){
 	content+=localizationData[currentLocale].app.reload_game_files;
 	content+="</div>"
 	content+="</div>"
-	content+="</div>"
+	
+
+	
+
+
+	
 	
 	elem.innerHTML = content;
 
@@ -622,6 +675,20 @@ function createOptions(){
 		initPathFinder(true)
 		refreshWarnings();
 	});
+
+	elem.querySelector("#appLang").addEventListener("click", function(){
+		localStorage.setItem("DigiPathFinder_locale", this.value);
+		populateMoveList();
+		populateDigimonList("start_digi_btn", "start_digi", true);
+		populateDigimonList("end_digi_btn","end_digi");
+		localizePage();
+	});
+
+	elem.querySelector("#applyLocale").addEventListener("click", function(){
+		location.reload()
+	});
+
+	
 }
 
 function refreshWarnings(){
