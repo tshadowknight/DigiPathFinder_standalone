@@ -80,6 +80,7 @@ function runCmd(cmd){
     const process = require('child_process');   
     let potentialLoadError = false;
     let exitCode;
+    console.log(cmd);
     return new Promise(function(resolve, reject){
         var ls = process.exec(cmd);
         ls.stdout.on('data', function (data) {
@@ -117,8 +118,12 @@ async function fetchGameFiles(){
         if(os.platform() === "win32"){
             let cmdDir = pathLib.join(getResourcesFolder(), "DSCSTools/win")
             cmd = "\""+getResourcesFolder()+""+'\\DSCSTools\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
+
+            const exetractorPath = pathLib.join(getResourcesFolder(), 'DSCSTools/win/DSCSToolsCLI.exe');
+            const dbFilePath = pathLib.join(gameFilesPath, 'resources/DSDBP.steam.mvgl');
+            const targetPath = pathLib.join(getResourcesFolder(), 'game_data/packed');
             
-            const mainExtractCmd = ".\\DSCSTools\\win\\DSCSToolsCLI.exe --extract \""+gameFilesPath+'/resources/DSDBP.steam.mvgl'+"\" .\\game_data\\packed";
+            const mainExtractCmd =  '"'+exetractorPath+'" --extract "' + dbFilePath + '" "' + targetPath + '"';
             await runCmd(mainExtractCmd);
             if (!fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/packed/data')) && !fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/packed/text'))  && !fs.existsSync(pathLib.join(getResourcesFolder(), './game_data/packed/images'))) {
                 setLoaderError(localizationData[currentLocale].app.warn_no_extract); 
@@ -614,6 +619,26 @@ async function preparePathFinderData(){
         DDSCache = JSON.parse(fs.readFileSync(pathLib.join(getResourcesFolder(), './game_data/', 'dds_cache.json')));
     }
     
+    function getStatValueAtLevel(digimonId, levellUpGrowths, stat, level){
+        try {
+            let targetBaseStats = baseStats[digimonId];
+            let baseStatValue = targetBaseStats["base"+stat];
+            let growthType = targetBaseStats.growthType;
+            let growthTable = levellUpGrowths[growthType];
+            let growthAmount = growthTable[stat];
+            statValue = Math.floor(baseStatValue * 1 + (growthAmount * (level - 1)));
+        
+            statValue/=100;
+            if(stat == "HP"){  
+                statValue = Math.floor(statValue);
+                statValue*=10;
+            } 
+            return Math.floor(statValue);
+        } catch(e){
+            console.log("Error while calculating stats for Digimon "+digimonId+": " + e);
+        }
+        return 0;	
+    }
 
     let digiData = {};
     for(let entry of digimonListData.data){
@@ -629,12 +654,12 @@ async function preparePathFinderData(){
                 moveDetails: movesLearnedDetail[digimonId] || {},
                 conditions: evoConditions[digimonId] || {},
                 maxBaseStats: {//used for checking difficult evolutions
-                    "HP": getStatValueAtLevel(baseStats[digimonId], levellUpGrowths, "HP", maxLevel),
-                    "SP": getStatValueAtLevel(baseStats[digimonId], levellUpGrowths, "SP", maxLevel),
-                    "ATK": getStatValueAtLevel(baseStats[digimonId], levellUpGrowths, "ATK", maxLevel),
-                    "DEF": getStatValueAtLevel(baseStats[digimonId], levellUpGrowths, "DEF", maxLevel),
-                    "INT": getStatValueAtLevel(baseStats[digimonId], levellUpGrowths,"INT", maxLevel),
-                    "SPD": getStatValueAtLevel(baseStats[digimonId], levellUpGrowths, "SPD", maxLevel),
+                    "HP": getStatValueAtLevel(digimonId, levellUpGrowths, "HP", maxLevel),
+                    "SP": getStatValueAtLevel(digimonId, levellUpGrowths, "SP", maxLevel),
+                    "ATK": getStatValueAtLevel(digimonId, levellUpGrowths, "ATK", maxLevel),
+                    "DEF": getStatValueAtLevel(digimonId, levellUpGrowths, "DEF", maxLevel),
+                    "INT": getStatValueAtLevel(digimonId, levellUpGrowths,"INT", maxLevel),
+                    "SPD": getStatValueAtLevel(digimonId, levellUpGrowths, "SPD", maxLevel),
                 },
                 encounters: {base: digimonToEncounters[digimonId] || [], hame: digimonToEncountersHame[digimonId] || []}
             }
@@ -656,17 +681,3 @@ async function preparePathFinderData(){
     };
 }
 
-function getStatValueAtLevel(baseStats, levellUpGrowths, stat, level){
-	let baseStatValue = baseStats["base"+stat];
-	let growthType = baseStats.growthType;
-	let growthTable = levellUpGrowths[growthType];
-	let growthAmount = growthTable[stat];
-	statValue = Math.floor(baseStatValue * 1 + (growthAmount * (level - 1)));
-
-	statValue/=100;
-	if(stat == "HP"){  
-		statValue = Math.floor(statValue);
-		statValue*=10;
-	} 
-	return Math.floor(statValue);
-}
