@@ -235,6 +235,12 @@ const commonFieldTranslations = {
 };
 
 async function preparePathFinderData(){
+    //browser version loads two premade cache files to get its data
+    if(!process.versions.hasOwnProperty('electron')){
+        DDSCache = await Promise.resolve($.getJSON('./game_data/dds_cache.json'));
+        return await Promise.resolve($.getJSON('./game_data/game_data.json'));
+    }
+
 	let digimonNames = {};
 	const digimonListData = await parseGameFile("digimon_list.mbe/digimon");
     let validDigimon = {};
