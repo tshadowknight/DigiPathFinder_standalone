@@ -1,5 +1,7 @@
 
-module.exports = MonSelector;
+if(isElectron()){
+    module.exports = MonSelector;
+}
 
 function MonSelector(containerId, callbacks, monData){
     this._containerId = containerId;

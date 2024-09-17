@@ -1,4 +1,6 @@
-module.exports = DexPane;
+if(isElectron()){
+    module.exports = DexPane;
+}
 
 function DexPane(containerId){
     this._containerId = containerId;
@@ -257,18 +259,23 @@ DexPane.prototype.createStatsBlock = function(monInfo){
     tableContent.push(["", localizationData[currentLocale].app.DEX_label_lv1,localizationData[currentLocale].app.DEX_label_lv50, localizationData[currentLocale].app.DEX_label_lv99]);
 
     function getStatValueAtLevel(stat, level){
-        let baseStatValue = monInfo.baseStats[stat.item];
-        let growthType = monInfo.baseStats.growthType;
-        let growthTable = getGrowthCurveInfo()[growthType];
-        let growthAmount = growthTable[stat.item.replace("base", "")]//hacky!
-        statValue = Math.floor(baseStatValue * 1 + (growthAmount * (level - 1)));
+        try {
+            let baseStatValue = monInfo.baseStats[stat.item];
+            let growthType = monInfo.baseStats.growthType;
+            let growthTable = getGrowthCurveInfo()[growthType];
+            let growthAmount = growthTable[stat.item.replace("base", "")]//hacky!
+            statValue = Math.floor(baseStatValue * 1 + (growthAmount * (level - 1)));
+    
+            statValue/=100;
+            if(stat.item == "baseHP"){  
+                statValue = Math.floor(statValue);
+                statValue*=10;
+            } 
+            return Math.floor(statValue);
+        } catch(e){
 
-        statValue/=100;
-        if(stat.item == "baseHP"){  
-            statValue = Math.floor(statValue);
-            statValue*=10;
-        } 
-        return Math.floor(statValue);
+        }
+        return "??";
     }
 
     for(let stat of stats){   

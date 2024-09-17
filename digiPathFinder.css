@@ -622,8 +622,24 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	position: relative;
 }
 
-#locale_select_container {
+#standalone_version_link {
 	margin-left: auto;
+	display: "none";
+	font-size: 13px;
+	color: #FFFFFF;
+}
+
+#standalone_version_link a{
+	color: #FFFFFF;
+}
+
+
+#standalone_version_link a:visited { 
+	text-decoration: none; color:#FFFFFF; 
+}
+
+#locale_select_container {
+	margin-left: 25px;
 	color: white;
 	font-size: 14px;
 	align-items: center;

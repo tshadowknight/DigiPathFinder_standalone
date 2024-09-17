@@ -1,8 +1,11 @@
 
 //game file management
-var fs = require('fs');
-const os = require('os');
-var pathLib = require('path');
+if(isElectron()){
+    var fs = require('fs');
+    var os = require('os');
+    var pathLib = require('path');
+}
+
 
 function getResourcesFolder(){
     if(__dirname.match(/.*\.asar$/)){
@@ -236,9 +239,11 @@ const commonFieldTranslations = {
 
 async function preparePathFinderData(){
     //browser version loads two premade cache files to get its data
-    if(!process.versions.hasOwnProperty('electron')){
-        DDSCache = await Promise.resolve($.getJSON('./game_data/dds_cache.json'));
-        return await Promise.resolve($.getJSON('./game_data/game_data.json'));
+    if(!isElectron()){
+        //const DDSCacheContent_A = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_a.txt'));
+        //const DDSCacheContent_B = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_b.txt'));
+        //DDSCache = JSON.parse(DDSCacheContent_A + DDSCacheContent_B);
+        return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data.json'));
     }
 
 	let digimonNames = {};

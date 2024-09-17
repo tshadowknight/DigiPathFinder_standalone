@@ -13,6 +13,7 @@
 	"txt_devolve_to": "Devolve to",
 	"txt_evolve_to": "Evolve to",
 	"loader_msg": "Loading Game Files...",
+	"loader_msg_web": "Loading Game Data...",
 	"loader_msg_imgs": "Loading Digmon Images...",
 	"game_path": "Game Files Location",
 	"no_game_files": "The Game Files could not be found!",
@@ -94,5 +95,6 @@
 	"DEF_undef_mon": "Undefined Digimon: ",
 	"label_types_filter": "Types",
 	"label_levels_filter": "Levels",
-	"warn_no_extract": "A game install was detected but extraction failed, please move this app to another location or run as admin."
+	"warn_no_extract": "A game install was detected but extraction failed, please move this app to another location or run as admin.",
+	"standalone_link": "Click here to download the standalone Windows version. With mod support!"
 }

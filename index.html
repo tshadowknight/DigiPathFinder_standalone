@@ -3,13 +3,17 @@
 		<meta charset="UTF-8">
 	</head> 
 	<script type="text/javascript" src='particles.js'></script>
-	<script type="text/javascript" src="jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+	<script type="text/javascript" src='utils.js'></script>	
+	<script type="text/javascript" src="jquery.min.js" onload="if(isElectron()){window.$ = window.jQuery = module.exports;}"></script>
 	<script type="text/javascript" src='digiPathWorker.js'></script>
 	<script type="text/javascript" src='digiPathFinder.js'></script>
+	<script type="text/javascript" src='components/DexPane.js'></script>	
+	<script type="text/javascript" src='components/MonSelector.js'></script>	
 	<script type="text/javascript" src='digiPathFinderUI.js'></script>	
 	<script type="text/javascript" src='GameFileHeaders.js'></script>	
 	<script type="text/javascript" src='GameFileManager.js'></script>	
-	<script type="text/javascript" src='utils.js'></script>	
+	
+	
 	
 	<link rel="stylesheet" type="text/css" href="digiPathFinder.css">
 	<link rel="stylesheet" href="css/font-awesome.css">
@@ -24,8 +28,13 @@
 		<div id='content'>
 		<div class='tool_header flex-container'>
 		<div data-appstring='app_title'>
-			Cyber Sleuth Evolution Path Finder
+			Cyber Sleuth Evolution Path Finder v3.0
 		</div>	
+
+		<div id='standalone_version_link' class='flex-container'>
+			<a target="_blank" href="https://drive.google.com/file/d/1Be84bVu3ACf4xau8GVa-CGHDHrF8Lfmo/view?usp=sharing"></a>
+		</div>
+
 		<div id='locale_select_container' class='flex-container'>
 		<!--div data-appstring='label_language'>
 			Language
