@@ -240,9 +240,9 @@ const commonFieldTranslations = {
 async function preparePathFinderData(){
     //browser version loads two premade cache files to get its data
     if(!isElectron()){
-        const DDSCacheContent_A = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_a.txt'));
-        const DDSCacheContent_B = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_b.txt'));
-        DDSCache = JSON.parse(DDSCacheContent_A + DDSCacheContent_B);
+        //const DDSCacheContent_A = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_a.txt'));
+        //const DDSCacheContent_B = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_b.txt'));
+        //DDSCache = JSON.parse(DDSCacheContent_A + DDSCacheContent_B);
         return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data.json'));
     }
 

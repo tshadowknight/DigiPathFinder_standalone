@@ -786,6 +786,9 @@ function initPathFinder(forceReload){
 			phase2();
 		}
 	} else {
+		$("#standalone_version_link").show();
+		$("#standalone_version_link a").html(localizationData[currentLocale].app.standalone_link)
+		showGameFileLoader(localizationData[currentLocale].app.loader_msg_web);
 		phase2();
 	}
 	
