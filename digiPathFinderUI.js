@@ -282,7 +282,7 @@ async function setDDSImage(elem, digimonId){
 	} else {
 		//in web context use a pre-converted image
 		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-		elem.src = "./game_data/clean/images_unpacked/ui_chara_icon_"+imgId+".png";
+		elem.src = "https://tshadowknight.github.io/DigiPathFinder_standalone//game_data/clean/images_unpacked/ui_chara_icon_"+imgId+".png";
 		elem.style.display = "block";
 	}	
 }
