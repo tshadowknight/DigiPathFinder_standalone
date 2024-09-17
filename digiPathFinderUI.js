@@ -210,7 +210,7 @@ var DDSCache = {};
 async function convertDDSImage(digimonId){
 	return new Promise(function(resolve, reject){
 		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-		const imagePath = pathLib.join(getResourcesFolder(), "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img");
+		let imagePath = pathLib.join(getResourcesFolder(), "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img");
 		xhr({
 			uri: imagePath,
 			responseType: 'arraybuffer'
@@ -264,20 +264,27 @@ async function convertDDSImage(digimonId){
 }
 
 async function setDDSImage(elem, digimonId){
-		
-	let imgData;
-	if(DDSCache[digimonId]){
-		imgData = DDSCache[digimonId];
+	//in electron context convert the DDS image from the game files
+	if(isElectron()){
+		let imgData;
+		if(DDSCache[digimonId]){
+			imgData = DDSCache[digimonId];
+		} else {
+			imgData = await convertDDSImage(digimonId);
+		}
+	
+		if(imgData){
+			elem.src = imgData;
+			elem.style.display = "block";
+		} else {
+			elem.style.display = "none";
+		}
 	} else {
-		imgData = await convertDDSImage(digimonId);
-	}
-
-	if(imgData){
-		elem.src = imgData;
+		//in web context use a pre-converted image
+		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
+		elem.src = "./game_data/clean/images_unpacked/ui_chara_icon_"+imgId+".png";
 		elem.style.display = "block";
-	} else {
-		elem.style.display = "none";
-	}
+	}	
 }
 
 function createControls(){
