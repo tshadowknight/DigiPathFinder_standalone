@@ -13,3 +13,7 @@ function escapeHTML(str) {
 
     return String(str).replace(/[&<>]/g, replaceTag);
 }
+
+function isElectron(){
+    return (typeof process != 'undefined' && process.versions.hasOwnProperty('electron'));
+}

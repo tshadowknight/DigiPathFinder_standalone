@@ -1,4 +1,6 @@
-module.exports = DexPane;
+if(isElectron()){
+    module.exports = DexPane;
+}
 
 function DexPane(containerId){
     this._containerId = containerId;

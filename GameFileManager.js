@@ -1,8 +1,11 @@
 
 //game file management
-var fs = require('fs');
-const os = require('os');
-var pathLib = require('path');
+if(isElectron()){
+    var fs = require('fs');
+    var os = require('os');
+    var pathLib = require('path');
+}
+
 
 function getResourcesFolder(){
     if(__dirname.match(/.*\.asar$/)){
@@ -236,7 +239,7 @@ const commonFieldTranslations = {
 
 async function preparePathFinderData(){
     //browser version loads two premade cache files to get its data
-    if(!process.versions.hasOwnProperty('electron')){
+    if(!isElectron()){
         DDSCache = await Promise.resolve($.getJSON('./game_data/dds_cache.json'));
         return await Promise.resolve($.getJSON('./game_data/game_data.json'));
     }

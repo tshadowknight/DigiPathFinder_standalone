@@ -1,14 +1,15 @@
-var pathLib = require('path');
-var parse_dds = require('./lib/parseDDS');
-const { parse } = require('path');
-var xhr = require('xhr')
-var decodeDXT = require('decode-dxt');
-var Jimp = require('jimp')
-var DDSUtils = require('./lib/DDSUtils');
-const DexPane = require('./components/DexPane');
-const MonSelector = require('./components/MonSelector');
-var fs_promise = require('fs').promises
-
+if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron')){
+	var pathLib = require('path');
+	var parse_dds = require('./lib/parseDDS');
+	var { parse } = require('path');
+	var xhr = require('xhr')
+	var decodeDXT = require('decode-dxt');
+	var Jimp = require('jimp')
+	var DDSUtils = require('./lib/DDSUtils');
+	var DexPane = require('./components/DexPane');
+	var MonSelector = require('./components/MonSelector');
+	var fs_promise = require('fs').promises
+}
 
 const dexPane = new DexPane("details_pane");
 
@@ -615,39 +616,40 @@ function createOptions(){
 	content+="</div>"
 	content+="</div>"
 
-	content+="<div class='row'>";
-	content+="<div class='label'>";
-	content+=localizationData[currentLocale].app.game_path;
-	content+="</div>"
-	content+="<div class='value'>";
-	content+="<input id='gameFilesPath' value='"+gameFilesPath+"'></input>";
-	content+="</div>"
-	content+="<div class='value'>";
-	content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path' aria-hidden='true'></i>";
-	content+="</div>"
-	content+="</div>"
-
-	content+="<div class='row no_files'>";
-	if(!hasInstalledGameFiles()){
-		content+="<div class='label no_files'>";
-		content+=localizationData[currentLocale].app.no_game_files;
+	if(isElectron()){
+		content+="<div class='row'>";
+		content+="<div class='label'>";
+		content+=localizationData[currentLocale].app.game_path;
 		content+="</div>"
+		content+="<div class='value'>";
+		content+="<input id='gameFilesPath' value='"+gameFilesPath+"'></input>";
+		content+="</div>"
+		content+="<div class='value'>";
+		content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path' aria-hidden='true'></i>";
+		content+="</div>"
+		content+="</div>"
+
+		content+="<div class='row no_files'>";
+		if(!hasInstalledGameFiles()){
+			content+="<div class='label no_files'>";
+			content+=localizationData[currentLocale].app.no_game_files;
+			content+="</div>"
+		}
+
+		
+		
+		content+="</div>"
+
+		
+
+		content+="<div class='row'>";
+		content+="<div class='label'>";
+		content+="<div id='reload_btn'>";
+		content+=localizationData[currentLocale].app.reload_game_files;
+		content+="</div>"
+		content+="</div>"
+		
 	}
-
-	
-	
-	content+="</div>"
-
-	
-
-	content+="<div class='row'>";
-	content+="<div class='label'>";
-	content+="<div id='reload_btn'>";
-	content+=localizationData[currentLocale].app.reload_game_files;
-	content+="</div>"
-	content+="</div>"
-	
-
 	
 
 
@@ -655,27 +657,28 @@ function createOptions(){
 	
 	elem.innerHTML = content;
 
-	elem.querySelector("#gameFilesPath").addEventListener("change", function(){
-		gameFilesPath = this.value;
-		localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
-		createOptions();
-		refreshWarnings();
-	});
+	if(isElectron()){
+		elem.querySelector("#gameFilesPath").addEventListener("change", function(){
+			gameFilesPath = this.value;
+			localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
+			createOptions();
+			refreshWarnings();
+		});
 
-	elem.querySelector("#refresh_path").addEventListener("click", function(){
-		gameFilesPath = defaultGamePath;
-		localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
-		createOptions();
-		refreshWarnings();
-	});
+		elem.querySelector("#refresh_path").addEventListener("click", function(){
+			gameFilesPath = defaultGamePath;
+			localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
+			createOptions();
+			refreshWarnings();
+		});
 
-	elem.querySelector("#reload_btn").addEventListener("click", function(){
-		toggleOptions();
-		$("#load_hider").show();	
-		initPathFinder(true)
-		refreshWarnings();
-	});
-
+		elem.querySelector("#reload_btn").addEventListener("click", function(){
+			toggleOptions();
+			$("#load_hider").show();	
+			initPathFinder(true)
+			refreshWarnings();
+		});
+	}
 	elem.querySelector("#appLang").addEventListener("click", function(){
 		localStorage.setItem("DigiPathFinder_locale", this.value);
 		populateMoveList();
@@ -692,8 +695,12 @@ function createOptions(){
 }
 
 function refreshWarnings(){
-	if(!hasInstalledGameFiles()){
-		$("#no_game_files_warning").show();	
+	if(isElectron()){
+		if(!hasInstalledGameFiles()){
+			$("#no_game_files_warning").show();	
+		} else {
+			$("#no_game_files_warning").hide();	
+		}
 	} else {
 		$("#no_game_files_warning").hide();	
 	}
@@ -766,16 +773,22 @@ function initPathFinder(forceReload){
 	if(forceReload){
 		cachedGameData = null;
 	}
-	checkDirectories();
-	if(!hasGameFiles() || forceReload){
-		showGameFileLoader(localizationData[currentLocale].app.loader_msg);
-		fetchGameFiles().then(function(){
+
+	if(isElectron()){
+		checkDirectories();
+		if(!hasGameFiles() || forceReload){
+			showGameFileLoader(localizationData[currentLocale].app.loader_msg);
+			fetchGameFiles().then(function(){
+				phase2();
+			});
+			
+		} else {
 			phase2();
-		});
-		
+		}
 	} else {
 		phase2();
 	}
+	
 
 	function phase2(){		
 		pathFinder = new DigiPathFinder();

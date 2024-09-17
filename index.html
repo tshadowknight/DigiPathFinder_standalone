@@ -3,13 +3,17 @@
 		<meta charset="UTF-8">
 	</head> 
 	<script type="text/javascript" src='particles.js'></script>
-	<script type="text/javascript" src="jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+	<script type="text/javascript" src='utils.js'></script>	
+	<script type="text/javascript" src="jquery.min.js" onload="if(isElectron()){window.$ = window.jQuery = module.exports;}"></script>
 	<script type="text/javascript" src='digiPathWorker.js'></script>
 	<script type="text/javascript" src='digiPathFinder.js'></script>
+	<script type="text/javascript" src='components/DexPane.js'></script>	
+	<script type="text/javascript" src='components/MonSelector.js'></script>	
 	<script type="text/javascript" src='digiPathFinderUI.js'></script>	
 	<script type="text/javascript" src='GameFileHeaders.js'></script>	
 	<script type="text/javascript" src='GameFileManager.js'></script>	
-	<script type="text/javascript" src='utils.js'></script>	
+	
+	
 	
 	<link rel="stylesheet" type="text/css" href="digiPathFinder.css">
 	<link rel="stylesheet" href="css/font-awesome.css">
