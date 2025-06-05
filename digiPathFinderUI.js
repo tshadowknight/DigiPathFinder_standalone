@@ -627,7 +627,7 @@ function createOptions(){
 	
 	for(let i = 0; i < gameVersions.length; i++){
 		let option = gameVersions[i];
-		content+="<option value='"+option.id+"' "+((i == currentGameVersion) ? "selected" : "")+">"+option.id+"</option>";
+		content+="<option value='"+i+"' "+((i == currentGameVersion) ? "selected" : "")+">"+option.id+"</option>";
 	}
 	content+="</select>"
 
@@ -721,7 +721,7 @@ function createOptions(){
 		});
 	}
 
-	elem.querySelector("#appLang").addEventListener("click", function(){
+	elem.querySelector("#appLang").addEventListener("change", function(){
 		localStorage.setItem("DigiPathFinder_locale", this.value);
 		populateMoveList();
 		populateDigimonList("start_digi_btn", "start_digi", true);
@@ -729,7 +729,8 @@ function createOptions(){
 		localizePage();
 	});
 
-	elem.querySelector("#gameVersion").addEventListener("click", function(){
+	elem.querySelector("#gameVersion").addEventListener("change", function(){
+		currentGameVersion = this.value;
 		localStorage.setItem("DigiPathFinder_gameVersion", this.value);
 		preparePathFinderData();
 		populateMoveList();

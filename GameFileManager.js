@@ -242,7 +242,7 @@ async function preparePathFinderData(){
     if(currentGameVersion == 1){
         //for TS data, load from file
         if(!isElectron()){
-            return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data_TS.json'));
+            return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/game_data_TS.json'));
         } else {
             return await Promise.resolve($.getJSON('./game_data/game_data_TS.json'));
         }
@@ -252,7 +252,7 @@ async function preparePathFinderData(){
         //const DDSCacheContent_A = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_a.txt'));
         //const DDSCacheContent_B = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_b.txt'));
         //DDSCache = JSON.parse(DDSCacheContent_A + DDSCacheContent_B);
-        return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data.json'));
+        return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/game_data.json'));
     }
 
 	let digimonNames = {};
