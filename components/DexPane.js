@@ -243,14 +243,20 @@ DexPane.prototype.createStatsBlock = function(monInfo){
     content+="<div class='inner'>";
 
     let stats = [     
-        {item: "baseHP", label:localizationData[currentLocale].app.DEX_label_baseHP},
-        {item: "baseSP", label: localizationData[currentLocale].app.DEX_label_baseSP},
-        {item: "baseATK", label: localizationData[currentLocale].app.DEX_label_baseATK},
-        {item: "baseDEF", label:localizationData[currentLocale].app.DEX_label_baseDEF},
-        {item: "baseINT", label: localizationData[currentLocale].app.DEX_label_baseINT},
-        {item: "baseSPD", label:localizationData[currentLocale].app.DEX_label_baseSPD},
+      
     ]
 
+    stats.push({item: "baseHP", label:localizationData[currentLocale].app.DEX_label_baseHP});          
+    stats.push({item: "baseSP", label: localizationData[currentLocale].app.DEX_label_baseSP});
+    stats.push({item: "baseATK", label: localizationData[currentLocale].app.DEX_label_baseATK});
+    stats.push({item: "baseDEF", label:localizationData[currentLocale].app.DEX_label_baseDEF});
+    stats.push( {item: "baseINT", label: localizationData[currentLocale].app.DEX_label_baseINT});
+    if(isTSMode()){
+        stats.push( {item: "baseSPI", label: localizationData[currentLocale].app.DEX_label_baseSPI});
+    }
+    stats.push( {item: "baseSPD", label:localizationData[currentLocale].app.DEX_label_baseSPD});
+   
+    
     content+="<div class='row stats'>";
     content+="<table class='stats level_up'>";   
 
@@ -389,18 +395,20 @@ DexPane.prototype.createMovesBlock = function(monInfo){
 
 DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
     let content = "";
-    const condList = [
-        "LVL",
-        "HP", 
-        "SP",
-        "ATK",
-        "DEF",
-        "INT",
-        "SPD",
-        "ABI",
-        "CAM",
-        "Other"
-    ];
+    const condList = [];
+    condList.push("LVL");
+    condList.push("HP");
+    condList.push("SP");
+    condList.push("ATK");
+    condList.push("DEF");
+    condList.push("INT");
+    condList.push("SPD");
+    if (isTSMode()) {
+        condList.push("SPI");
+    }
+    condList.push("ABI");
+    condList.push("CAM");
+    condList.push("Other");
 
     const labels = {
         "LVL": localizationData[currentLocale].app.DEX_evos_label_level,
@@ -412,8 +420,11 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
         "SPD": localizationData[currentLocale].app.DEX_evos_label_SPD,
         "ABI": localizationData[currentLocale].app.DEX_evos_label_ABI,
         "CAM": localizationData[currentLocale].app.DEX_evos_label_CAM,
-        "Other": localizationData[currentLocale].app.DEX_evos_label_additional
+        "Other": localizationData[currentLocale].app.DEX_evos_label_additional,
+        "SPI": localizationData[currentLocale].app.DEX_evos_label_SPI
     }
+
+
         
 
     content+="<div class='evo_reqs_flex'>";
@@ -619,24 +630,37 @@ DexPane.prototype.createEncountersBlock = function(monInfo){
         content+="</table>";
         return content;
     }
-    content+="<div class='enc_block'>";
-    content+="<div class='section_sub_header'>";
-    
-    content+=localizationData[currentLocale].app.DEX_encounters_base;
-    content+="</div>";
-
-   
-    content+=createEncountersTable(getDigiData(monInfo.id).encounters.base);
-    content+="</div>";
-    content+="<div class='enc_block'>";
-    content+="<div class='section_sub_header'>";
-    
-    content+=localizationData[currentLocale].app.DEX_encounters_hame;
-    content+="</div>";
+    if(isTSMode()){
+        content+="<div class='enc_block'>";
+        content+="<div class='section_sub_header'>";
+        
+        content+=localizationData[currentLocale].app.DEX_encounters_TS;
+        content+="</div>";
 
     
-    content+=createEncountersTable(getDigiData(monInfo.id).encounters.hame);
-    content+="</div>";
+        content+=createEncountersTable(getDigiData(monInfo.id).encounters.TS || []);
+        content+="</div>";
+    } else {
+        content+="<div class='enc_block'>";
+        content+="<div class='section_sub_header'>";
+        
+        content+=localizationData[currentLocale].app.DEX_encounters_base;
+        content+="</div>";
+
+    
+        content+=createEncountersTable(getDigiData(monInfo.id).encounters.base);
+        content+="</div>";
+        content+="<div class='enc_block'>";
+        content+="<div class='section_sub_header'>";
+        
+        content+=localizationData[currentLocale].app.DEX_encounters_hame;
+        content+="</div>";
+
+        
+        content+=createEncountersTable(getDigiData(monInfo.id).encounters.hame);
+        content+="</div>";
+    }
+    
     content+="</div>";
 
     content+="</div>";

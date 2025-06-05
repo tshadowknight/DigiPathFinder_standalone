@@ -543,6 +543,8 @@ if(!localizationConfig[currentLocale]){
 	 "English";
 }
 
+
+
 var gameVersions = [
 	{id: "Cyber Sleuth + HaMe", sourceType: ""},
 	{id: "Time Stranger", sourceType: ""},	
@@ -550,6 +552,10 @@ var gameVersions = [
 
 var preferredGameVersion = localStorage.getItem("DigiPathFinder_gameVersion");
 var currentGameVersion = preferredGameVersion || 0;
+
+function isTSMode(){
+	return currentGameVersion == 1;
+}
 
 
 var localizationData = {
@@ -796,6 +802,7 @@ function getDigiData(digiId){
                     "ATK": 0,
                     "DEF": 0,
                     "INT": 0,
+					"SPI": 0,
                     "SPD": 0,
                 },
                 encounters: {base: [], hame: []},

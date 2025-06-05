@@ -239,7 +239,7 @@ const commonFieldTranslations = {
 
 async function preparePathFinderData(){
     //browser version loads two premade cache files to get its data
-    if(currentGameVersion == 1){
+    if(isTSMode()){
         //for TS data, load from file
         if(!isElectron()){
             return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/game_data_TS.json'));
