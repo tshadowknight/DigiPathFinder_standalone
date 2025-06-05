@@ -1,7 +1,8 @@
 {
-	"app_title": "Cyber Sleuth Evolution Path Finder",
+	"app_title": "Cyber Sleuth Evolution Path Finder v4.0",
 	"calculate_path": "Calculate Path",
 	"label_language": "Digmon Info Language",
+	"label_game_version": "Game Mode",
 	"start_digimon": "Start Digimon",
 	"end_digimon": "End Digimon",
 	"header_digimon": "Digimon",

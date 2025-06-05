@@ -282,7 +282,8 @@ async function setDDSImage(elem, digimonId){
 	} else {
 		//in web context use a pre-converted image
 		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-		elem.src = "https://tshadowknight.github.io/DigiPathFinder_standalone//game_data/clean/images_unpacked/ui_chara_icon_"+imgId+".png";
+		elem.src = "./game_data/clean/images_unpacked/ui_chara_icon_"+imgId+".png";
+		//elem.src = "https://tshadowknight.github.io/DigiPathFinder_standalone//game_data/clean/images_unpacked/ui_chara_icon_"+imgId+".png";
 		elem.style.display = "block";
 	}	
 }
@@ -538,8 +539,18 @@ var localizationConfig = {
 var preferredLocale = localStorage.getItem("DigiPathFinder_locale");
 var currentLocale = preferredLocale || "English";
 if(!localizationConfig[currentLocale]){
-	currentLocale =  "English";
+	currentLocale = 
+	 "English";
 }
+
+var gameVersions = [
+	{id: "Cyber Sleuth + HaMe", sourceType: ""},
+	{id: "Time Stranger", sourceType: ""},	
+];
+
+var preferredGameVersion = localStorage.getItem("DigiPathFinder_gameVersion");
+var currentGameVersion = preferredGameVersion || 0;
+
 
 var localizationData = {
 	English: {
@@ -600,10 +611,33 @@ function hideGameFileLoader(){
 	document.getElementById("particles").classList.remove("game_loader");
 }
 
+
+
 function createOptions(){
 	let elem = document.getElementById("options_pane");
 	let content = "";
 	content+="<div id='options_container'>";
+
+	content+="<div class='row locale'>";
+	content+="<div class='label'>";
+	content+=localizationData[currentLocale].app.label_game_version;
+	content+="</div>"
+	content+="<div class='value'>";
+	content+="<select id='gameVersion'>";
+	
+	for(let i = 0; i < gameVersions.length; i++){
+		let option = gameVersions[i];
+		content+="<option value='"+option.id+"' "+((i == currentGameVersion) ? "selected" : "")+">"+option.id+"</option>";
+	}
+	content+="</select>"
+
+	/*content+="<button id='applyGameVersion'>";
+	content+="Apply"
+	content+="</button>"
+	content+="This will reload the app."*/
+	content+="</div>"
+	content+="</div>"
+
 
 	content+="<div class='row locale'>";
 	content+="<div class='label'>";
@@ -686,6 +720,7 @@ function createOptions(){
 			refreshWarnings();
 		});
 	}
+
 	elem.querySelector("#appLang").addEventListener("click", function(){
 		localStorage.setItem("DigiPathFinder_locale", this.value);
 		populateMoveList();
@@ -694,10 +729,18 @@ function createOptions(){
 		localizePage();
 	});
 
+	elem.querySelector("#gameVersion").addEventListener("click", function(){
+		localStorage.setItem("DigiPathFinder_gameVersion", this.value);
+		preparePathFinderData();
+		populateMoveList();
+		populateDigimonList("start_digi_btn", "start_digi", true);
+		populateDigimonList("end_digi_btn","end_digi");
+		localizePage();
+	});	
+
 	elem.querySelector("#applyLocale").addEventListener("click", function(){
 		location.reload()
 	});
-
 	
 }
 

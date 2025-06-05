@@ -239,6 +239,15 @@ const commonFieldTranslations = {
 
 async function preparePathFinderData(){
     //browser version loads two premade cache files to get its data
+    if(currentGameVersion == 1){
+        //for TS data, load from file
+        if(!isElectron()){
+            return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data_TS.json'));
+        } else {
+            return await Promise.resolve($.getJSON('./game_data/game_data_TS.json'));
+        }
+        
+    }
     if(!isElectron()){
         //const DDSCacheContent_A = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_a.txt'));
         //const DDSCacheContent_B = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_b.txt'));
