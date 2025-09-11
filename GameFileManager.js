@@ -176,6 +176,7 @@ function GameFileManager(){
     }
 
     GameFileManager.prototype.parseGameFile = function(file){
+        const _this = this;
         return new Promise(function(resolve, reject){
         
             
@@ -183,7 +184,7 @@ function GameFileManager(){
             const records = [];
 
             var csvData=[];
-            fs.createReadStream(pathLib.join(this.getResourcesFolder(), "game_data/unpacked/"+file+".csv"))
+            fs.createReadStream(pathLib.join(_this.getResourcesFolder(), "game_data/unpacked/"+file+".csv"))
                 .pipe(parse({delimiter: ','}))
                 .on('data', function(csvrow) {
                     //console.log(csvrow);

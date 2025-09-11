@@ -698,7 +698,7 @@ function createOptions(){
 		content+="<option value='"+i+"' "+((i == currentGameVersion) ? "selected" : "")+">"+option.id+"</option>";
 	}
 	content+="</select>"
-
+	content+="This will reload the app."
 	/*content+="<button id='applyGameVersion'>";
 	content+="Apply"
 	content+="</button>"
@@ -832,11 +832,7 @@ function createOptions(){
 		} else {
 			activeGameFileManager = gameFileManagerTS;
 		}
-		
-		populateMoveList();
-		populateDigimonList("start_digi_btn", "start_digi", true);
-		populateDigimonList("end_digi_btn","end_digi");
-		localizePage();
+		location.reload();
 	});	
 
 	elem.querySelector("#applyLocale").addEventListener("click", function(){

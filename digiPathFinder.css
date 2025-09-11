@@ -1243,12 +1243,14 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 #applyLocale {
 	margin: 5px;
+}
 
+#gameVersion {
+	margin-right: 5px;
+}
 
 #applyGameVersion {
 	margin: 5px;
-
-}
 }
 
 #options_container .row.locale {

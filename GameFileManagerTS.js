@@ -263,13 +263,13 @@ function GameFileManagerTS(){
         
         let strKeyLookup = {};
         let placeHolderNameLookup = {};//demo debug
-
         for(let entry of digimonListData.data){
             const dbId = entry[digimonListData.headerLookup["id"]];
             const strKey = entry[digimonListData.headerLookup["strKey"]];
             strKeyLookup[strKey] = dbId;
             placeHolderNameLookup[dbId] = strKey;
         }
+        
 
         let evolutions = {};
         const evolutionData = await this.parseGameFile("main/evolution.mbe/01_evolution_to");
@@ -314,6 +314,19 @@ function GameFileManagerTS(){
                 let dbId = parseInt(strKey.replace(/^digimon_/, "").replace(/_profile$/, ""));
                 digimonDescriptions[locale][dbId] = escapeHTML(row[entry.descriptions.headerLookup["value"]]);		
             }
+        }
+
+        for(let entry of digimonListData.data){
+            const dbId = entry[digimonListData.headerLookup["id"]];
+            const strKey = entry[digimonListData.headerLookup["strKey"]];
+
+            for(let entry of localizedStrings){
+                const locale = entry.locale;
+                if(!digimonNames[locale][dbId]){
+                    digimonNames[locale][dbId] = escapeHTML(strKey.replace("char_", ""));
+                }	
+            }
+            
         }
 
         /*
@@ -671,7 +684,9 @@ function GameFileManagerTS(){
             }
             return 0;	
         }
-*/
+*/  
+        let digimonToEncounters = {};
+        let digimonToEncountersHame = {};
         let digiData = {};
         for(let entry of digimonListData.data){
             const digimonId = entry[digimonListData.headerLookup["id"]];
@@ -683,8 +698,8 @@ function GameFileManagerTS(){
                     moves: [],//movesLearned[digimonId] || [],
                     neighBours: evolutions[digimonId] || {},
                     baseStats: {}, //baseStats[digimonId] || {},
-                 //   moveDetails: movesLearnedDetail[digimonId] || {},
-                //    conditions: evoConditions[digimonId] || {},
+                    moveDetails: {},//movesLearnedDetail[digimonId] || {},
+                    conditions: {},//evoConditions[digimonId] || {},
                 /*    maxBaseStats: {//used for checking difficult evolutions
                         "HP": getStatValueAtLevel(digimonId, levellUpGrowths, "HP", maxLevel),
                         "SP": getStatValueAtLevel(digimonId, levellUpGrowths, "SP", maxLevel),
@@ -693,7 +708,7 @@ function GameFileManagerTS(){
                         "INT": getStatValueAtLevel(digimonId, levellUpGrowths,"INT", maxLevel),
                         "SPD": getStatValueAtLevel(digimonId, levellUpGrowths, "SPD", maxLevel),
                     },*/
-                  //  encounters: {base: digimonToEncounters[digimonId] || [], hame: digimonToEncountersHame[digimonId] || []}
+                    encounters: {base: digimonToEncounters[digimonId] || [], hame: digimonToEncountersHame[digimonId] || []}
                 }
             }        
         }

@@ -42,10 +42,11 @@ DexPane.prototype.getMonInfo = function(monId){
         } else {
             name = localizationData[currentLocale].digimon[monId];
         }
+        let description = localizationData[currentLocale].digimonDesc[getDigiData(monId).baseStats.profile] || localizationData[currentLocale].digimonDesc[monId]
         monInfo = {
             id: monId,
             name: name,
-            description: localizationData[currentLocale].digimonDesc[getDigiData(monId).baseStats.profile],
+            description: description,
             baseStats: getDigiData(monId).baseStats,
             moves: getDigiData(monId).moveDetails,
             evosReqs: getDigiData(monId).conditions,
