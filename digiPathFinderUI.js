@@ -8,10 +8,17 @@ if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron'))
 	var DDSUtils = require('./lib/DDSUtils');
 	var DexPane = require('./components/DexPane');
 	var MonSelector = require('./components/MonSelector');
+	var GameFileManager = require('./GameFileManager');
+	var GameFileManagerTS = require('./GameFileManagerTS');
 	var fs_promise = require('fs').promises
 }
 
 const dexPane = new DexPane("details_pane");
+
+const gameFileManager = new GameFileManager();
+const gameFileManagerTS = new GameFileManagerTS();
+
+let activeGameFileManager;
 
 function localizePage(){
 	$(".digi_name_placeholder").each(function(){
@@ -210,7 +217,7 @@ var DDSCache = {};
 async function convertDDSImage(digimonId){
 	return new Promise(function(resolve, reject){
 		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-		let imagePath = pathLib.join(getResourcesFolder(), "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img");
+		let imagePath = pathLib.join(activeGameFileManager.getResourcesFolder(), "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img");
 		xhr({
 			uri: imagePath,
 			responseType: 'arraybuffer'
@@ -553,6 +560,12 @@ var gameVersions = [
 var preferredGameVersion = localStorage.getItem("DigiPathFinder_gameVersion");
 var currentGameVersion = preferredGameVersion || 0;
 
+if(currentGameVersion == 0){
+	activeGameFileManager = gameFileManager;
+} else {
+	activeGameFileManager = gameFileManagerTS;
+}
+
 function isTSMode(){
 	return currentGameVersion == 1;
 }
@@ -669,7 +682,7 @@ function createOptions(){
 		content+=localizationData[currentLocale].app.game_path;
 		content+="</div>"
 		content+="<div class='value'>";
-		content+="<input id='gameFilesPath' value='"+gameFilesPath+"'></input>";
+		content+="<input id='gameFilesPath' value='"+gameFileManager.gameFilesPath+"'></input>";
 		content+="</div>"
 		content+="<div class='value'>";
 		content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path' aria-hidden='true'></i>";
@@ -677,14 +690,31 @@ function createOptions(){
 		content+="</div>"
 
 		content+="<div class='row no_files'>";
-		if(!hasInstalledGameFiles()){
+		if(!gameFileManager.hasInstalledGameFiles()){
 			content+="<div class='label no_files'>";
 			content+=localizationData[currentLocale].app.no_game_files;
 			content+="</div>"
-		}
+		}		
+		content+="</div>"
 
-		
-		
+		content+="<div class='row'>";
+		content+="<div class='label'>";
+		content+=localizationData[currentLocale].app.game_path_TS;
+		content+="</div>"
+		content+="<div class='value'>";
+		content+="<input id='gameFilesPathTS' value='"+gameFileManagerTS.gameFilesPath+"'></input>";
+		content+="</div>"
+		content+="<div class='value'>";
+		content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path_TS' aria-hidden='true'></i>";
+		content+="</div>"
+		content+="</div>"
+
+		content+="<div class='row no_files'>";
+		if(!gameFileManagerTS.hasInstalledGameFiles()){
+			content+="<div class='label no_files'>";
+			content+=localizationData[currentLocale].app.no_game_files;
+			content+="</div>"
+		}		
 		content+="</div>"
 
 		
@@ -706,15 +736,25 @@ function createOptions(){
 
 	if(isElectron()){
 		elem.querySelector("#gameFilesPath").addEventListener("change", function(){
-			gameFilesPath = this.value;
-			localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
+			gameFileManager.updateGameFilesPath(this.value);
 			createOptions();
 			refreshWarnings();
 		});
 
 		elem.querySelector("#refresh_path").addEventListener("click", function(){
-			gameFilesPath = defaultGamePath;
-			localStorage.setItem("DigiPathFinder_game_file_path", gameFilesPath);
+			gameFileManager.updateGameFilesPath(this.value);
+			createOptions();
+			refreshWarnings();
+		});
+
+		elem.querySelector("#gameFilesPathTS").addEventListener("change", function(){
+			gameFileManagerTS.updateGameFilesPath(this.value);
+			createOptions();
+			refreshWarnings();
+		});
+
+		elem.querySelector("#refresh_path_TS").addEventListener("click", function(){
+			gameFileManagerTS.updateGameFilesPath(this.value);
 			createOptions();
 			refreshWarnings();
 		});
@@ -738,7 +778,12 @@ function createOptions(){
 	elem.querySelector("#gameVersion").addEventListener("change", function(){
 		currentGameVersion = this.value;
 		localStorage.setItem("DigiPathFinder_gameVersion", this.value);
-		preparePathFinderData();
+		if(currentGameVersion == 0){
+			activeGameFileManager = gameFileManager;
+		} else {
+			activeGameFileManager = gameFileManagerTS;
+		}
+		
 		populateMoveList();
 		populateDigimonList("start_digi_btn", "start_digi", true);
 		populateDigimonList("end_digi_btn","end_digi");
@@ -753,7 +798,7 @@ function createOptions(){
 
 function refreshWarnings(){
 	if(isElectron()){
-		if(!hasInstalledGameFiles()){
+		if(!activeGameFileManager.hasInstalledGameFiles()){
 			$("#no_game_files_warning").show();	
 		} else {
 			$("#no_game_files_warning").hide();	
@@ -833,10 +878,10 @@ function initPathFinder(forceReload){
 	}
 
 	if(isElectron()){
-		checkDirectories();
-		if(!hasGameFiles() || forceReload){
+		activeGameFileManager.checkDirectories();
+		if(!activeGameFileManager.hasGameFiles() || forceReload){
 			showGameFileLoader(localizationData[currentLocale].app.loader_msg);
-			fetchGameFiles().then(function(){
+			activeGameFileManager.fetchGameFiles().then(function(){
 				phase2();
 			});
 			
@@ -859,7 +904,7 @@ function initPathFinder(forceReload){
 			gameData = cachedGameData;
 			finalize();
 		} else {
-			preparePathFinderData().then(function(data){
+			activeGameFileManager.preparePathFinderData().then(function(data){
 				gameData = data;
 				cachedGameData = data;
 				finalize();

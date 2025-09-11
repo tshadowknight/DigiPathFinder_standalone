@@ -99,12 +99,22 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', e
 	cursor: pointer;
 }
 
+#gameFilesPathTS {
+	width: 600px;
+	max-width: 80vw;
+}
+
+#refresh_path_TS {
+	cursor: pointer;
+}
+
 #reload_btn {
 	padding: 20px;
 	cursor: pointer;
 	border-radius: 15px;
 	background-color: #334e9b;
 	color: #FFFFFF;
+	text-align: center;
 }
 
 .tool_header {
@@ -1216,9 +1226,10 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	cursor: pointer;
 }
 
-.label.no_files {
+#options_container .row .label.no_files {
 	color: red;
 	font-weight: bold;
+	width: auto;
 }
 
 #no_game_files_warning {
@@ -1242,4 +1253,9 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 #options_container .row.locale {
 	justify-content: flex-start;
+}
+
+#options_container .row .label{
+	width: 225px;
+	text-align: left;
 }

@@ -1,13 +1,13 @@
 
 //game file management
 if(isElectron()){
-    module.exports = GameFileManager;
+    module.exports = GameFileManagerTS;
 }
 
-function GameFileManager(){
+function GameFileManagerTS(){
 
 
-
+    const gameDataFolder = "game_data_TS";
 
     if(isElectron()){
         var fs = require('fs');
@@ -16,7 +16,7 @@ function GameFileManager(){
     }
 
 
-    GameFileManager.prototype.getResourcesFolder = function(){
+    GameFileManagerTS.prototype.getResourcesFolder = function(){
         if(__dirname.match(/.*\.asar$/)){
             return pathLib.dirname(__dirname);
         } else {
@@ -25,32 +25,13 @@ function GameFileManager(){
     }
 
     const requiredFiles = [
-        "charname.mbe/Sheet1.csv",
-        "digimon_farm_para.mbe/digimon.csv",
-        "digimon_common_para.mbe/digimon.csv",
-        "digimon_list.mbe/digimon.csv",
-        "digimon_book_explanation.mbe/Sheet1.csv",
-        "evolution_next_para.mbe/digimon.csv",
-        "skill_name.mbe/Sheet1.csv",
-        "skill_content_name.mbe/Sheet1.csv",
-        "support_skill_name.mbe/Sheet1.csv",
-        "support_skill_content_name.mbe/Sheet1.csv",
-        "lvup_para.mbe/table.csv",
-        "evolution_condition_para.mbe/digimon.csv",
-        "mon_cpl.mbe/Coupling.csv",
-        "map_encount_param.mbe/Field.csv",
-        "field_area_para.mbe/Field_List.csv",
-        "field_area_para_add.mbe/Field_List.csv",
-        "fieldname.mbe/Sheet1.csv",
-        "map_encount_param_add.mbe/Field.csv",
-        "battle_command.mbe/Command.csv",
-        "images"
+         "app_0.dx11.mvgl",
     ];
 
-    GameFileManager.prototype.hasGameFiles = function(){
+    GameFileManagerTS.prototype.hasGameFiles = function(){
         let isKitValid = true;
         for(let file of requiredFiles){
-            if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/unpacked', file))) {
+            if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked', file))) {
                 isKitValid = false;
             }
         }
@@ -58,42 +39,44 @@ function GameFileManager(){
     }
 
     const requiredGameFiles = [
-        "DSDBP.steam.mvgl",
+        "app_0.dx11.mvgl",
+        "app_text00.dx11.mvgl",
+        "app_text01.dx11.mvgl",
     ];
 
-    GameFileManager.prototype.hasInstalledGameFiles = function(){
+    GameFileManagerTS.prototype.hasInstalledGameFiles = function(){
         let isKitValid = true;
         for(let file of requiredGameFiles){
-            if (!fs.existsSync(pathLib.join(this.gameFilesPath, './resources', file))) {
+            if (!fs.existsSync(pathLib.join(this.gameFilesPath, './gamedata', file))) {
                 isKitValid = false;
             }
         }
         return isKitValid;
     }
 
-    GameFileManager.prototype.checkDirectories = function(){
-        if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data'))) {
-            fs.mkdirSync(pathLib.join(this.getResourcesFolder(), './game_data'));
+    GameFileManagerTS.prototype.checkDirectories = function(){
+        if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder))) {
+            fs.mkdirSync(pathLib.join(this.getResourcesFolder(), gameDataFolder));
         }
-        if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed'))) {
-            fs.mkdirSync(pathLib.join(this.getResourcesFolder(), './game_data/packed'));
+        if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed'))) {
+            fs.mkdirSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed'));
         }
-        if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/unpacked'))) {
-            fs.mkdirSync(pathLib.join(this.getResourcesFolder(), './game_data/unpacked'));
+        if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked'))) {
+            fs.mkdirSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked'));
         }
     }
 
-    var defaultGamePath = "C:/Program Files (x86)/Steam/steamapps/common/Digimon Story Cyber Sleuth Complete Edition";
-    GameFileManager.prototype.gameFilesPath = localStorage.getItem("DigiPathFinder_game_file_path") || defaultGamePath;
+    var defaultGamePath = "C:/Program Files (x86)/Steam/steamapps/common/Digimon Story Time Stranger Demo";
+    GameFileManagerTS.prototype.gameFilesPath = localStorage.getItem("DigiPathFinder_game_file_path_TS") || defaultGamePath;
 
-    GameFileManager.prototype.updateGameFilesPath = function(path){
+    GameFileManagerTS.prototype.updateGameFilesPath = function(path){
         this.gameFilesPath = path;
-		localStorage.setItem("DigiPathFinder_game_file_path", path);
+		localStorage.setItem("DigiPathFinder_game_file_path_TS", path);
     }
 
     var potentialLoadError = false;
 
-    GameFileManager.prototype.runCmd = function(cmd){
+    GameFileManagerTS.prototype.runCmd = function(cmd){
         const process = require('child_process');   
         let potentialLoadError = false;
         let exitCode;
@@ -124,58 +107,70 @@ function GameFileManager(){
         });
     }
 
-    GameFileManager.prototype.fetchGameFiles = async function(){	
+    GameFileManagerTS.prototype.fetchGameFiles = async function(){	
     
             const process = require('child_process');   
             if(!this.hasInstalledGameFiles()){
                 return;
             }
+            const toolsFolder = "DSTSTools";
 
             let cmd;
             if(os.platform() === "win32"){
-                let cmdDir = pathLib.join(this.getResourcesFolder(), "DSCSTools/win")
-                cmd = "\""+this.getResourcesFolder()+""+'\\DSCSTools\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
+                let cmdDir = pathLib.join(this.getResourcesFolder(), toolsFolder, "/win");
+                cmd = "\""+this.getResourcesFolder()+""+'\\'+toolsFolder+'\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
 
-                const exetractorPath = pathLib.join(this.getResourcesFolder(), 'DSCSTools/win/DSCSToolsCLI.exe');
-                const dbFilePath = pathLib.join(this.gameFilesPath, 'resources/DSDBP.steam.mvgl');
-                const targetPath = pathLib.join(this.getResourcesFolder(), 'game_data/packed');
+                const exetractorPath = pathLib.join(this.getResourcesFolder(), toolsFolder, '/win/DSCSToolsCLI.exe');
+                const dbFilePaths = [
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_0.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/txt_jpn')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/txt_eng')},
+                ]
+              
                 
-                const mainExtractCmd =  '"'+exetractorPath+'" --extract "' + dbFilePath + '" "' + targetPath + '"';
-                await this.runCmd(mainExtractCmd);
-                if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed/data')) && !fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed/text'))  && !fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed/images'))) {
+                for(let pathInfo of dbFilePaths){
+                    const mainExtractCmd =  '"'+exetractorPath+'" --extract "' + pathInfo.in + '" "' + pathInfo.out + '"';
+                    await this.runCmd(mainExtractCmd);
+                }
+                
+                if (
+                        !fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/data')) ||
+                        !fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/images'))
+                        !fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/shaders'))
+                        !fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua'))
+                ) {
                     setLoaderError(localizationData[currentLocale].app.warn_no_extract); 
                     throw("Failed extract.");
                 }
                 
                 let result = await this.runCmd(cmd);
             } else if(os.platform() === "linux"){
-                let cmdDir = pathLib.join(this.getResourcesFolder(), "DSCSTools/linux")
-                cmd =  "\""+this.getResourcesFolder()+""+'\\DSCSTools\\linux\\unpack_game_files.bat\"  \"'+cmdDir+'\" \"'+this.gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
+                //let cmdDir = pathLib.join(this.getResourcesFolder(), toolsFolder, "/linux")
+                //cmd =  "\""+this.getResourcesFolder()+""+'\\DSCSTools\\linux\\unpack_game_files.bat\"  \"'+cmdDir+'\" \"'+this.gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
+                setLoaderError("Unsupported platform."); 
+                throw("Unsupported platform.");
             } else {
                 setLoaderError("Unsupported platform."); 
                 throw("Unsupported platform.");
             }
-
             
-
-            
-            fs.rm(pathLib.join(this.getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
+            fs.rm(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/packed"), { recursive: true, force: true });
             await this.cachceDDSImages();    
         
     }
 
-    GameFileManager.prototype.cachceDDSImages = async function(){
+    GameFileManagerTS.prototype.cachceDDSImages = async function(){
         const digimonListData = await this.parseGameFile("digimon_list.mbe/digimon");
         DDSCache = {};
         for(let entry of digimonListData.data){
             const digimonId = entry[digimonListData.headerLookup["id"]];
             await convertDDSImage(digimonId);//prepopulate cache
         }
-        fs.writeFileSync(pathLib.join(this.getResourcesFolder(), './game_data/', 'dds_cache.json'), JSON.stringify(DDSCache));
+        fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/dds_cache.json'), JSON.stringify(DDSCache));
         
     }
 
-    GameFileManager.prototype.parseGameFile = function(file){
+    GameFileManagerTS.prototype.parseGameFile = function(file){
         return new Promise(function(resolve, reject){
         
             
@@ -183,7 +178,7 @@ function GameFileManager(){
             const records = [];
 
             var csvData=[];
-            fs.createReadStream(pathLib.join(this.getResourcesFolder(), "game_data/unpacked/"+file+".csv"))
+            fs.createReadStream(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked/"+file+".csv"))
                 .pipe(parse({delimiter: ','}))
                 .on('data', function(csvrow) {
                     //console.log(csvrow);
@@ -206,7 +201,7 @@ function GameFileManager(){
         });	
     }
 
-    GameFileManager.prototype.generateHeaders = async function(){
+    GameFileManagerTS.prototype.generateHeaders = async function(){
         let result = {};
         for(let file of requiredFiles){
             try {
@@ -252,18 +247,8 @@ function GameFileManager(){
         }
     };
 
-    GameFileManager.prototype.preparePathFinderData = async function(){
-        //browser version loads two premade cache files to get its data
-        if(isTSMode()){
-            //for TS data, load from file
-            if(!isElectron()){
-                return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/game_data_TS.json'));
-            } else {
-                return await Promise.resolve($.getJSON('./game_data/game_data_TS.json'));
-            }
-            
-        }
-        if(!isElectron()){
+    GameFileManagerTS.prototype.preparePathFinderData = async function(){
+       if(!isElectron()){
             //const DDSCacheContent_A = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_a.txt'));
             //const DDSCacheContent_B = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_b.txt'));
             //DDSCache = JSON.parse(DDSCacheContent_A + DDSCacheContent_B);
@@ -646,12 +631,12 @@ function GameFileManager(){
         }
         const maxLevel = 99;
 
-        if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/', 'dds_cache.json'))) {
+        if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, 'dds_cache.json'))) {
             showGameFileLoader(localizationData[currentLocale].app.loader_msg_imgs);
             await this.cachceDDSImages();
             hideGameFileLoader();
         } else {
-            DDSCache = JSON.parse(fs.readFileSync(pathLib.join(this.getResourcesFolder(), './game_data/', 'dds_cache.json')));
+            DDSCache = JSON.parse(fs.readFileSync(pathLib.join(this.getResourcesFolder(),  gameDataFolder, 'dds_cache.json')));
         }
         
         function getStatValueAtLevel(digimonId, levellUpGrowths, stat, level){

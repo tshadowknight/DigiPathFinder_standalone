@@ -1,5 +1,8 @@
 game_data/packed
 game_data/unpacked
 game_data/dds_cache.json
+game_data_TS/packed
+game_data_TS/unpacked
+game_data_TS/dds_cache.json
 node_modules/
 out/
