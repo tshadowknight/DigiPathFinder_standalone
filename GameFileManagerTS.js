@@ -25,7 +25,7 @@ function GameFileManagerTS(){
     }
 
     const requiredFiles = [
-         "app_0.dx11.mvgl",
+         "main/digimon_status.mbe/00_digimon_status_data.csv",
     ];
 
     GameFileManagerTS.prototype.hasGameFiles = function(){
@@ -116,31 +116,47 @@ function GameFileManagerTS(){
             const toolsFolder = "DSTSTools";
 
             let cmd;
+
+            
+
             if(os.platform() === "win32"){
                 let cmdDir = pathLib.join(this.getResourcesFolder(), toolsFolder, "/win");
                 cmd = "\""+this.getResourcesFolder()+""+'\\'+toolsFolder+'\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
 
                 const exetractorPath = pathLib.join(this.getResourcesFolder(), toolsFolder, '/win/DSCSToolsCLI.exe');
                 const dbFilePaths = [
-                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_0.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main')},
-                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/txt_jpn')},
-                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/txt_eng')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_0.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main') , unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/main')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/txt_jpn'), unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/txt_jpn')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text01.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/txt_eng'), unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/txt_eng')},
                 ]
               
                 
                 for(let pathInfo of dbFilePaths){
+                    if(!fs.existsSync(pathInfo.unpacked)){
+                        fs.mkdirSync(pathInfo.unpacked);
+                    }
+                    
                     const mainExtractCmd =  '"'+exetractorPath+'" --extract "' + pathInfo.in + '" "' + pathInfo.out + '"';
                     await this.runCmd(mainExtractCmd);
                 }
                 
-                if (
-                        !fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/data')) ||
-                        !fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/images'))
-                        !fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/shaders'))
-                        !fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua'))
-                ) {
+                const requiredFiles = [
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/data'),
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/images'),
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/shaders'),
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua')
+                ];
+
+                let missingFiles = [];
+                for(const entry of requiredFiles){
+                    if(!fs.existsSync(entry)){
+                        missingFiles.push(entry);
+                    }
+                }
+                
+                if (missingFiles.length) {
                     setLoaderError(localizationData[currentLocale].app.warn_no_extract); 
-                    throw("Failed extract.");
+                    throw("Failed extract. Could not find '"+missingFiles.join(', ')+"' after extract.");
                 }
                 
                 let result = await this.runCmd(cmd);
@@ -160,7 +176,7 @@ function GameFileManagerTS(){
     }
 
     GameFileManagerTS.prototype.cachceDDSImages = async function(){
-        const digimonListData = await this.parseGameFile("digimon_list.mbe/digimon");
+        const digimonListData = await this.parseGameFile("main/digimon_status.mbe/00_digimon_status_data");
         DDSCache = {};
         for(let entry of digimonListData.data){
             const digimonId = entry[digimonListData.headerLookup["id"]];
@@ -171,6 +187,7 @@ function GameFileManagerTS(){
     }
 
     GameFileManagerTS.prototype.parseGameFile = function(file){
+        const _this = this;
         return new Promise(function(resolve, reject){
         
             
@@ -178,7 +195,7 @@ function GameFileManagerTS(){
             const records = [];
 
             var csvData=[];
-            fs.createReadStream(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked/"+file+".csv"))
+            fs.createReadStream(pathLib.join(_this.getResourcesFolder(), gameDataFolder, "/unpacked/"+file+".csv"))
                 .pipe(parse({delimiter: ','}))
                 .on('data', function(csvrow) {
                     //console.log(csvrow);
@@ -190,8 +207,8 @@ function GameFileManagerTS(){
                     let headers = records.shift();
                     let headerLookup;
                     let fileKey = file+".csv";
-                    if(hardDefinedHeaders[fileKey] && Object.keys(hardDefinedHeaders[fileKey]).length){
-                        headerLookup = hardDefinedHeaders[fileKey]
+                    if(hardDefinedHeadersTS[fileKey] && Object.keys(hardDefinedHeadersTS[fileKey]).length){
+                        headerLookup = hardDefinedHeadersTS[fileKey]
                     } else {
                         throw "No header information for " + fileKey;
                     }
@@ -217,35 +234,7 @@ function GameFileManagerTS(){
         console.log(result);
     }
 
-    const commonFieldTranslations = {    
-        attribute: {
-            0: "neutral",
-            1: "fire",
-            2: "water",
-            3: "plant",
-            4: "electric",
-            5: "earth",
-            6: "wind",
-            7: "light",
-            8: "dark"
-        },
-        type: {
-            0: "free",
-            1: "virus", 
-            2: "vaccine",
-            3: "data"
-        },
-        level: {
-            1: "training_1",
-            2: "training_2",
-            3: "child",
-            4: "adult",
-
-            5: "perfect",
-            6: "ultimate",
-            7: "ultra"
-        }
-    };
+    
 
     GameFileManagerTS.prototype.preparePathFinderData = async function(){
        if(!isElectron()){
@@ -256,56 +245,79 @@ function GameFileManagerTS(){
         }
 
         let digimonNames = {};
-        const digimonListData = await this.parseGameFile("digimon_list.mbe/digimon");
+        const digimonListData = await this.parseGameFile("main/digimon_status.mbe/00_digimon_status_data");
         let validDigimon = {};
-        const nameData = await this.parseGameFile("charname.mbe/Sheet1");
+
+        const localizedStrings = [
+            {
+                locale: "English", 
+                names: await this.parseGameFile("txt_eng/char_name.mbe/00_Sheet1"), 
+                descriptions: await this.parseGameFile("txt_eng/digimon_profile.mbe/00_Sheet1"), 
+            },
+            {
+                locale: "Japanese", 
+                names: await this.parseGameFile("txt_jpn/char_name.mbe/00_Sheet1"),
+                descriptions: await this.parseGameFile("txt_jpn/digimon_profile.mbe/00_Sheet1"), 
+            }
+        ];
         
-        
+        let strKeyLookup = {};
+        let placeHolderNameLookup = {};//demo debug
+
+        for(let entry of digimonListData.data){
+            const dbId = entry[digimonListData.headerLookup["id"]];
+            const strKey = entry[digimonListData.headerLookup["strKey"]];
+            strKeyLookup[strKey] = dbId;
+            placeHolderNameLookup[dbId] = strKey;
+        }
+
         let evolutions = {};
-        const evolutionData = await this.parseGameFile("evolution_next_para.mbe/digimon");
+        const evolutionData = await this.parseGameFile("main/evolution.mbe/01_evolution_to");
         for(let entry of evolutionData.data){
-            const digimonId = escapeHTML(entry[evolutionData.headerLookup["id"]]);
-            validDigimon[digimonId] = true; //remove filtering to accomodate more mod types
-            if(!evolutions[digimonId]){
-                evolutions[digimonId] = {
+            const fromId = escapeHTML(entry[evolutionData.headerLookup["idFrom"]]);
+            const toId = escapeHTML(entry[evolutionData.headerLookup["idTo"]]);
+            validDigimon[fromId] = true; //remove filtering to accomodate more mod types
+            validDigimon[toId] = true; //remove filtering to accomodate more mod types
+            if(!evolutions[fromId]){
+                evolutions[fromId] = {
                     prev: [],
                     next: []
                 }
             }
-            for(let i = 1; i <=6 ; i++){
-                let targetDigimonId = escapeHTML(entry[evolutionData.headerLookup["digi"+i]])
-                if(targetDigimonId != 0){
-                    validDigimon[digimonId] = true;
-                    validDigimon[targetDigimonId] = true;
-                    evolutions[digimonId].next.push(targetDigimonId);
-                    if(!evolutions[targetDigimonId]){
-                        evolutions[targetDigimonId] = {
-                            prev: [],
-                            next: []
-                        }
-                    }
-                    evolutions[targetDigimonId].prev.push(digimonId);
+            if(!evolutions[toId]){
+                evolutions[toId] = {
+                    prev: [],
+                    next: []
                 }
+            }
+            evolutions[fromId].next.push(toId);
+            evolutions[toId].prev.push(fromId);
+        }
+        
+        let digimonDescriptions = {};
+        for(let entry of localizedStrings){
+            const locale = entry.locale;
+            if(!digimonNames[locale]){
+                digimonNames[locale] = {};
+            }
+            for(let row of entry.names.data){
+                const strKey = row[entry.names.headerLookup["strKey"]];      
+                const dbId = strKeyLookup[strKey];          
+                digimonNames[locale][dbId] = escapeHTML(row[entry.names.headerLookup["value"]]);		
+            }
+
+            if(!digimonDescriptions[locale]){
+                digimonDescriptions[locale] = {};
+            }
+            for(let row of entry.descriptions.data){
+                const strKey = row[entry.descriptions.headerLookup["strKey"]];                     
+                let dbId = parseInt(strKey.replace(/^digimon_/, "").replace(/_profile$/, ""));
+                digimonDescriptions[locale][dbId] = escapeHTML(row[entry.descriptions.headerLookup["value"]]);		
             }
         }
 
-        for(let entry of nameData.data){
-            let nameId = entry[nameData.headerLookup["ID"]];
-            if(nameId < 2000){
-                nameId = nameId.substr(1) * 1;
-                if(validDigimon[nameId]){
-                    for(let locale in localizationConfig){
-                        if(!digimonNames[locale]){
-                            digimonNames[locale] = {};
-                        }
+        /*
         
-                        digimonNames[locale][nameId] = escapeHTML(entry[nameData.headerLookup[locale]]);		
-                    }
-                }		
-            }		
-        }
-
-        let digimonDescriptions = {};
         const digmonDescData = await this.parseGameFile("digimon_book_explanation.mbe/Sheet1");
         for(let entry of digmonDescData.data){
             const entryId = entry[digmonDescData.headerLookup["ID"]];
@@ -659,7 +671,7 @@ function GameFileManagerTS(){
             }
             return 0;	
         }
-
+*/
         let digiData = {};
         for(let entry of digimonListData.data){
             const digimonId = entry[digimonListData.headerLookup["id"]];
@@ -667,37 +679,37 @@ function GameFileManagerTS(){
             if(validDigimon[digimonId]){
                 digiData[digimonId] = {
                     id: digimonId,
-                    name: digimonNames[digimonId] || "",
-                    moves: movesLearned[digimonId] || [],
+                    name: digimonNames["English"][digimonId] || placeHolderNameLookup[digimonId] || "",
+                    moves: [],//movesLearned[digimonId] || [],
                     neighBours: evolutions[digimonId] || {},
-                    baseStats: baseStats[digimonId] || {},
-                    moveDetails: movesLearnedDetail[digimonId] || {},
-                    conditions: evoConditions[digimonId] || {},
-                    maxBaseStats: {//used for checking difficult evolutions
+                    baseStats: {}, //baseStats[digimonId] || {},
+                 //   moveDetails: movesLearnedDetail[digimonId] || {},
+                //    conditions: evoConditions[digimonId] || {},
+                /*    maxBaseStats: {//used for checking difficult evolutions
                         "HP": getStatValueAtLevel(digimonId, levellUpGrowths, "HP", maxLevel),
                         "SP": getStatValueAtLevel(digimonId, levellUpGrowths, "SP", maxLevel),
                         "ATK": getStatValueAtLevel(digimonId, levellUpGrowths, "ATK", maxLevel),
                         "DEF": getStatValueAtLevel(digimonId, levellUpGrowths, "DEF", maxLevel),
                         "INT": getStatValueAtLevel(digimonId, levellUpGrowths,"INT", maxLevel),
                         "SPD": getStatValueAtLevel(digimonId, levellUpGrowths, "SPD", maxLevel),
-                    },
-                    encounters: {base: digimonToEncounters[digimonId] || [], hame: digimonToEncountersHame[digimonId] || []}
+                    },*/
+                  //  encounters: {base: digimonToEncounters[digimonId] || [], hame: digimonToEncountersHame[digimonId] || []}
                 }
             }        
         }
 
         return {
             digiData: digiData, 
-            levellUpGrowths: levellUpGrowths, 
-            fieldNames: fieldNames, 
-            moveNames: moveNames, 
-            sigMoves: moveNamesFull, 
-            moveDescriptions: moveDescriptions, 
+            //levellUpGrowths: levellUpGrowths, 
+            //fieldNames: fieldNames, 
+           // moveNames: moveNames, 
+           // sigMoves: moveNamesFull, 
+           // moveDescriptions: moveDescriptions, 
             digimonNames: digimonNames, 
             digimonDescriptions: digimonDescriptions, 
-            supportSkillNames: supportSkillNames, 
-            supportSkillDescriptions: supportSkillDescriptions,
-            skillTextIds: skillTextIds
+           // supportSkillNames: supportSkillNames, 
+           // supportSkillDescriptions: supportSkillDescriptions,
+           // skillTextIds: skillTextIds
         };
     }
 

@@ -13,6 +13,36 @@ if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron'))
 	var fs_promise = require('fs').promises
 }
 
+const commonFieldTranslations = {    
+        attribute: {
+            0: "neutral",
+            1: "fire",
+            2: "water",
+            3: "plant",
+            4: "electric",
+            5: "earth",
+            6: "wind",
+            7: "light",
+            8: "dark"
+        },
+        type: {
+            0: "free",
+            1: "virus", 
+            2: "vaccine",
+            3: "data"
+        },
+        level: {
+            1: "training_1",
+            2: "training_2",
+            3: "child",
+            4: "adult",
+
+            5: "perfect",
+            6: "ultimate",
+            7: "ultra"
+        }
+    };
+
 const dexPane = new DexPane("details_pane");
 
 const gameFileManager = new GameFileManager();
@@ -213,11 +243,21 @@ function showSkills(){
 }
 
 var DDSCache = {};
+var DDSCacheTS = {};
 
 async function convertDDSImage(digimonId){
 	return new Promise(function(resolve, reject){
+		let targetCache;
+		let targetPath;
+		if(isTSMode()){
+			targetCache = DDSCacheTS;
+			targetPath = "./game_data_TS/unpacked/images/ui_chara_icon_";
+		} else{
+			targetCache = DDSCache;
+			targetPath = "./game_data/unpacked/images/ui_chara_icon_";
+		}
 		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-		let imagePath = pathLib.join(activeGameFileManager.getResourcesFolder(), "./game_data/unpacked/images/ui_chara_icon_"+imgId+".img");
+		let imagePath = pathLib.join(activeGameFileManager.getResourcesFolder(), targetPath+imgId+".img");
 		xhr({
 			uri: imagePath,
 			responseType: 'arraybuffer'
@@ -258,7 +298,7 @@ async function convertDDSImage(digimonId){
 					var image = new Jimp(imageWidth, imageHeight, async function (err, image) {
 						image.bitmap.data = rgbaData;
 						let dataUrl = await image.getBase64Async(Jimp.AUTO);
-						DDSCache[digimonId] = dataUrl;
+						targetCache[digimonId] = dataUrl;
 						resolve(dataUrl);
 						
 					});
@@ -272,10 +312,20 @@ async function convertDDSImage(digimonId){
 
 async function setDDSImage(elem, digimonId){
 	//in electron context convert the DDS image from the game files
+	let targetCache;
+	let targetPath;
+	if(isTSMode()){
+		targetCache = DDSCacheTS;
+		targetPath = "./game_data_TS/unpacked/images/ui_chara_icon_";
+	} else{
+		targetCache = DDSCache;
+		targetPath = "./game_data/unpacked/images/ui_chara_icon_";
+	}
 	if(isElectron()){
+		
 		let imgData;
-		if(DDSCache[digimonId]){
-			imgData = DDSCache[digimonId];
+		if(targetCache[digimonId]){
+			imgData = targetCache[digimonId];
 		} else {
 			imgData = await convertDDSImage(digimonId);
 		}
@@ -290,7 +340,6 @@ async function setDDSImage(elem, digimonId){
 		//in web context use a pre-converted image
 		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
 		elem.src = "./game_data/clean/images_unpacked/ui_chara_icon_"+imgId+".png";
-		//elem.src = "https://tshadowknight.github.io/DigiPathFinder_standalone//game_data/clean/images_unpacked/ui_chara_icon_"+imgId+".png";
 		elem.style.display = "block";
 	}	
 }
@@ -914,14 +963,14 @@ function initPathFinder(forceReload){
 		function finalize(){
 			
 			for(let locale in localizationConfig){
-				localizationData[locale].moves = gameData.moveNames[locale];
-				localizationData[locale].moveDesc = gameData.moveDescriptions[locale];
-				localizationData[locale].digimon = gameData.digimonNames[locale];
-				localizationData[locale].digimonDesc = gameData.digimonDescriptions[locale];
-				localizationData[locale].supportSkills = gameData.supportSkillNames[locale];
-				localizationData[locale].supportSkillDesc = gameData.supportSkillDescriptions[locale];
-				localizationData[locale].sigMoves = gameData.sigMoves[locale];
-				localizationData[locale].fieldNames = gameData.fieldNames[locale];
+				localizationData[locale].moves = gameData.moveNames?.[locale] || {};
+				localizationData[locale].moveDesc = gameData.moveDescriptions?.[locale] || {};
+				localizationData[locale].digimon = gameData.digimonNames?.[locale] || {};
+				localizationData[locale].digimonDesc = gameData.digimonDescriptions?.[locale] || {};
+				localizationData[locale].supportSkills = gameData.supportSkillNames?.[locale] || {};
+				localizationData[locale].supportSkillDesc = gameData.supportSkillDescriptions?.[locale] || {};
+				localizationData[locale].sigMoves = gameData.sigMoves?.[locale] || {};
+				localizationData[locale].fieldNames = gameData.fieldNames?.[locale] || {};
 			}	
 
 

@@ -296,3 +296,31 @@ const hardDefinedHeaders = {
       "Unk15": 39
     }
   }
+
+  const hardDefinedHeadersTS = {
+    "main/digimon_status.mbe/00_digimon_status_data.csv": {
+      "id": 0,
+      "strKey": 2
+    },
+    "main/evolution.mbe/01_evolution_to.csv": {
+      "idx": 0,
+      "idFrom": 1,
+      "idTo": 3
+    },
+    "txt_eng/char_name.mbe/00_Sheet1.csv": {
+      "strKey": 0,
+      "value": 1
+    },
+    "txt_jpn/char_name.mbe/00_Sheet1.csv": {
+      "strKey": 0,
+      "value": 1
+    },
+    "txt_eng/digimon_profile.mbe/00_Sheet1.csv": {
+      "strKey": 0,
+      "value": 1
+    },
+    "txt_jpn/digimon_profile.mbe/00_Sheet1.csv": {
+      "strKey": 0,
+      "value": 1
+    }
+  }

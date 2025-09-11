@@ -226,14 +226,19 @@ MonSelector.prototype.getSortedIds = function(){
             }
         }
         const type = getDigiData(x).baseStats.type;
-        if(!_this._filters.types[type]){
-            isValid = false;
-        }
+        if(type != null){
+            if(!_this._filters.types[type]){
+                isValid = false;
+            }
+        }        
 
         const level = getDigiData(x).baseStats.level;
-        if(!_this._filters.levels[level]){
-            isValid = false;
+        if(level != null){
+            if(!_this._filters.levels[level]){
+                isValid = false;
+            }
         }
+        
         return isValid;
     });
     return managedKeys;

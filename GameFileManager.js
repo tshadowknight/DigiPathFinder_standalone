@@ -222,36 +222,6 @@ function GameFileManager(){
         console.log(result);
     }
 
-    const commonFieldTranslations = {    
-        attribute: {
-            0: "neutral",
-            1: "fire",
-            2: "water",
-            3: "plant",
-            4: "electric",
-            5: "earth",
-            6: "wind",
-            7: "light",
-            8: "dark"
-        },
-        type: {
-            0: "free",
-            1: "virus", 
-            2: "vaccine",
-            3: "data"
-        },
-        level: {
-            1: "training_1",
-            2: "training_2",
-            3: "child",
-            4: "adult",
-
-            5: "perfect",
-            6: "ultimate",
-            7: "ultra"
-        }
-    };
-
     GameFileManager.prototype.preparePathFinderData = async function(){
         //browser version loads two premade cache files to get its data
         if(isTSMode()){
