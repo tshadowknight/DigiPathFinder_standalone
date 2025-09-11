@@ -70,8 +70,8 @@ function GameFileManagerTS(){
     GameFileManagerTS.prototype.gameFilesPath = localStorage.getItem("DigiPathFinder_game_file_path_TS") || defaultGamePath;
 
     GameFileManagerTS.prototype.updateGameFilesPath = function(path){
-        this.gameFilesPath = path;
-		localStorage.setItem("DigiPathFinder_game_file_path_TS", path);
+        this.gameFilesPath = path || defaultGamePath;
+		localStorage.setItem("DigiPathFinder_game_file_path_TS", path || this.gameFilesPath);
     }
 
     var potentialLoadError = false;
@@ -176,14 +176,19 @@ function GameFileManagerTS(){
     }
 
     GameFileManagerTS.prototype.cachceDDSImages = async function(){
+        const convertedDir = pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked/images/converted");
+        if(!fs.existsSync(convertedDir)){
+            fs.mkdirSync(convertedDir);
+        }
         const digimonListData = await this.parseGameFile("main/digimon_status.mbe/00_digimon_status_data");
         DDSCache = {};
         for(let entry of digimonListData.data){
             const digimonId = entry[digimonListData.headerLookup["id"]];
-            await convertDDSImage(digimonId);//prepopulate cache
+            const data = await convertDDSImage(digimonId);//prepopulate cache
+            const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
+            fs.writeFileSync(pathLib.join(convertedDir, "/ui_chara_icon_"+imgId+".png"), data);
         }
-        fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/dds_cache.json'), JSON.stringify(DDSCache));
-        
+       //fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/dds_cache.json'), JSON.stringify(DDSCacheTS));
     }
 
     GameFileManagerTS.prototype.parseGameFile = function(file){

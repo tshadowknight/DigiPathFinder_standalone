@@ -298,69 +298,20 @@ async function convertDDSImage(digimonId){
 			responseType: 'arraybuffer'
 		}, async function (err, resp, data) {
 			if(!err){
-					/*
-						
-					var dds = parse_dds(data)
-					console.log(dds.format)  // 'dxt1'
-					console.log(dds.shape)   // [ width, height ]
-					console.log(dds.images)  // [ ... mipmap level data ... ]
-			
-					// get the compressed texture data for gl.compressedTexImage2D
-					
-					let imageInfo = dds.images[0];
-					let imageWidth = imageInfo.shape[0];
-					let imageHeight = imageInfo.shape[1];
-					let imageDataView = new DataView(data, imageInfo.offset, imageInfo.length);
-			
-					let rgbaData;
-					
-					let alignedWidth = Math.floor(imageWidth / 4) * 4;
-					let alignedHeight = Math.floor(imageHeight / 4) * 4;
-
-					if(dds.format){
-						rgbaData = decodeDXT(imageDataView, alignedWidth, alignedHeight, dds.format);
-					} else {
-						const buffer= Buffer.from(data)
-						
-						const header = buffer.slice(0, 128);
-						const headerInfo = DDSUtils.summarizeHeader(header);
-
-						let imageData = buffer.slice(128);
-						imageData = DDSUtils.correctFromDXGI(imageData, headerInfo.DXGIFormat);				
-
-						rgbaData = imageData;
-					}
-					var image = new Jimp(imageWidth, imageHeight, async function (err, image) {
-						image.bitmap.data = rgbaData;
-						let dataUrl = await image.getBase64Async(Jimp.AUTO);
-						targetCache[digimonId] = dataUrl;
-						resolve(dataUrl);
-						
-					});*/
-
-					/*ImageMagick.read(data, image => {
-						image.resize(100, 100);
-						image.blur(1, 5);
-						console.log(image.toString());
-
-						image.write(MagickFormat.Png, data => {
-							const base64String = Buffer.from(data).toString('base64');
-
-							const mimeType = 'image/png'; // adjust based on your output format
-							const dataUri = `data:${mimeType};base64,${base64String}`;
-							
-							resolve(dataUri);
-						});
-					});*/
+				
 					const bufferData = new Uint8Array(data);
 					ImageMagick.read(bufferData, image => {
+						image.quality = 50;
+						image.resize(64,64);
 						image.write(MagickFormat.Png, data => {
-							const base64String = Buffer.from(data).toString('base64');
+							/*const base64String = Buffer.from(data).toString('base64');
 
 							const mimeType = 'image/png'; // adjust based on your output format
 							const dataUri = `data:${mimeType};base64,${base64String}`;
+
+							targetCache[digimonId] = dataUri;*/
 							
-							resolve(dataUri);
+							resolve(data);
 						});
 						
 					});
@@ -378,12 +329,12 @@ async function setDDSImage(elem, digimonId){
 	let targetPath;
 	if(isTSMode()){
 		targetCache = DDSCacheTS;
-		targetPath = "./game_data_TS/unpacked/images/ui_chara_icon_";
+		targetPath = "./game_data_TS/unpacked/images/converted";
 	} else{
 		targetCache = DDSCache;
-		targetPath = "./game_data/unpacked/images/ui_chara_icon_";
+		targetPath = "./game_data/unpacked/images/converted";
 	}
-	if(isElectron()){
+	/*if(isElectron()){
 		
 		let imgData;
 		if(targetCache[digimonId]){
@@ -398,12 +349,12 @@ async function setDDSImage(elem, digimonId){
 		} else {
 			elem.style.display = "none";
 		}
-	} else {
+	} else {*/
 		//in web context use a pre-converted image
 		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-		elem.src = "./game_data/clean/images_unpacked/ui_chara_icon_"+imgId+".png";
+		elem.src = targetPath+"/ui_chara_icon_"+imgId+".png";
 		elem.style.display = "block";
-	}	
+	//}	
 }
 
 function createControls(){
@@ -853,7 +804,7 @@ function createOptions(){
 		});
 
 		elem.querySelector("#refresh_path").addEventListener("click", function(){
-			gameFileManager.updateGameFilesPath(this.value);
+			gameFileManager.updateGameFilesPath();
 			createOptions();
 			refreshWarnings();
 		});
@@ -865,7 +816,7 @@ function createOptions(){
 		});
 
 		elem.querySelector("#refresh_path_TS").addEventListener("click", function(){
-			gameFileManagerTS.updateGameFilesPath(this.value);
+			gameFileManagerTS.updateGameFilesPath();
 			createOptions();
 			refreshWarnings();
 		});
