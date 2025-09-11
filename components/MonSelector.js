@@ -282,7 +282,7 @@ MonSelector.prototype.showList = function(managedKeys){
                 if(targetContainer.querySelector(".icon") == null){//do not refresh entries that haven't gone out of render
                     let content = "";
                     content+="<div class='icon dex_img_container'>";
-                    content+="<img data-id='"+monId+"' class='dex_img'/>";
+                    content+="<img data-id='"+monId+"' class='dex_img "+(isTSMode() ? "TS" : "")+"'/>";
                     content+="</div>";
                 
                     content+="<div class='name'>";

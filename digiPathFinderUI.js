@@ -11,7 +11,42 @@ if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron'))
 	var GameFileManager = require('./GameFileManager');
 	var GameFileManagerTS = require('./GameFileManagerTS');
 	var fs_promise = require('fs').promises
+
+	var fs = require('fs');
+
+	const {
+		initializeImageMagick,
+		ImageMagick,
+		Magick,
+		MagickFormat,
+		Quantum,
+	} = require('@imagemagick/magick-wasm');
+
+	const wasmLocation = './node_modules/@imagemagick/magick-wasm/dist/magick.wasm';
+	const wasmBytes = fs.readFileSync(wasmLocation);
+	initializeImageMagick(wasmBytes).then(() => {
+		/*console.log(Magick.imageMagickVersion);
+		console.log('Delegates:', Magick.delegates);
+		console.log('Features:', Magick.features);
+		console.log('Quantum:', Quantum.depth);
+
+		console.log('');
+		ImageMagick.read('logo:', image => {
+			image.resize(100, 100);
+			image.blur(1, 5);
+			console.log(image.toString());
+
+			image.write(MagickFormat.Jpeg, data => {
+				console.log(data.length);
+			});
+		});*/
+		window.Magick = Magick;
+		window.ImageMagick = ImageMagick;
+		window.MagickFormat = MagickFormat;
+	});
 }
+
+
 
 const commonFieldTranslations = {    
         attribute: {
@@ -93,7 +128,7 @@ function showRoute(route){
 			pathContent+="<div class='digi_header flex-item flex-container'>";
 			
 			pathContent+="<div class='path_img_container'>";
-			pathContent+="<img class='path_img' class='flex-item' data-digimonid='"+route[i]+"'/>";
+			pathContent+="<img class='path_img "+(isTSMode() ? "TS" : "")+"' class='flex-item' data-digimonid='"+route[i]+"'/>";
 			pathContent+="</div>";
 			pathContent+="<div data-digimonid='"+route[i]+"' class='flex-item digi_name digi_name_placeholder'>";
 			//pathContent+=pathFinder.digiData[route[i]].name;
@@ -261,9 +296,9 @@ async function convertDDSImage(digimonId){
 		xhr({
 			uri: imagePath,
 			responseType: 'arraybuffer'
-		}, function (err, resp, data) {
+		}, async function (err, resp, data) {
 			if(!err){
-				
+					/*
 						
 					var dds = parse_dds(data)
 					console.log(dds.format)  // 'dxt1'
@@ -300,6 +335,33 @@ async function convertDDSImage(digimonId){
 						let dataUrl = await image.getBase64Async(Jimp.AUTO);
 						targetCache[digimonId] = dataUrl;
 						resolve(dataUrl);
+						
+					});*/
+
+					/*ImageMagick.read(data, image => {
+						image.resize(100, 100);
+						image.blur(1, 5);
+						console.log(image.toString());
+
+						image.write(MagickFormat.Png, data => {
+							const base64String = Buffer.from(data).toString('base64');
+
+							const mimeType = 'image/png'; // adjust based on your output format
+							const dataUri = `data:${mimeType};base64,${base64String}`;
+							
+							resolve(dataUri);
+						});
+					});*/
+					const bufferData = new Uint8Array(data);
+					ImageMagick.read(bufferData, image => {
+						image.write(MagickFormat.Png, data => {
+							const base64String = Buffer.from(data).toString('base64');
+
+							const mimeType = 'image/png'; // adjust based on your output format
+							const dataUri = `data:${mimeType};base64,${base64String}`;
+							
+							resolve(dataUri);
+						});
 						
 					});
 				
@@ -364,7 +426,7 @@ function createControls(){
 	content+="</div>";	
 
 	content+="<div class='digi_icon_container'>";
-	content+="<img class='controls_digi_icon digi_icon' id='start_digi_icon' class='flex-item'/>";
+	content+="<img class='controls_digi_icon digi_icon "+(isTSMode() ? "TS" : "")+"' id='start_digi_icon' class='flex-item'/>";
 	content+="</div>";
 	content+="</div>";
 	content+="<div class='controls_arrow' ><i class='fa fa-chevron-right' aria-hidden='true' style='font-size:30px;'></i></div>";
@@ -380,7 +442,7 @@ function createControls(){
 	content+="<div class='' id='end_digi'>";		
 	content+="</div>";	
 	content+="<div class='digi_icon_container'>";
-	content+="<img class='controls_digi_icon digi_icon' id='end_digi_icon' class='flex-item'/>";
+	content+="<img class='controls_digi_icon digi_icon "+(isTSMode() ? "TS" : "")+"' id='end_digi_icon' class='flex-item'/>";
 	content+="</div>";
 	content+="</div>";
 	content+="</div>";

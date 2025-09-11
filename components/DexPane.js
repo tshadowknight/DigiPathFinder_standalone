@@ -69,7 +69,7 @@ DexPane.prototype.show = function(context){
     content+="<div class='row name_info'>";
     content+="<div class='banner'>";
     content+="<div class='icon dex_img_container'>";
-    content+="<img data-id='"+monInfo.id+"' class='dex_img'/>";
+    content+="<img data-id='"+monInfo.id+"' class='dex_img "+(isTSMode() ? "TS" : "")+"'/>";
     content+="</div>";
     
     content+="<div class='name'>";
@@ -507,7 +507,7 @@ DexPane.prototype.createEvosBlock = function(monInfo){
 
         content+="<div class='row'>";
         content+="<div class='icon dex_img_container'>";
-        content+="<img data-id='"+monId+"' class='dex_img'/>";
+        content+="<img data-id='"+monId+"' class='dex_img "+(isTSMode() ? "TS" : "")+"'/>";
         content+="</div>";
         
         content+="<div class='name'>";
@@ -544,7 +544,7 @@ DexPane.prototype.createEvosBlock = function(monInfo){
 
         content+="<div class='row'>";
         content+="<div class='icon dex_img_container'>";
-        content+="<img data-id='"+monId+"' class='dex_img'/>";
+        content+="<img data-id='"+monId+"' class='dex_img "+(isTSMode() ? "TS" : "")+"'/>";
         content+="</div>";
         
         content+="<div class='name'>";
