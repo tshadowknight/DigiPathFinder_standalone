@@ -10,9 +10,28 @@ rem main monster db
 rem jpn strings
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\digimon_profile.mbe ..\..\game_data_TS\unpacked\txt_jpn\
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\char_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\skill_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\jogress_skill_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\skill_explanation.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\skill_auto_explanation.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\generation_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\digimon_type.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\element.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\personality_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\item_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
 
-rem jpn strings
+rem eng strings
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\digimon_profile.mbe ..\..\game_data_TS\unpacked\txt_eng\
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\char_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\skill_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\jogress_skill_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\skill_explanation.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\skill_auto_explanation.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\generation_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\digimon_type.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\element.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\personality_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\item_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
+
 
 xcopy /s /Y ..\..\game_data_TS\packed\main\images\ui_chara* ..\..\game_data_TS\unpacked\images\

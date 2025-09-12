@@ -49,34 +49,76 @@ if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron'))
 
 
 const commonFieldTranslations = {    
-        attribute: {
-            0: "neutral",
-            1: "fire",
-            2: "water",
-            3: "plant",
-            4: "electric",
-            5: "earth",
-            6: "wind",
-            7: "light",
-            8: "dark"
-        },
-        type: {
-            0: "free",
-            1: "virus", 
-            2: "vaccine",
-            3: "data"
-        },
-        level: {
-            1: "training_1",
-            2: "training_2",
-            3: "child",
-            4: "adult",
+	attribute: {
+		0: "neutral",
+		1: "fire",
+		2: "water",
+		3: "plant",
+		4: "electric",
+		5: "earth",
+		6: "wind",
+		7: "light",
+		8: "dark",
+	},
+	type: {
+		0: "free",
+		1: "virus", 
+		2: "vaccine",
+		3: "data"
+	},
+	level: {
+		1: "training_1",
+		2: "training_2",
+		3: "child",
+		4: "adult",
 
-            5: "perfect",
-            6: "ultimate",
-            7: "ultra"
-        }
-    };
+		5: "perfect",
+		6: "ultimate",
+		7: "ultra"
+	}
+};
+
+const commonFieldTranslationsTS = {    
+    attribute: {
+        "0": "None",
+        "1": "Fire",
+        "2": "Ice",
+        "3": "Plant",
+        "4": "Water",
+        "5": "Electricity",
+        "6": "Steel",
+        "7": "Wind",
+        "8": "Earth",
+        "9": "Light",
+        "10": "Dark"
+    },
+    type: {
+        "0": "Vaccine",
+        "1": "Data",
+        "2": "Virus",
+        "3": "Free",
+        "4": "Variable",
+        "5": "Unknown",
+        "6": "No Data"
+    },
+    level: {
+      //  "0": "-",
+        "1": "In-Training I",
+        "2": "In-Training II",
+        "3": "Rookie",
+        "4": "Champion",
+        "5": "Ultimate",
+        "6": "Mega",
+        "7": "Mega +",
+        "8": "Armor",
+        "9": "Armor",
+        "10": "Hybrid",
+        //"11": "Hybrid",
+        //"12": "Hybrid",
+        //"13": "Hybrid",
+        //"14": "Cannot Train"
+    }
+};
 
 const dexPane = new DexPane("details_pane");
 
@@ -197,7 +239,7 @@ function showRoute(route){
 		if(pathFinder.currentLookupMode == "digi"){
 			findDigiRoute();
 		} else {
-			findSkillRoute();
+			findSkillRoute(source);
 		}				
 	});
 	$(".set_banned_button").on("click", function(){		
@@ -538,12 +580,12 @@ var path;
 var digiWorker;
 var pathsTried = 0;
 var totalPaths = 1;
-function findSkillRoute(){
+function findSkillRoute(source, target){
 	$("#path_container_content").fadeOut("fast");
 	overlayTimer = (new Date).getTime();
 	$("#overlay").fadeIn("fast");
-	var source = currentPathSelections["start_digi"];
-	var target = currentPathSelections["end_digi"];
+	source = source || currentPathSelections["start_digi"];
+	target = target || currentPathSelections["end_digi"];
 	digiWorker = new Worker('digiPathWorker.js');
 	digiWorker.postMessage([pathFinder.getParams(), source, target, cachedGameData]);
 	digiWorker.onmessage = function(e) {
@@ -980,6 +1022,8 @@ function initPathFinder(forceReload){
 				localizationData[locale].supportSkillDesc = gameData.supportSkillDescriptions?.[locale] || {};
 				localizationData[locale].sigMoves = gameData.sigMoves?.[locale] || {};
 				localizationData[locale].fieldNames = gameData.fieldNames?.[locale] || {};
+				localizationData[locale].personalityNames = gameData.personalityNames?.[locale] || {};				
+				localizationData[locale].itemNames = gameData.itemNames?.[locale] || {};	
 			}	
 
 

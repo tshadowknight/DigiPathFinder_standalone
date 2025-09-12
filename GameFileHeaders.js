@@ -300,13 +300,59 @@ const hardDefinedHeaders = {
   const hardDefinedHeadersTS = {
     "main/digimon_status.mbe/00_digimon_status_data.csv": {
       "id": 0,
-      "strKey": 2
+      "strKey": 2,
+      //signature skills
+      "signatureSkillId": 72,
+      "signatureSkillId2": 75,
+      //generic skills
+      "gSkill1Id": 108,
+      "gSkill1Level": 110,
+      "gSkill2Id": 111,
+      "gSkill2Level": 113,
+      "gSkill3Id": 114,
+      "gSkill3Level": 116,
+      "gSkill4Id": 117,
+      "gSkill4Level": 119,
+      //base stats
+      "stageId": 4,
+      "typeId": 6,
+      //"elementId":??? 
+      "baseHP": 64,
+      "baseSP": 65,
+      "baseATK": 66,
+      "baseDEF": 67,
+      "baseINT": 68,
+      "baseSPI": 69,
+      "baseSPD": 70,
+
     },
     "main/evolution.mbe/01_evolution_to.csv": {
       "idx": 0,
       "idFrom": 1,
       "idTo": 3
     },
+    "main/evolution.mbe/00_evolution_condition.csv": {
+      "dbId": 0,
+      "tamerLevel": 2,
+      "HP": 4,
+      "SP": 5,
+      "ATK": 6,
+      "DEF": 7,
+      "INT": 8,
+      "SPI": 9,
+      "SPD": 10,
+      "unknown1": 11,
+      "skillCountValor": 13,
+      "skillCountPhilantropy": 14,
+      "skillCountAmicable": 15,
+      "skillCountWisdom": 16,
+      //other
+      "needsItem": 22,
+      "jogressDbIdA": 24,
+      "jogressPersonalityA": 26,
+      "jogressDbIdB": 27,
+      "jogressPersonalityB": 29
+    },   
     "txt_eng/char_name.mbe/00_Sheet1.csv": {
       "strKey": 0,
       "value": 1
@@ -322,5 +368,82 @@ const hardDefinedHeaders = {
     "txt_jpn/digimon_profile.mbe/00_Sheet1.csv": {
       "strKey": 0,
       "value": 1
-    }
+    },
+    "txt_eng/skill_name.mbe/00_Sheet1.csv": {
+      "skillId": 0,
+      "value": 1
+    },
+    "txt_jpn/skill_name.mbe/00_Sheet1.csv": {
+      "skillId": 0,
+      "value": 1
+    },
+    "main/battle_skill.mbe/00_battle_skill_list.csv": {
+      "skillId": 0,
+      "power": 23
+    },
+    "txt_eng/jogress_skill_name.mbe/00_Sheet1.csv": {
+      "skillId": 0,
+      "value": 1
+    },
+    "txt_jpn/jogress_skill_name.mbe/00_Sheet1.csv": {
+      "skillId": 0,
+      "value": 1
+    }, 
+    "txt_eng/skill_explanation.mbe/00_Sheet1.csv": {
+      "skillId": 0,
+      "value": 1
+    }, 
+    "txt_jpn/skill_explanation.mbe/00_Sheet1.csv": {
+      "skillId": 0,
+      "value": 1
+    }, 
+    "txt_eng/skill_auto_explanation.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_jpn/skill_auto_explanation.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_eng/generation_name.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_jpn/generation_name.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_eng/digimon_type.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_jpn/digimon_type.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_eng/element.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_jpn/element.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_eng/personality_name.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_jpn/personality_name.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_eng/item_name.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_jpn/item_name.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    },      
+    
   }

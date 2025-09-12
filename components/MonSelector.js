@@ -6,22 +6,50 @@ if(isElectron()){
 function MonSelector(containerId, callbacks, monData){
     this._containerId = containerId;
     this._monData = monData;
-    this._filters = {
-        text: "",
-        types: {
-            "free": true,
-            "virus": true, 
-            "vaccine": true,
-            "data": true
-        }, 
-        levels: {
-            "training_1": true,
-            "training_2": true,
-            "child": true,
-            "adult": true,
-            "perfect": true,
-            "ultimate": true,
-            "ultra": true,
+     if(isTSMode()){
+        this._filters = {
+            text: "",
+            types: {
+                "Vaccine": true,
+                "Data": true,
+                "Virus": true,
+                "Free": true,
+                "Variable": true,
+                "Unknown": true,
+                "No Data": true
+            }, 
+            levels: {
+                "-": true,
+                "In-Training I": true,
+                "In-Training II": true,
+                "Rookie": true,
+                "Champion": true,
+                "Ultimate": true,
+                "Mega": true,
+                "Mega +": true,
+                "Armor": true,
+                "Hybrid": true,
+                "Cannot Train": true
+            }
+        }
+    } else {
+        this._filters = {
+            text: "",
+            types: {
+                "free": true,
+                "virus": true, 
+                "vaccine": true,
+                "data": true
+            }, 
+            levels: {
+                "training_1": true,
+                "training_2": true,
+                "child": true,
+                "adult": true,
+                "perfect": true,
+                "ultimate": true,
+                "ultra": true,
+            }
         }
     }
     this._callbacks = callbacks;
@@ -63,13 +91,27 @@ MonSelector.prototype.show = function(selectedId){
     
     content+="</div>";
     content+="<div class='options'>";
-    for(let id in commonFieldTranslations.type){
-        let typeId = commonFieldTranslations.type[id];
+
+    let targetFieldTranslations;
+    let typeStrings;
+    let levelStrings;
+    if(isTSMode()){
+        targetFieldTranslations = commonFieldTranslationsTS;
+        typeStrings = localizationData[currentLocale].app.typesTS;
+        levelStrings = localizationData[currentLocale].app.levelsTS;
+    } else {
+        targetFieldTranslations = commonFieldTranslations;
+        typeStrings = localizationData[currentLocale].app.types;
+        levelStrings = localizationData[currentLocale].app.levels;
+    }
+
+    for(let id in targetFieldTranslations.type){
+        let typeId = targetFieldTranslations.type[id];
         content+="<div class='filter_entry'>";
         content+="<div class='filter_label'>";
-        content+=localizationData[currentLocale].app.types[typeId];
+        content+=typeStrings[typeId];
         content+="</div>";
-        content+="<input data-type='types' data-typeid='"+typeId+"' value='"+localizationData[currentLocale].app.types[typeId]+"' type=checkbox "+(_this._filters.types[typeId] ? "checked" : "")+"></input>";
+        content+="<input data-type='types' data-typeid='"+typeId+"' value='"+typeStrings[typeId]+"' type=checkbox "+(_this._filters.types[typeId] ? "checked" : "")+"></input>";
         content+="</div>";
     }  
     content+="</div>";
@@ -87,13 +129,13 @@ MonSelector.prototype.show = function(selectedId){
 
     //levels filter
     content+="<div class='options'>";
-    for(let id in commonFieldTranslations.level){
-        let levelId = commonFieldTranslations.level[id];
+    for(let id in targetFieldTranslations.level){
+        let levelId = targetFieldTranslations.level[id];
         content+="<div class='filter_entry'>";
         content+="<div class='filter_label'>";
-        content+=localizationData[currentLocale].app.levels[levelId];
+        content+=levelStrings[levelId];
         content+="</div>";
-        content+="<input data-type='levels' data-typeid='"+levelId+"' value='"+localizationData[currentLocale].app.levels[levelId]+"' type=checkbox "+(_this._filters.levels[levelId] ? "checked" : "")+"></input>";
+        content+="<input data-type='levels' data-typeid='"+levelId+"' value='"+levelStrings[levelId]+"' type=checkbox "+(_this._filters.levels[levelId] ? "checked" : "")+"></input>";
         content+="</div>";
     }  
     content+="</div>";
@@ -134,7 +176,10 @@ MonSelector.prototype.show = function(selectedId){
     
     const selectorElem = contentContainer.querySelector(".mon_selector");
     if(selectedId){
-        selectorElem.querySelector(".entry[data-id='"+selectedId+"']").scrollIntoView();
+        const targetElem = selectorElem.querySelector(".entry[data-id='"+selectedId+"']");
+        if(targetElem){
+            targetElem.scrollIntoView();
+        }       
     }
 
     const filterEntries = contentContainer.querySelectorAll(".filter_entry input");

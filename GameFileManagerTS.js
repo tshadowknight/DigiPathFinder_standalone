@@ -250,6 +250,9 @@ function GameFileManagerTS(){
         }
 
         let digimonNames = {};
+        let moveNames = {};
+        let sigMoveNames = {};
+        let moveDescriptions = {};
         const digimonListData = await this.parseGameFile("main/digimon_status.mbe/00_digimon_status_data");
         let validDigimon = {};
 
@@ -258,11 +261,23 @@ function GameFileManagerTS(){
                 locale: "English", 
                 names: await this.parseGameFile("txt_eng/char_name.mbe/00_Sheet1"), 
                 descriptions: await this.parseGameFile("txt_eng/digimon_profile.mbe/00_Sheet1"), 
+                moveNames: await this.parseGameFile("txt_eng/skill_name.mbe/00_Sheet1"), 
+                jogressMoveNames: await this.parseGameFile("txt_eng/jogress_skill_name.mbe/00_Sheet1"), 
+                moveDescriptions: await this.parseGameFile("txt_eng/skill_explanation.mbe/00_Sheet1"), 
+                autoMoveDescriptions: await this.parseGameFile("txt_eng/skill_auto_explanation.mbe/00_Sheet1"),  
+                personalityNames: await this.parseGameFile("txt_eng/personality_name.mbe/00_Sheet1"),  
+                itemNames: await this.parseGameFile("txt_eng/item_name.mbe/00_Sheet1"),  
             },
             {
                 locale: "Japanese", 
                 names: await this.parseGameFile("txt_jpn/char_name.mbe/00_Sheet1"),
                 descriptions: await this.parseGameFile("txt_jpn/digimon_profile.mbe/00_Sheet1"), 
+                moveNames: await this.parseGameFile("txt_jpn/skill_name.mbe/00_Sheet1"), 
+                jogressMoveNames: await this.parseGameFile("txt_jpn/jogress_skill_name.mbe/00_Sheet1"), 
+                moveDescriptions: await this.parseGameFile("txt_jpn/skill_explanation.mbe/00_Sheet1"), 
+                autoMoveDescriptions: await this.parseGameFile("txt_jpn/skill_auto_explanation.mbe/00_Sheet1"),   
+                personalityNames: await this.parseGameFile("txt_eng/personality_name.mbe/00_Sheet1"),  
+                itemNames: await this.parseGameFile("txt_eng/item_name.mbe/00_Sheet1"),  
             }
         ];
         
@@ -298,8 +313,15 @@ function GameFileManagerTS(){
             evolutions[fromId].next.push(toId);
             evolutions[toId].prev.push(fromId);
         }
-        
+        let skillTextIds = {};
         let digimonDescriptions = {};
+        let personalityNames = {};
+        let itemNames = {};
+
+        function substituteDescriptionText(txt){
+            return txt.replace(/\{.*?\}/g, "");
+        }
+
         for(let entry of localizedStrings){
             const locale = entry.locale;
             if(!digimonNames[locale]){
@@ -319,7 +341,60 @@ function GameFileManagerTS(){
                 let dbId = parseInt(strKey.replace(/^digimon_/, "").replace(/_profile$/, ""));
                 digimonDescriptions[locale][dbId] = escapeHTML(row[entry.descriptions.headerLookup["value"]]);		
             }
+
+            if(!moveNames[locale]){
+                moveNames[locale] = {};
+            }
+            if(!sigMoveNames[locale]){
+                sigMoveNames[locale] = {};
+            }
+            for(let row of entry.moveNames.data){
+                const skillId = row[entry.moveNames.headerLookup["skillId"]];        
+                skillTextIds[skillId] = skillId;//TS data does not need an additional translation layer   
+                if(skillId.match(/^3.*/)){//only regular skills
+                    moveNames[locale][skillId] = escapeHTML(row[entry.moveNames.headerLookup["value"]]);
+                }                        		
+                sigMoveNames[locale][skillId] = escapeHTML(row[entry.moveNames.headerLookup["value"]]);	                
+            }
+
+            for(let row of entry.jogressMoveNames.data){
+                const skillId = row[entry.jogressMoveNames.headerLookup["skillId"]];        
+                skillTextIds[skillId] = skillId;//TS data does not need an additional translation layer                         		
+                sigMoveNames[locale][skillId] = escapeHTML(row[entry.jogressMoveNames.headerLookup["value"]]);	                
+            }
+
+            if(!moveDescriptions[locale]){
+                moveDescriptions[locale] = {};
+            }
+
+            for(let row of entry.moveDescriptions.data){
+                const skillId = row[entry.moveNames.headerLookup["skillId"]];   
+                moveDescriptions[locale][skillId] = escapeHTML(substituteDescriptionText(row[entry.moveDescriptions.headerLookup["value"]]));	                
+            }
+
+            if(!personalityNames[locale]){
+                personalityNames[locale] = {};
+            }
+            for(let row of entry.personalityNames.data){
+                const id = row[entry.personalityNames.headerLookup["id"]];        
+                personalityNames[locale][id] = row[entry.personalityNames.headerLookup["value"]];       
+            }
+
+            if(!itemNames[locale]){
+                itemNames[locale] = {};
+            }
+            for(let row of entry.itemNames.data){
+                const id = row[entry.itemNames.headerLookup["id"]];        
+                itemNames[locale][id] = row[entry.itemNames.headerLookup["value"]];       
+            }
         }
+
+
+        let movesLearned = {};
+        let movesLearnedDetail = {};
+        let sigMoves = {};
+        let baseStats = {};
+        let evoConditions = {};
 
         for(let entry of digimonListData.data){
             const dbId = entry[digimonListData.headerLookup["id"]];
@@ -331,8 +406,89 @@ function GameFileManagerTS(){
                     digimonNames[locale][dbId] = escapeHTML(strKey.replace("char_", ""));
                 }	
             }
+
+            if(!movesLearned[dbId]){
+                movesLearned[dbId] = [];
+            }
+            if(!movesLearnedDetail[dbId]){
+                movesLearnedDetail[dbId] = {
+                    inherited: {},
+                    signature: {}
+                };
+            }
+
+            const signatureMoveId =  entry[digimonListData.headerLookup["signatureSkillId"]];
+            if(signatureMoveId != 0){
+                movesLearnedDetail[dbId].signature[signatureMoveId] = {level: 1};
+            }
             
+
+            const signatureMoveId2 =  entry[digimonListData.headerLookup["signatureSkillId2"]];
+            if(signatureMoveId2 != 0){
+                movesLearnedDetail[dbId].signature[signatureMoveId2] = {level: 1};
+            }  
+        
+ 
+            for(let i = 0; i < 4; i++){
+                const moveId = entry[digimonListData.headerLookup["gSkill"+(i+1)+"Id"]];
+                const learnLevel = entry[digimonListData.headerLookup["gSkill"+(i+1)+"Level"]];
+                if(moveId != 0){
+                    movesLearnedDetail[dbId].inherited[moveId] = {level: learnLevel};
+                    movesLearned[dbId].push(moveId);
+                }                
+            }
+               
+            if(!baseStats[dbId]){
+                baseStats[dbId] = {};
+            }
+
+          
+            baseStats[dbId].level = commonFieldTranslationsTS.level[escapeHTML(entry[digimonListData.headerLookup["stageId"]])];
+
+            baseStats[dbId].type = commonFieldTranslationsTS.type[escapeHTML(entry[digimonListData.headerLookup["typeId"]])];
+
+            baseStats[dbId].baseHP = escapeHTML(entry[digimonListData.headerLookup["baseHP"]]);
+            baseStats[dbId].baseSP = escapeHTML(entry[digimonListData.headerLookup["baseSP"]]);
+            baseStats[dbId].baseATK = escapeHTML(entry[digimonListData.headerLookup["baseATK"]]);
+            baseStats[dbId].baseDEF = escapeHTML(entry[digimonListData.headerLookup["baseDEF"]]);
+            baseStats[dbId].baseINT = escapeHTML(entry[digimonListData.headerLookup["baseINT"]]);
+            baseStats[dbId].baseSPI = escapeHTML(entry[digimonListData.headerLookup["baseSPI"]]);
+            baseStats[dbId].baseSPD = escapeHTML(entry[digimonListData.headerLookup["baseSPD"]]);
+
+            
+
         }
+
+        const evolutionConditionData = await this.parseGameFile("main/evolution.mbe/00_evolution_condition");
+        for(let entry of evolutionConditionData.data){
+            const dbId = entry[evolutionConditionData.headerLookup["dbId"]];
+            if(!evoConditions[dbId]){
+                evoConditions[dbId] = {};
+            }
+
+            evoConditions[dbId].TRank = escapeHTML(entry[evolutionConditionData.headerLookup["tamerLevel"]]);
+            evoConditions[dbId].HP = escapeHTML(entry[evolutionConditionData.headerLookup["HP"]]);
+            evoConditions[dbId].SP = escapeHTML(entry[evolutionConditionData.headerLookup["SP"]]);
+            evoConditions[dbId].ATK = escapeHTML(entry[evolutionConditionData.headerLookup["ATK"]]);
+            evoConditions[dbId].DEF = escapeHTML(entry[evolutionConditionData.headerLookup["DEF"]]);
+            evoConditions[dbId].INT = escapeHTML(entry[evolutionConditionData.headerLookup["INT"]]);
+            evoConditions[dbId].SPD = escapeHTML(entry[evolutionConditionData.headerLookup["SPD"]]);
+
+            evoConditions[dbId].skillCountValor = escapeHTML(entry[evolutionConditionData.headerLookup["skillCountValor"]]);
+            evoConditions[dbId].skillCountPhilantropy = escapeHTML(entry[evolutionConditionData.headerLookup["skillCountPhilantropy"]]);
+            evoConditions[dbId].skillCountAmicable = escapeHTML(entry[evolutionConditionData.headerLookup["skillCountAmicable"]]);
+            evoConditions[dbId].skillCountWisdom = escapeHTML(entry[evolutionConditionData.headerLookup["skillCountWisdom"]]);
+
+            evoConditions[dbId].needsItem = escapeHTML(entry[evolutionConditionData.headerLookup["needsItem"]]);
+
+            evoConditions[dbId].jogressIdA = escapeHTML(entry[evolutionConditionData.headerLookup["jogressDbIdA"]]);
+            evoConditions[dbId].jogressPersonalityA = escapeHTML(entry[evolutionConditionData.headerLookup["jogressPersonalityA"]]);
+
+            evoConditions[dbId].jogressIdB = escapeHTML(entry[evolutionConditionData.headerLookup["jogressDbIdB"]]);
+            evoConditions[dbId].jogressPersonalityB = escapeHTML(entry[evolutionConditionData.headerLookup["jogressPersonalityB"]]);
+        }
+
+        
 
         /*
         
@@ -349,51 +505,7 @@ function GameFileManagerTS(){
 
         let movesAvailable = {};
         let moveNames = {};
-        let movesLearned = {};
-        let movesLearnedDetail = {};
-        let sigMoves = {};
-        let baseStats = {};
-        const baseStatFields = ["memoryUse","growthType","unk3","baseHP","baseSP","baseATK","baseDEF","baseINT","baseSPD","maxLevel","equipSlots","supportSkill", "profile"];
-        const farmData = await this.parseGameFile("digimon_farm_para.mbe/digimon");
-        for(let entry of farmData.data){
-            const digimonId = escapeHTML(entry[farmData.headerLookup["id"]]);
-            if(!movesLearned[digimonId]){
-                movesLearned[digimonId] = [];
-            }
-            if(!movesLearnedDetail[digimonId]){
-                movesLearnedDetail[digimonId] = {
-                    inherited: {},
-                    signature: {}
-                };
-            }
-            for(let i = 1; i <=6 ; i++){
-                let moveId = escapeHTML(entry[farmData.headerLookup["move"+i]]);
-                let moveLevel = escapeHTML(entry[farmData.headerLookup["move"+i+"Level"]]);
-                if(moveId != 0){
-                    movesAvailable[moveId] = true;
-                    movesLearned[digimonId].push(moveId);
-
-                    movesLearnedDetail[digimonId].inherited[moveId] = {level: moveLevel};
-                }
-            }
-
-            for(let i = 1; i <=2 ; i++){
-                let moveId = escapeHTML(entry[farmData.headerLookup["sMove"+i]]);
-                let moveLevel = escapeHTML(entry[farmData.headerLookup["sMove"+i+"Level"]]);
-                if(moveId != 0){
-                    movesLearnedDetail[digimonId].signature[moveId] = {level: moveLevel};
-                }
-            }
-
-            if(!baseStats[digimonId]){
-                baseStats[digimonId] = {};
-            }
-            for(let field of baseStatFields){
-                baseStats[digimonId][field] =  escapeHTML(entry[farmData.headerLookup[field]]);
-            }
-
-            
-        }
+        
 
         
 
@@ -690,6 +802,9 @@ function GameFileManagerTS(){
             return 0;	
         }
 */  
+
+    
+
         let digimonToEncounters = {};
         let digimonToEncountersHame = {};
         let digiData = {};
@@ -700,11 +815,11 @@ function GameFileManagerTS(){
                 digiData[digimonId] = {
                     id: digimonId,
                     name: digimonNames["English"][digimonId] || placeHolderNameLookup[digimonId] || "",
-                    moves: [],//movesLearned[digimonId] || [],
+                    moves: movesLearned[digimonId] || [],
                     neighBours: evolutions[digimonId] || {},
-                    baseStats: {}, //baseStats[digimonId] || {},
-                    moveDetails: {},//movesLearnedDetail[digimonId] || {},
-                    conditions: {},//evoConditions[digimonId] || {},
+                    baseStats: baseStats[digimonId] || {},
+                    moveDetails: movesLearnedDetail[digimonId] || {},
+                    conditions: evoConditions[digimonId] || {},
                 /*    maxBaseStats: {//used for checking difficult evolutions
                         "HP": getStatValueAtLevel(digimonId, levellUpGrowths, "HP", maxLevel),
                         "SP": getStatValueAtLevel(digimonId, levellUpGrowths, "SP", maxLevel),
@@ -722,14 +837,16 @@ function GameFileManagerTS(){
             digiData: digiData, 
             //levellUpGrowths: levellUpGrowths, 
             //fieldNames: fieldNames, 
-           // moveNames: moveNames, 
-           // sigMoves: moveNamesFull, 
-           // moveDescriptions: moveDescriptions, 
+            moveNames: moveNames, 
+            sigMoves: sigMoveNames, 
+            moveDescriptions: moveDescriptions, 
             digimonNames: digimonNames, 
             digimonDescriptions: digimonDescriptions, 
            // supportSkillNames: supportSkillNames, 
            // supportSkillDescriptions: supportSkillDescriptions,
-           // skillTextIds: skillTextIds
+            skillTextIds: skillTextIds,
+            personalityNames: personalityNames,
+            itemNames: itemNames
         };
     }
 

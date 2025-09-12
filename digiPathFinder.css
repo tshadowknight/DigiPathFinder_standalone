@@ -1208,6 +1208,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	display: flex;
 	align-items: center;
 	width: 44%;
+	text-align: left;
 }
 
 .row.filter .filter_entry .label{

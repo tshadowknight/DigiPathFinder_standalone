@@ -93,33 +93,63 @@ DexPane.prototype.show = function(context){
 
     content+="<div class='name_desc'>";
     
+    let listedAttributes;
+    if(isTSMode()){
+        listedAttributes = [
+            {
+                item: "level",
+                label: localizationData[currentLocale].app.DEX_general_level,
+                localizer: localizationData[currentLocale].app.levelsTS
+            },
+            {
+                item: "type",
+                label: localizationData[currentLocale].app.DEX_general_type,
+                localizer: localizationData[currentLocale].app.typesTS
+            },
+            /*{
+                item: "attribute",
+                label: localizationData[currentLocale].app.DEX_general_attribute,
+                localizer: localizationData[currentLocale].app.attributesTS
+            },
+            {
+                item: "memoryUse",
+                label: localizationData[currentLocale].app.DEX_general_memoryUse
+            },
+            {
+                item: "equipSlots",
+                label: localizationData[currentLocale].app.DEX_general_equipSlots
+            },   */     
 
-    const listedAttributes = [
-        {
-            item: "level",
-            label: localizationData[currentLocale].app.DEX_general_level,
-            localizer: localizationData[currentLocale].app.levels
-        },
-        {
-            item: "type",
-            label: localizationData[currentLocale].app.DEX_general_type,
-            localizer: localizationData[currentLocale].app.types
-        },
-        {
-            item: "attribute",
-            label: localizationData[currentLocale].app.DEX_general_attribute,
-            localizer: localizationData[currentLocale].app.attributes
-        },
-        {
-            item: "memoryUse",
-            label: localizationData[currentLocale].app.DEX_general_memoryUse
-        },
-        {
-            item: "equipSlots",
-            label: localizationData[currentLocale].app.DEX_general_equipSlots
-        },        
+        ];
+    } else {    
+        listedAttributes = [
+            {
+                item: "level",
+                label: localizationData[currentLocale].app.DEX_general_level,
+                localizer: localizationData[currentLocale].app.levels
+            },
+            {
+                item: "type",
+                label: localizationData[currentLocale].app.DEX_general_type,
+                localizer: localizationData[currentLocale].app.types
+            },
+            {
+                item: "attribute",
+                label: localizationData[currentLocale].app.DEX_general_attribute,
+                localizer: localizationData[currentLocale].app.attributes
+            },
+            {
+                item: "memoryUse",
+                label: localizationData[currentLocale].app.DEX_general_memoryUse
+            },
+            {
+                item: "equipSlots",
+                label: localizationData[currentLocale].app.DEX_general_equipSlots
+            },        
 
-    ];
+        ];
+    }
+   
     let tableContent = [];
     for(let attr of listedAttributes){
         let value = monInfo.baseStats[attr.item];
@@ -132,21 +162,26 @@ DexPane.prototype.show = function(context){
     content+=this.arrayToTableContent(tableContent, true);
     content+="</table>";
 
-    content+="<div class='section_sub_header'>";
-    
-    content+=localizationData[currentLocale].app.DEX_general_support_skill;
-    content+="</div>";
+    if(!isTSMode()){
 
-    content+="<div class='support_skill_container'>";
-    content+="<div class='row'>";
-    content+="<div class='label'>";
-    content+=localizationData[currentLocale].supportSkills[monInfo.baseStats.supportSkill];
-    content+="</div>";
-    content+="<div class='value'>";
-    content+=localizationData[currentLocale].supportSkillDesc[monInfo.baseStats.supportSkill];
-    content+="</div>";
-    content+="</div>";
-    content+="</div>";
+        content+="<div class='section_sub_header'>";
+        
+        content+=localizationData[currentLocale].app.DEX_general_support_skill;
+        content+="</div>";
+
+    
+        content+="<div class='support_skill_container'>";
+        content+="<div class='row'>";
+        content+="<div class='label'>";
+        content+=localizationData[currentLocale].supportSkills[monInfo.baseStats.supportSkill];
+        content+="</div>";
+        content+="<div class='value'>";
+        content+=localizationData[currentLocale].supportSkillDesc[monInfo.baseStats.supportSkill];
+        content+="</div>";
+        content+="</div>";
+        content+="</div>";
+    }
+    
 
     content+="<div class='section_sub_header'>";
     
@@ -170,7 +205,10 @@ DexPane.prototype.show = function(context){
 
     content+=this.createEvosBlock(monInfo);
 
-    content+=this.createEncountersBlock(monInfo);
+    if(!isTSMode()){
+        content+=this.createEncountersBlock(monInfo);
+    }
+    
 
     
 
@@ -258,45 +296,68 @@ DexPane.prototype.createStatsBlock = function(monInfo){
     stats.push( {item: "baseSPD", label:localizationData[currentLocale].app.DEX_label_baseSPD});
    
     
-    content+="<div class='row stats'>";
-    content+="<table class='stats level_up'>";   
+    
 
 
     let tableContent = [];
-    tableContent.push(["", localizationData[currentLocale].app.DEX_label_lv1,localizationData[currentLocale].app.DEX_label_lv50, localizationData[currentLocale].app.DEX_label_lv99]);
-
-    function getStatValueAtLevel(stat, level){
-        try {
-            let baseStatValue = monInfo.baseStats[stat.item];
-            let growthType = monInfo.baseStats.growthType;
-            let growthTable = getGrowthCurveInfo()[growthType];
-            let growthAmount = growthTable[stat.item.replace("base", "")]//hacky!
-            statValue = Math.floor(baseStatValue * 1 + (growthAmount * (level - 1)));
+    if(isTSMode()){
+        content+="<div class='section_sub_header'>";
     
-            statValue/=100;
-            if(stat.item == "baseHP"){  
-                statValue = Math.floor(statValue);
-                statValue*=10;
-            } 
-            return Math.floor(statValue);
-        } catch(e){
+        content+=localizationData[currentLocale].app.DEX_stats_base;
+        content+="</div>";
 
+        content+="<div class='row stats'>";
+        content+="<table class='stats level_up_ts'>";   
+
+        let header = [];
+        let data = [];
+
+        for(let stat of stats){    
+            header.push(stat.label);
+            data.push(monInfo.baseStats[stat.item]);
         }
-        return "??";
-    }
 
-    for(let stat of stats){   
+        tableContent.push(header);
+        tableContent.push(data);
 
+    } else {
+        content+="<div class='row stats'>";
+        content+="<table class='stats level_up'>";   
+        tableContent.push(["", localizationData[currentLocale].app.DEX_label_lv1,localizationData[currentLocale].app.DEX_label_lv50, localizationData[currentLocale].app.DEX_label_lv99]); 
+    
 
+        function getStatValueAtLevel(stat, level){
+            try {
+                let baseStatValue = monInfo.baseStats[stat.item];
+                let growthType = monInfo.baseStats.growthType;
+                let growthTable = getGrowthCurveInfo()[growthType];
+                let growthAmount = growthTable[stat.item.replace("base", "")]//hacky!
+                statValue = Math.floor(baseStatValue * 1 + (growthAmount * (level - 1)));
         
-        let row = [];
-        row.push(stat.label);
-        row.push(getStatValueAtLevel(stat, 1));
-        row.push(getStatValueAtLevel(stat, 50));
-        row.push(getStatValueAtLevel(stat, 99));
-        tableContent.push(row);
-    }
+                statValue/=100;
+                if(stat.item == "baseHP"){  
+                    statValue = Math.floor(statValue);
+                    statValue*=10;
+                } 
+                return Math.floor(statValue);
+            } catch(e){
 
+            }
+            return "??";
+        }
+
+        for(let stat of stats){           
+            let row = [];
+            row.push(stat.label);
+            row.push(getStatValueAtLevel(stat, 1));
+        
+            row.push(getStatValueAtLevel(stat, 50));
+            row.push(getStatValueAtLevel(stat, 99));
+            
+            
+            tableContent.push(row);
+        }
+        }
     content+=this.arrayToTableContent(tableContent);
 
     content+="</table>";
@@ -342,7 +403,7 @@ DexPane.prototype.createMovesBlock = function(monInfo){
     }
     for(let entry of sortedSigMoves){
         let nameContent = "<div class='skill_entry'>" + localizationData[currentLocale].sigMoves[getSkillTextIdInfo()[entry.id]] + "</div>";
-        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[getSkillTextIdInfo()[entry.id]]]);
+        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[getSkillTextIdInfo()[entry.id]] || "---"]);
     }
 
     content+=this.arrayToTableContent(tableContent);
@@ -377,7 +438,7 @@ DexPane.prototype.createMovesBlock = function(monInfo){
     for(let entry of sortedMoves){
         let isWanted = pathFinder.wantedSkills[entry.id];
         let nameContent = "<div class='skill_entry "+(isWanted ? "wanted" : "")+"'>" + localizationData[currentLocale].sigMoves[getSkillTextIdInfo()[entry.id]] + "</div>";
-        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[getSkillTextIdInfo()[entry.id]], entry.level]);
+        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[getSkillTextIdInfo()[entry.id]] || "---", entry.level]);
     }
 
     content+=this.arrayToTableContent(tableContent);
@@ -396,35 +457,62 @@ DexPane.prototype.createMovesBlock = function(monInfo){
 
 DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
     let content = "";
-    const condList = [];
-    condList.push("LVL");
-    condList.push("HP");
-    condList.push("SP");
-    condList.push("ATK");
-    condList.push("DEF");
-    condList.push("INT");
-    condList.push("SPD");
-    if (isTSMode()) {
-        condList.push("SPI");
-    }
-    condList.push("ABI");
-    condList.push("CAM");
-    condList.push("Other");
+    let condList = [];
+    let labels = [];
 
-    const labels = {
-        "LVL": localizationData[currentLocale].app.DEX_evos_label_level,
-        "HP": localizationData[currentLocale].app.DEX_evos_label_HP,
-        "SP": localizationData[currentLocale].app.DEX_evos_label_SP,
-        "ATK": localizationData[currentLocale].app.DEX_evos_label_ATK,
-        "DEF": localizationData[currentLocale].app.DEX_evos_label_DEF,        
-        "INT": localizationData[currentLocale].app.DEX_evos_label_INT,        
-        "SPD": localizationData[currentLocale].app.DEX_evos_label_SPD,
-        "ABI": localizationData[currentLocale].app.DEX_evos_label_ABI,
-        "CAM": localizationData[currentLocale].app.DEX_evos_label_CAM,
-        "Other": localizationData[currentLocale].app.DEX_evos_label_additional,
-        "SPI": localizationData[currentLocale].app.DEX_evos_label_SPI
-    }
+    if(isTSMode()){
+        condList.push("HP");
+        condList.push("SP");
+        condList.push("ATK");
+        condList.push("DEF");
+        condList.push("INT");
+        condList.push("SPD");
+        if (isTSMode()) {
+            condList.push("SPI");
+        }
+        condList.push("skillCountValor");
+        condList.push("skillCountPhilantropy");
+        condList.push("skillCountAmicable");
+        condList.push("skillCountWisdom");
+        condList.push("needsItem");
+        condList.push("jogress");
+    } else {
+        condList.push("LVL");
+        condList.push("HP");
+        condList.push("SP");
+        condList.push("ATK");
+        condList.push("DEF");
+        condList.push("INT");
+        condList.push("SPD");
+        if (isTSMode()) {
+            condList.push("SPI");
+        }
+        condList.push("ABI");
+        condList.push("CAM");
+        condList.push("Other");
 
+       
+    }
+    
+     labels = {
+            "LVL": localizationData[currentLocale].app.DEX_evos_label_level,
+            "HP": localizationData[currentLocale].app.DEX_evos_label_HP,
+            "SP": localizationData[currentLocale].app.DEX_evos_label_SP,
+            "ATK": localizationData[currentLocale].app.DEX_evos_label_ATK,
+            "DEF": localizationData[currentLocale].app.DEX_evos_label_DEF,        
+            "INT": localizationData[currentLocale].app.DEX_evos_label_INT,        
+            "SPD": localizationData[currentLocale].app.DEX_evos_label_SPD,
+            "ABI": localizationData[currentLocale].app.DEX_evos_label_ABI,
+            "CAM": localizationData[currentLocale].app.DEX_evos_label_CAM,
+            "Other": localizationData[currentLocale].app.DEX_evos_label_additional,
+            "SPI": localizationData[currentLocale].app.DEX_evos_label_SPI,
+            "skillCountValor": localizationData[currentLocale].app.DEX_evos_label_valor_count,
+	        "skillCountPhilantropy": localizationData[currentLocale].app.DEX_evos_label_amicability_count,
+	        "skillCountAmicable": localizationData[currentLocale].app.DEX_evos_label_wisdom_count,
+	        "skillCountWisdom": localizationData[currentLocale].app.DEX_evos_label_philantropy_count,
+            "needsItem": localizationData[currentLocale].app.DEX_evos_label_item,
+            "jogress": localizationData[currentLocale].app.DEX_evos_label_jogress,
+        }
 
         
 
@@ -444,15 +532,25 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
             }
         }
         content+="<div class='value "+errorClass+"'>"
-        if(requirements[condition]){
-            if(condition == "Other"){
-                content+= (localizationData[currentLocale].app.DEX_evos_label_has_additional);
+        if(condition == "jogress"){
+            if(requirements.jogressIdA * 1 && requirements.jogressIdB * 1){
+                content+=localizationData[currentLocale].digimon[requirements.jogressIdA] + " ("+localizationData[currentLocale].personalityNames[requirements.jogressPersonalityA]+")" + " + " + localizationData[currentLocale].digimon[requirements.jogressIdB]  + " ("+localizationData[currentLocale].personalityNames[requirements.jogressPersonalityB]+")" ;
             } else {
-                content+=(requirements[condition]);
+                content+=("-");
             }
-            
-        } else {
-            content+=("-");
+         } else {                
+            if(requirements[condition] * 1){
+                if(condition == "needsItem"){    
+                     content+=localizationData[currentLocale].itemNames[requirements.needsItem];
+                } else if(condition == "Other"){
+                    content+= (localizationData[currentLocale].app.DEX_evos_label_has_additional);
+                } else {
+                    content+=(requirements[condition]);
+                }
+                
+            } else {
+                content+=("-");
+            }
         }
         content+="</div>";
         content+="</div>";
