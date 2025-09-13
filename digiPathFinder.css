@@ -1282,3 +1282,34 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 .effectiveness_icon {
 	width: 24px;
 }
+
+.effectiveness_icon.valor {
+	filter: brightness(0) saturate(100%) invert(54%) sepia(12%) saturate(1830%) hue-rotate(348deg) brightness(97%) contrast(97%);
+}
+
+.effectiveness_icon.love {
+	filter: brightness(0) saturate(100%) invert(34%) sepia(70%) saturate(443%) hue-rotate(294deg) brightness(91%) contrast(96%);
+}
+
+.effectiveness_icon.friendship {
+	filter: brightness(0) saturate(100%) invert(41%) sepia(98%) saturate(405%) hue-rotate(205deg) brightness(96%) contrast(96%);
+}
+
+.effectiveness_icon.wisdom {
+	filter: brightness(0) saturate(100%) invert(82%) sepia(34%) saturate(5822%) hue-rotate(213deg) brightness(89%) contrast(93%);
+}
+
+.effectiveness_icon.inline {
+	margin-right: 5px;
+	width: 16px;
+}
+
+.icon_entry {
+	display: flex;
+	align-items: center;
+}
+
+.label.condition {
+	display: flex;
+	align-items: top;
+}

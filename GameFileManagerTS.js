@@ -497,6 +497,25 @@ function GameFileManagerTS(){
                 };
             }
 
+           // "0","Vaccine"
+            //"1","Data"
+            //"2","Virus"
+
+            if(baseStats[dbId].type == "Vaccine"){  
+                resistances[dbId].attributes["data"] = 1;
+                resistances[dbId].attributes["virus"] = 3;
+            }
+
+            if(baseStats[dbId].type == "Data"){  
+                resistances[dbId].attributes["virus"] = 1;
+                resistances[dbId].attributes["vaccine"] = 3;
+            }
+
+            if(baseStats[dbId].type == "Virus"){  
+                resistances[dbId].attributes["vaccine"] = 1;
+                resistances[dbId].attributes["data"] = 3;
+            }
+
             resistances[dbId].elements["null"] = escapeHTML(entry[digimonListData.headerLookup["resNull"]]);
             resistances[dbId].elements["fire"] = escapeHTML(entry[digimonListData.headerLookup["resFire"]]);
             resistances[dbId].elements["water"] = escapeHTML(entry[digimonListData.headerLookup["resWater"]]);

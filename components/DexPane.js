@@ -386,82 +386,153 @@ DexPane.prototype.createStatsBlock = function(monInfo){
     }
 
     if(isTSMode()){
-        let tableContent = [];
-        content+="<div class='section_sub_header'>";
-    
-        content+=localizationData[currentLocale].app.DEX_stats_res_element;
-        content+="</div>";
 
-        content+="<div class='row stats'>";
+        const createAttributeView = () => {
 
-        const elements = [
-                       {
-                id: "fire",
-                icon: "ui_icon_skill_001"
-            },
-            {
-                id: "water", 
-                icon: "ui_icon_skill_004"
-            },
-            {
-                id: "grass",
-                icon: "ui_icon_skill_003"
-            },
-            {
-                id: "ice",
-                icon: "ui_icon_skill_002"
-            },
-            {
-                id: "elec",
-                icon: "ui_icon_skill_005"
-            },
-            {
-                id: "ground",
-                icon: "ui_icon_skill_008"
-            },
-            {
-                id: "steel",
-                icon: "ui_icon_skill_006"
-            },
-            {
-                id: "wind",
-                icon: "ui_icon_skill_007"
-            },
-            {
-                id: "light",
-                icon: "ui_icon_skill_009"
-            },
-            {
-                id: "dark",
-                icon: "ui_icon_skill_010"
-            },
-            {
-                id: "null",
-                icon: "ui_icon_skill_000"
-            },
-        ]
-
+             let tableContent = [];
+            content+="<div class='section_sub_header'>";
         
+            content+=localizationData[currentLocale].app.DEX_stats_res_attribute;
+            content+="</div>";
 
-        content+="<table class='stats effectiveness level_up_ts'>";   
-        let header = [];
-        let data = [];
+            content+="<div class='row stats'>";
+            
+            const attributes = [
+                {
+                    id: "vaccine",
+                    icon: "ui_icon_type_000"
+                },
+                {
+                    id: "data",
+                    icon: "ui_icon_type_020"
+                },
+                {
+                    id: "virus",
+                    icon: "ui_icon_type_040"
+                },
+                {
+                    id: "free",
+                    icon: "ui_icon_type_060"
+                },
+                {
+                    id: "variable",
+                    icon: "ui_icon_type_080"
+                },
+                {
+                    id: "unknown",
+                    icon: "ui_icon_type_100"
+                },
+                {
+                    id: "no_data",
+                    icon: "ui_icon_type_120"
+                }
+            ];
 
-        for(let element of elements){    
-            header.push("<img class='effectiveness_icon' src='img/ui_icon/"+element.icon+".png'></img>");
-            const resistance = monInfo.resistances.elements[element.id];
-            const iconInfo = effectivenessIcons[resistance];
-            data.push("<img class='effectiveness_icon' style='filter: "+iconInfo.colorFilter+";' src='img/ui_icon/"+iconInfo.icon+".png'></img>");
+            
+
+            content+="<table class='stats effectiveness level_up_ts'>";   
+            let header = [];
+            let data = [];
+
+            for(let attribute of attributes){    
+                header.push("<img class='effectiveness_icon' style='filter: brightness(0) saturate(100%) invert(25%) sepia(0%) saturate(602%) hue-rotate(231deg) brightness(96%) contrast(91%);' src='img/ui_icon/"+attribute.icon+".png'></img>");
+                const resistance = monInfo.resistances.attributes[attribute.id] || 0;
+                const iconInfo = effectivenessIcons[resistance];
+                data.push("<img class='effectiveness_icon' style='filter: "+iconInfo.colorFilter+";' src='img/ui_icon/"+iconInfo.icon+".png'></img>");
+            }
+
+            tableContent.push(header);
+            tableContent.push(data);
+
+            content+=this.arrayToTableContent(tableContent);
+
+
+            content+="</table>";
+            content+="</div>";
+
         }
+        createAttributeView();
 
-        tableContent.push(header);
-        tableContent.push(data);
+        const createElementalView = () => {
+            
+            let tableContent = [];
+            content+="<div class='section_sub_header'>";
+        
+            content+=localizationData[currentLocale].app.DEX_stats_res_element;
+            content+="</div>";
 
-        content+=this.arrayToTableContent(tableContent);
+            content+="<div class='row stats'>";
+
+            const elements = [
+                        {
+                    id: "fire",
+                    icon: "ui_icon_skill_001"
+                },
+                {
+                    id: "water", 
+                    icon: "ui_icon_skill_004"
+                },
+                {
+                    id: "grass",
+                    icon: "ui_icon_skill_003"
+                },
+                {
+                    id: "ice",
+                    icon: "ui_icon_skill_002"
+                },
+                {
+                    id: "elec",
+                    icon: "ui_icon_skill_005"
+                },
+                {
+                    id: "ground",
+                    icon: "ui_icon_skill_008"
+                },
+                {
+                    id: "steel",
+                    icon: "ui_icon_skill_006"
+                },
+                {
+                    id: "wind",
+                    icon: "ui_icon_skill_007"
+                },
+                {
+                    id: "light",
+                    icon: "ui_icon_skill_009"
+                },
+                {
+                    id: "dark",
+                    icon: "ui_icon_skill_010"
+                },
+                {
+                    id: "null",
+                    icon: "ui_icon_skill_000"
+                },
+            ]
+
+            
+
+            content+="<table class='stats effectiveness level_up_ts'>";   
+            let header = [];
+            let data = [];
+
+            for(let element of elements){    
+                header.push("<img class='effectiveness_icon' src='img/ui_icon/"+element.icon+".png'></img>");
+                const resistance = monInfo.resistances.elements[element.id];
+                const iconInfo = effectivenessIcons[resistance];
+                data.push("<img class='effectiveness_icon' style='filter: "+iconInfo.colorFilter+";' src='img/ui_icon/"+iconInfo.icon+".png'></img>");
+            }
+
+            tableContent.push(header);
+            tableContent.push(data);
+
+            content+=this.arrayToTableContent(tableContent);
 
 
-        content+="</table>";
-        content+="</div>";
+            content+="</table>";
+            content+="</div>";
+        }
+        createElementalView();
     }
 
     content+="</div>";
@@ -605,10 +676,10 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
             "CAM": localizationData[currentLocale].app.DEX_evos_label_CAM,
             "Other": localizationData[currentLocale].app.DEX_evos_label_additional,
             "SPI": localizationData[currentLocale].app.DEX_evos_label_SPI,
-            "skillCountValor": localizationData[currentLocale].app.DEX_evos_label_valor_count,
-	        "skillCountPhilantropy": localizationData[currentLocale].app.DEX_evos_label_amicability_count,
-	        "skillCountAmicable": localizationData[currentLocale].app.DEX_evos_label_wisdom_count,
-	        "skillCountWisdom": localizationData[currentLocale].app.DEX_evos_label_philantropy_count,
+            "skillCountValor": "<img src='img/ui_icon/ui_icon_personal00_00.png' class='effectiveness_icon valor inline'>" + localizationData[currentLocale].app.DEX_evos_label_valor_count,
+	        "skillCountPhilantropy": "<img src='img/ui_icon/ui_icon_personal00_01.png' class='effectiveness_icon love inline'>" + localizationData[currentLocale].app.DEX_evos_label_philantropy_count,
+	        "skillCountAmicable": "<img src='img/ui_icon/ui_icon_personal00_02.png' class='effectiveness_icon friendship inline'>" + localizationData[currentLocale].app.DEX_evos_label_amicability_count,
+	        "skillCountWisdom": "<img src='img/ui_icon/ui_icon_personal00_03.png' class='effectiveness_icon wisdom inline'>" + localizationData[currentLocale].app.DEX_evos_label_wisdom_count,
             "needsItem": localizationData[currentLocale].app.DEX_evos_label_item,
             "jogress": localizationData[currentLocale].app.DEX_evos_label_jogress,
             "TRank": localizationData[currentLocale].app.DEX_evos_label_t_rank,
@@ -622,7 +693,7 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
     let row = [];
     for(let condition of condList){
         content+="<div class='block'>"
-        content+="<div class='label'>"
+        content+="<div class='label condition'>"
         content+=labels[condition];
         content+="</div>";
         let errorClass = "";
