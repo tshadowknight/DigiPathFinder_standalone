@@ -25,9 +25,46 @@ function GameFileManagerTS(){
     }
 
     const requiredFiles = [
-         "main/digimon_status.mbe/00_digimon_status_data.csv",
+        // Evolution info
+        "main/evolution.mbe/01_evolution_to.csv",
+        "main/evolution.mbe/00_evolution_condition.csv",
+        
+        // Main monster database
+        "main/digimon_status.mbe/00_digimon_status_data.csv",
+        
+        // Battle skills
+       // "main/battle_skill.mbe/00_battle_skill_list.csv",
+        
+        // Japanese text files
+        "txt_jpn/digimon_profile.mbe/00_Sheet1.csv",
+        "txt_jpn/char_name.mbe/00_Sheet1.csv",
+        "txt_jpn/skill_name.mbe/00_Sheet1.csv",
+        "txt_jpn/jogress_skill_name.mbe/00_Sheet1.csv",
+        "txt_jpn/skill_explanation.mbe/00_Sheet1.csv",
+        "txt_jpn/skill_auto_explanation.mbe/00_Sheet1.csv",
+        "txt_jpn/generation_name.mbe/00_Sheet1.csv",
+        "txt_jpn/digimon_type.mbe/00_Sheet1.csv",
+        "txt_jpn/element.mbe/00_Sheet1.csv",
+        "txt_jpn/personality_name.mbe/00_Sheet1.csv",
+        "txt_jpn/item_name.mbe/00_Sheet1.csv",
+        "txt_jpn/belong.mbe/00_Sheet1.csv",
+        "txt_jpn/digimon_class_name.mbe/00_Sheet1.csv",
+        
+        // English text files
+        "txt_eng/digimon_profile.mbe/00_Sheet1.csv",
+        "txt_eng/char_name.mbe/00_Sheet1.csv",
+        "txt_eng/skill_name.mbe/00_Sheet1.csv",
+        "txt_eng/jogress_skill_name.mbe/00_Sheet1.csv",
+        "txt_eng/skill_explanation.mbe/00_Sheet1.csv",
+        "txt_eng/skill_auto_explanation.mbe/00_Sheet1.csv",
+        "txt_eng/generation_name.mbe/00_Sheet1.csv",
+        "txt_eng/digimon_type.mbe/00_Sheet1.csv",
+        "txt_eng/element.mbe/00_Sheet1.csv",
+        "txt_eng/personality_name.mbe/00_Sheet1.csv",
+        "txt_eng/item_name.mbe/00_Sheet1.csv",
+        "txt_eng/belong.mbe/00_Sheet1.csv",
+        "txt_eng/digimon_class_name.mbe/00_Sheet1.csv"
     ];
-
     GameFileManagerTS.prototype.hasGameFiles = function(){
         let isKitValid = true;
         for(let file of requiredFiles){

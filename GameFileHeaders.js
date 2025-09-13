@@ -389,10 +389,10 @@ const hardDefinedHeaders = {
       "skillId": 0,
       "value": 1
     },
-    "main/battle_skill.mbe/00_battle_skill_list.csv": {
+   /* "main/battle_skill.mbe/00_battle_skill_list.csv": {
       "skillId": 0,
       "power": 23
-    },
+    },*/
     "txt_eng/jogress_skill_name.mbe/00_Sheet1.csv": {
       "skillId": 0,
       "value": 1
