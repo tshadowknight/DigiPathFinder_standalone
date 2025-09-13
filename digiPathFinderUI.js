@@ -201,7 +201,7 @@ function showRoute(route){
 								warnings.push(localizationData[currentLocale].app.warn_special_evo);
 								//warn_difficult_evo
 							} else if(["LVL", "CAM", "ABI"].indexOf(condType) == -1){
-								if(maxStats[condType] < reqs[condType]){
+								if(maxStats && maxStats[condType] < reqs[condType]){
 									warnings.push(localizationData[currentLocale].app.warn_difficult_evo+condType+"!");
 								}
 							}
@@ -951,7 +951,8 @@ function getDigiData(digiId){
                     "SPD": 0,
                 },
                 encounters: {base: [], hame: []},
-				isUndefined: true
+				isUndefined: true,
+				
 			};
 		}		
 	}
@@ -1024,6 +1025,8 @@ function initPathFinder(forceReload){
 				localizationData[locale].fieldNames = gameData.fieldNames?.[locale] || {};
 				localizationData[locale].personalityNames = gameData.personalityNames?.[locale] || {};				
 				localizationData[locale].itemNames = gameData.itemNames?.[locale] || {};	
+				localizationData[locale].categoryNames = gameData.categoryNames?.[locale] || {};	
+				localizationData[locale].classNames = gameData.classNames?.[locale] || {};			
 			}	
 
 

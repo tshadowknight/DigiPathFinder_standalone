@@ -37,21 +37,24 @@ DexPane.prototype.getMonInfo = function(monId){
     };
     if(monId != -1){
         let name;
-        if(getDigiData(monId).isUndefined){
+        const digiData = getDigiData(monId);
+        if(digiData.isUndefined){
             name = localizationData[currentLocale].app.DEF_undef_mon + monId;
         } else {
             name = localizationData[currentLocale].digimon[monId];
         }
-        let description = localizationData[currentLocale].digimonDesc[getDigiData(monId).baseStats.profile] || localizationData[currentLocale].digimonDesc[monId]
+        let description = localizationData[currentLocale].digimonDesc[digiData.baseStats.profile] || localizationData[currentLocale].digimonDesc[monId]
+        
         monInfo = {
             id: monId,
             name: name,
             description: description,
-            baseStats: getDigiData(monId).baseStats,
-            moves: getDigiData(monId).moveDetails,
-            evosReqs: getDigiData(monId).conditions,
-            neighBours: getDigiData(monId).neighBours,
-
+            baseStats: digiData.baseStats,
+            moves: digiData.moveDetails,
+            evosReqs: digiData.conditions,
+            neighBours: digiData.neighBours,
+            traits: digiData.traits,
+            resistances: digiData.resistances
         };
     }
     return monInfo;
@@ -157,6 +160,15 @@ DexPane.prototype.show = function(context){
             value = attr.localizer[value];
         } 
         tableContent.push(["<div class='row_label'>"+attr.label+"</div>", value]);
+    }
+    if(isTSMode()){
+        tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_category+"</div>", localizationData[currentLocale].categoryNames[this._activeId]]);
+
+        let traitString = [];
+        for(let entry of monInfo.traits){
+            traitString.push(localizationData[currentLocale].classNames[entry]);
+        }
+        tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_traits+"</div>", traitString.join(", ")]);
     }
     content+="<table id='general_table' class='stats'>";  
     content+=this.arrayToTableContent(tableContent, true);
@@ -320,6 +332,8 @@ DexPane.prototype.createStatsBlock = function(monInfo){
         tableContent.push(header);
         tableContent.push(data);
 
+
+
     } else {
         content+="<div class='row stats'>";
         content+="<table class='stats level_up'>";   
@@ -361,10 +375,94 @@ DexPane.prototype.createStatsBlock = function(monInfo){
     content+=this.arrayToTableContent(tableContent);
 
     content+="</table>";
+    content+="</div>";   
+
+    const effectivenessIcons = {
+        0: {icon: "ui_icon_effst_00", colorFilter: null},//none,
+        1: {icon: "ui_icon_effst_01", colorFilter: "brightness(0) saturate(100%) invert(79%) sepia(81%) saturate(2892%) hue-rotate(181deg) brightness(94%) contrast(89%)"},//weak,
+        2: {icon: "ui_icon_effst_02", colorFilter: "brightness(0) saturate(100%) invert(34%) sepia(56%) saturate(1347%) hue-rotate(208deg) brightness(86%) contrast(94%)"},//double weak,
+        3: {icon: "ui_icon_effst_03", colorFilter: "brightness(0) saturate(100%) invert(56%) sepia(37%) saturate(572%) hue-rotate(300deg) brightness(91%) contrast(101%)"},//resist,
+        4: {icon: "ui_icon_effst_04", colorFilter: "brightness(0) saturate(100%) invert(28%) sepia(57%) saturate(1888%) hue-rotate(321deg) brightness(94%) contrast(108%)"},//immune,
+    }
+
+    if(isTSMode()){
+        let tableContent = [];
+        content+="<div class='section_sub_header'>";
     
+        content+=localizationData[currentLocale].app.DEX_stats_res_element;
+        content+="</div>";
+
+        content+="<div class='row stats'>";
+
+        const elements = [
+                       {
+                id: "fire",
+                icon: "ui_icon_skill_001"
+            },
+            {
+                id: "water", 
+                icon: "ui_icon_skill_004"
+            },
+            {
+                id: "grass",
+                icon: "ui_icon_skill_003"
+            },
+            {
+                id: "ice",
+                icon: "ui_icon_skill_002"
+            },
+            {
+                id: "elec",
+                icon: "ui_icon_skill_005"
+            },
+            {
+                id: "ground",
+                icon: "ui_icon_skill_008"
+            },
+            {
+                id: "steel",
+                icon: "ui_icon_skill_006"
+            },
+            {
+                id: "wind",
+                icon: "ui_icon_skill_007"
+            },
+            {
+                id: "light",
+                icon: "ui_icon_skill_009"
+            },
+            {
+                id: "dark",
+                icon: "ui_icon_skill_010"
+            },
+            {
+                id: "null",
+                icon: "ui_icon_skill_000"
+            },
+        ]
+
+        
+
+        content+="<table class='stats effectiveness level_up_ts'>";   
+        let header = [];
+        let data = [];
+
+        for(let element of elements){    
+            header.push("<img class='effectiveness_icon' src='img/ui_icon/"+element.icon+".png'></img>");
+            const resistance = monInfo.resistances.elements[element.id];
+            const iconInfo = effectivenessIcons[resistance];
+            data.push("<img class='effectiveness_icon' style='filter: "+iconInfo.colorFilter+";' src='img/ui_icon/"+iconInfo.icon+".png'></img>");
+        }
+
+        tableContent.push(header);
+        tableContent.push(data);
+
+        content+=this.arrayToTableContent(tableContent);
 
 
-    content+="</div>";
+        content+="</table>";
+        content+="</div>";
+    }
 
     content+="</div>";
     content+="</div>";
@@ -461,6 +559,7 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
     let labels = [];
 
     if(isTSMode()){
+         condList.push("TRank");
         condList.push("HP");
         condList.push("SP");
         condList.push("ATK");
@@ -512,6 +611,7 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
 	        "skillCountWisdom": localizationData[currentLocale].app.DEX_evos_label_philantropy_count,
             "needsItem": localizationData[currentLocale].app.DEX_evos_label_item,
             "jogress": localizationData[currentLocale].app.DEX_evos_label_jogress,
+            "TRank": localizationData[currentLocale].app.DEX_evos_label_t_rank,
         }
 
         

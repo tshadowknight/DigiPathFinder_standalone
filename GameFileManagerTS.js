@@ -267,6 +267,8 @@ function GameFileManagerTS(){
                 autoMoveDescriptions: await this.parseGameFile("txt_eng/skill_auto_explanation.mbe/00_Sheet1"),  
                 personalityNames: await this.parseGameFile("txt_eng/personality_name.mbe/00_Sheet1"),  
                 itemNames: await this.parseGameFile("txt_eng/item_name.mbe/00_Sheet1"),  
+                categoryNames: await this.parseGameFile("txt_eng/belong.mbe/00_Sheet1"),  
+                classNames: await this.parseGameFile("txt_eng/digimon_class_name.mbe/00_Sheet1"),  
             },
             {
                 locale: "Japanese", 
@@ -276,8 +278,10 @@ function GameFileManagerTS(){
                 jogressMoveNames: await this.parseGameFile("txt_jpn/jogress_skill_name.mbe/00_Sheet1"), 
                 moveDescriptions: await this.parseGameFile("txt_jpn/skill_explanation.mbe/00_Sheet1"), 
                 autoMoveDescriptions: await this.parseGameFile("txt_jpn/skill_auto_explanation.mbe/00_Sheet1"),   
-                personalityNames: await this.parseGameFile("txt_eng/personality_name.mbe/00_Sheet1"),  
-                itemNames: await this.parseGameFile("txt_eng/item_name.mbe/00_Sheet1"),  
+                personalityNames: await this.parseGameFile("txt_jpn/personality_name.mbe/00_Sheet1"),  
+                itemNames: await this.parseGameFile("txt_jpn/item_name.mbe/00_Sheet1"),  
+                categoryNames: await this.parseGameFile("txt_jpn/belong.mbe/00_Sheet1"),  
+                classNames: await this.parseGameFile("txt_jpn/digimon_class_name.mbe/00_Sheet1"),  
             }
         ];
         
@@ -317,6 +321,8 @@ function GameFileManagerTS(){
         let digimonDescriptions = {};
         let personalityNames = {};
         let itemNames = {};
+        let categoryNames = {};
+        let classNames = {};
 
         function substituteDescriptionText(txt){
             return txt.replace(/\{.*?\}/g, "");
@@ -387,14 +393,31 @@ function GameFileManagerTS(){
                 const id = row[entry.itemNames.headerLookup["id"]];        
                 itemNames[locale][id] = row[entry.itemNames.headerLookup["value"]];       
             }
-        }
 
+            if(!categoryNames[locale]){
+                categoryNames[locale] = {};
+            }
+            for(let row of entry.categoryNames.data){
+                const id = row[entry.categoryNames.headerLookup["id"]];        
+                categoryNames[locale][id] = row[entry.categoryNames.headerLookup["value"]];       
+            }
+
+            if(!classNames[locale]){
+                classNames[locale] = {};
+            }
+            for(let row of entry.classNames.data){
+                const id = row[entry.classNames.headerLookup["id"]];        
+                classNames[locale][id] = row[entry.classNames.headerLookup["value"]];       
+            }
+        }
 
         let movesLearned = {};
         let movesLearnedDetail = {};
         let sigMoves = {};
         let baseStats = {};
         let evoConditions = {};
+        let traits = {};
+        let resistances = {};
 
         for(let entry of digimonListData.data){
             const dbId = entry[digimonListData.headerLookup["id"]];
@@ -455,7 +478,36 @@ function GameFileManagerTS(){
             baseStats[dbId].baseSPI = escapeHTML(entry[digimonListData.headerLookup["baseSPI"]]);
             baseStats[dbId].baseSPD = escapeHTML(entry[digimonListData.headerLookup["baseSPD"]]);
 
-            
+            if(!traits[dbId]){
+                traits[dbId] = [];
+            }
+
+            const traitsBaseIdx = digimonListData.headerLookup["traitsBaseIdx"];
+            for(let i = 0; i < 41; i++){
+                const hasTrait = entry[traitsBaseIdx + i] * 1;
+                if(hasTrait){
+                    traits[dbId].push(i);
+                }
+            }
+
+            if(!resistances[dbId]){
+                resistances[dbId] = {
+                    attributes: {},
+                    elements: {}
+                };
+            }
+
+            resistances[dbId].elements["null"] = escapeHTML(entry[digimonListData.headerLookup["resNull"]]);
+            resistances[dbId].elements["fire"] = escapeHTML(entry[digimonListData.headerLookup["resFire"]]);
+            resistances[dbId].elements["water"] = escapeHTML(entry[digimonListData.headerLookup["resWater"]]);
+            resistances[dbId].elements["grass"] = escapeHTML(entry[digimonListData.headerLookup["resGrass"]]);
+            resistances[dbId].elements["ice"] = escapeHTML(entry[digimonListData.headerLookup["resIce"]]);
+            resistances[dbId].elements["elec"] = escapeHTML(entry[digimonListData.headerLookup["resElec"]]);
+            resistances[dbId].elements["ground"] = escapeHTML(entry[digimonListData.headerLookup["resGround"]]);
+            resistances[dbId].elements["steel"] = escapeHTML(entry[digimonListData.headerLookup["resSteel"]]);
+            resistances[dbId].elements["wind"] = escapeHTML(entry[digimonListData.headerLookup["resWind"]]);
+            resistances[dbId].elements["light"] = escapeHTML(entry[digimonListData.headerLookup["resLight"]]);
+            resistances[dbId].elements["dark"] = escapeHTML(entry[digimonListData.headerLookup["resDark"]]);
 
         }
 
@@ -828,7 +880,9 @@ function GameFileManagerTS(){
                         "INT": getStatValueAtLevel(digimonId, levellUpGrowths,"INT", maxLevel),
                         "SPD": getStatValueAtLevel(digimonId, levellUpGrowths, "SPD", maxLevel),
                     },*/
-                    encounters: {base: digimonToEncounters[digimonId] || [], hame: digimonToEncountersHame[digimonId] || []}
+                    encounters: {base: digimonToEncounters[digimonId] || [], hame: digimonToEncountersHame[digimonId] || []},
+                    traits: traits[digimonId] || [],
+                    resistances:  resistances[digimonId] || {}
                 }
             }        
         }
@@ -846,7 +900,9 @@ function GameFileManagerTS(){
            // supportSkillDescriptions: supportSkillDescriptions,
             skillTextIds: skillTextIds,
             personalityNames: personalityNames,
-            itemNames: itemNames
+            itemNames: itemNames,
+            categoryNames: categoryNames,
+            classNames: classNames
         };
     }
 

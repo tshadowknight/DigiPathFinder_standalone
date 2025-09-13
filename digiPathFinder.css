@@ -874,6 +874,10 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	border-bottom: 1px solid #E0E0E0;;
 }
 
+.dex_pane table.stats.effectiveness tr td {
+	border-bottom: 0px;
+}	
+
 .dex_pane table.stats tr td{
 	padding: 6px 10px;
 }
@@ -1273,4 +1277,8 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 #options_container .row .label{
 	width: 225px;
 	text-align: left;
+}
+
+.effectiveness_icon {
+	width: 24px;
 }

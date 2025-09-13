@@ -316,7 +316,6 @@ const hardDefinedHeaders = {
       //base stats
       "stageId": 4,
       "typeId": 6,
-      //"elementId":??? 
       "baseHP": 64,
       "baseSP": 65,
       "baseATK": 66,
@@ -324,7 +323,20 @@ const hardDefinedHeaders = {
       "baseINT": 68,
       "baseSPI": 69,
       "baseSPD": 70,
-
+      //traits
+      "traitsBaseIdx": 19,//next 41 are trait bool flags
+      //elemental resistance
+      "resNull": 7,
+      "resFire": 8,
+      "resWater": 9,
+      "resGrass": 10,
+      "resIce": 11,
+      "resElec": 12,
+      "resGround": 13,
+      "resSteel": 14,
+      "resWind": 15,
+      "resLight": 16,
+      "resDark": 17,      
     },
     "main/evolution.mbe/01_evolution_to.csv": {
       "idx": 0,
@@ -444,6 +456,22 @@ const hardDefinedHeaders = {
     "txt_jpn/item_name.mbe/00_Sheet1.csv": {
       "id": 0,
       "value": 1
-    },      
+    }, 
+    "txt_eng/belong.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_jpn/belong.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_eng/digimon_class_name.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    }, 
+    "txt_jpn/digimon_class_name.mbe/00_Sheet1.csv": {
+      "id": 0,
+      "value": 1
+    },          
     
   }
