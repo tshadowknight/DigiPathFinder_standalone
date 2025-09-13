@@ -668,7 +668,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 100vw;
+	width: calc(100vw - 100px);
 	height: calc(100vh - 57px);
 	transition: 1s;
 	background-color: rgba(51,78,155,0.7);
@@ -1311,5 +1311,5 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 .label.condition {
 	display: flex;
-	align-items: top;
+	justify-content: center;
 }

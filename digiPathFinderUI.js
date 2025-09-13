@@ -761,7 +761,7 @@ function createOptions(){
 	content+="</div>"
 	content+="</div>"
 
-
+	/*
 	content+="<div class='row locale'>";
 	content+="<div class='label'>";
 	content+=localizationData[currentLocale].app.label_language;
@@ -779,7 +779,7 @@ function createOptions(){
 	content+="This will reload the app."
 	content+="</div>"
 	content+="</div>"
-
+*/
 	if(isElectron()){
 		content+="<div class='row'>";
 		content+="<div class='label'>";
@@ -870,7 +870,7 @@ function createOptions(){
 			refreshWarnings();
 		});
 	}
-
+/*
 	elem.querySelector("#appLang").addEventListener("change", function(){
 		localStorage.setItem("DigiPathFinder_locale", this.value);
 		populateMoveList();
@@ -879,6 +879,10 @@ function createOptions(){
 		localizePage();
 	});
 
+	elem.querySelector("#applyLocale").addEventListener("click", function(){
+		location.reload()
+	});
+*/
 	elem.querySelector("#gameVersion").addEventListener("change", function(){
 		currentGameVersion = this.value;
 		localStorage.setItem("DigiPathFinder_gameVersion", this.value);
@@ -890,9 +894,7 @@ function createOptions(){
 		location.reload();
 	});	
 
-	elem.querySelector("#applyLocale").addEventListener("click", function(){
-		location.reload()
-	});
+	
 	
 }
 

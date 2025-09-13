@@ -147,10 +147,24 @@ function GameFileManagerTS(){
                     pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua')
                 ];
 
+                let retryCount = 0;
+                let retryTime = 15;
+                
+
                 let missingFiles = [];
                 for(const entry of requiredFiles){
                     if(!fs.existsSync(entry)){
                         missingFiles.push(entry);
+                    }
+                }
+                while(missingFiles.length && retryCount++ < 3){
+                    console.log("Files missing on attempt " + retryCount);
+                    await new Promise(resolve => setTimeout(resolve, 15000));
+                    missingFiles = [];
+                    for(const entry of requiredFiles){
+                        if(!fs.existsSync(entry)){
+                            missingFiles.push(entry);
+                        }
                     }
                 }
                 
