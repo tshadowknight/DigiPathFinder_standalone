@@ -389,10 +389,30 @@ const hardDefinedHeaders = {
       "skillId": 0,
       "value": 1
     },
-   /* "main/battle_skill.mbe/00_battle_skill_list.csv": {
+    "main/battle_skill.mbe/00_battle_skill_list.csv": {
       "skillId": 0,
-      "power": 23
-    },*/
+      "skillFixedDescId": 5,
+      "effectId": 16,
+      "dmgType": 22,//?? 0:none/self, 1: physical, 2: magic, 4: fixed damage at, 5:fixed %, 6: buff, 11: 'Major Damage'
+      "power": 23,
+      "element": 28,
+      "targetType": 33,
+      "minHits": 34,
+      "maxHits": 35,
+      "accuracy": 40,
+      "???_0": 41,//1-0
+      "critRate": 42,
+      "HPDrain": 43,
+      "SPDrain": 44,//??
+      "recoil": 45,      
+      "???_damage_increase_conditional": 46,
+      "???_1": 47,
+      "empty_0": 48,
+      "increasedDmgTagetHPPercent": 49,
+      "crtRateIfFirst": 50,
+      "empty_1": 51,
+      //remaing fields are anim/etc related?
+    },
     "txt_eng/jogress_skill_name.mbe/00_Sheet1.csv": {
       "skillId": 0,
       "value": 1

@@ -33,7 +33,7 @@ function GameFileManagerTS(){
         "main/digimon_status.mbe/00_digimon_status_data.csv",
         
         // Battle skills
-       // "main/battle_skill.mbe/00_battle_skill_list.csv",
+        "main/battle_skill.mbe/00_battle_skill_list.csv",
         
         // Japanese text files
         "txt_jpn/digimon_profile.mbe/00_Sheet1.csv",
@@ -304,6 +304,7 @@ function GameFileManagerTS(){
         let moveNames = {};
         let sigMoveNames = {};
         let moveDescriptions = {};
+        let autoMoveDescriptions = {};
         const digimonListData = await this.parseGameFile("main/digimon_status.mbe/00_digimon_status_data");
         let validDigimon = {};
 
@@ -320,6 +321,7 @@ function GameFileManagerTS(){
                 itemNames: await this.parseGameFile("txt_eng/item_name.mbe/00_Sheet1"),  
                 categoryNames: await this.parseGameFile("txt_eng/belong.mbe/00_Sheet1"),  
                 classNames: await this.parseGameFile("txt_eng/digimon_class_name.mbe/00_Sheet1"),  
+                elementNames: await this.parseGameFile("txt_eng/element.mbe/00_Sheet1"),  
             },
             {
                 locale: "Japanese", 
@@ -333,6 +335,7 @@ function GameFileManagerTS(){
                 itemNames: await this.parseGameFile("txt_jpn/item_name.mbe/00_Sheet1"),  
                 categoryNames: await this.parseGameFile("txt_jpn/belong.mbe/00_Sheet1"),  
                 classNames: await this.parseGameFile("txt_jpn/digimon_class_name.mbe/00_Sheet1"),  
+                elementNames: await this.parseGameFile("txt_jpn/element.mbe/00_Sheet1"),
             }
         ];
         
@@ -374,6 +377,7 @@ function GameFileManagerTS(){
         let itemNames = {};
         let categoryNames = {};
         let classNames = {};
+        let elementNames = {};
 
         function substituteDescriptionText(txt){
             return txt.replace(/\{.*?\}/g, "");
@@ -429,6 +433,16 @@ function GameFileManagerTS(){
                 moveDescriptions[locale][skillId] = escapeHTML(substituteDescriptionText(row[entry.moveDescriptions.headerLookup["value"]]));	                
             }
 
+            if(!autoMoveDescriptions[locale]){
+                autoMoveDescriptions[locale] = {};
+            }
+
+            for(let row of entry.autoMoveDescriptions.data){
+                const skillId = row[entry.autoMoveDescriptions.headerLookup["id"]];   
+                autoMoveDescriptions[locale][skillId] = escapeHTML((row[entry.autoMoveDescriptions.headerLookup["value"]]));	                
+            }
+
+
             if(!personalityNames[locale]){
                 personalityNames[locale] = {};
             }
@@ -460,6 +474,15 @@ function GameFileManagerTS(){
                 const id = row[entry.classNames.headerLookup["id"]];        
                 classNames[locale][id] = row[entry.classNames.headerLookup["value"]];       
             }
+
+             if(!elementNames[locale]){
+                elementNames[locale] = {};
+            }
+            for(let row of entry.elementNames.data){
+                const id = row[entry.elementNames.headerLookup["id"]];        
+                elementNames[locale][id] = row[entry.elementNames.headerLookup["value"]];       
+            }
+            
         }
 
         let movesLearned = {};
@@ -610,7 +633,50 @@ function GameFileManagerTS(){
             evoConditions[dbId].jogressPersonalityB = escapeHTML(entry[evolutionConditionData.headerLookup["jogressPersonalityB"]]);
         }
 
+        const skillData = await this.parseGameFile("main/battle_skill.mbe/00_battle_skill_list");
+
+        let skillDataLookup = {};
+
+        for(let entry of skillData.data){
+        const skillId = escapeHTML(entry[skillData.headerLookup["skillId"]]);
         
+        skillDataLookup[skillId] = {
+            // Core skill properties
+            skillId: parseInt(entry[skillData.headerLookup["skillId"]]) || 0,
+            skillFixedDescId: parseInt(entry[skillData.headerLookup["skillFixedDescId"]]) || 0,
+            effectId: parseInt(entry[skillData.headerLookup["effectId"]]) || 0,
+            
+            // Damage properties
+            dmgType: parseInt(entry[skillData.headerLookup["dmgType"]]) || 0, // 0:none/self, 1: physical, 2: magic, 4: fixed damage, 5:fixed %, 11: 'Major Damage'
+            power: parseInt(entry[skillData.headerLookup["power"]]) || 0,
+            element: parseInt(entry[skillData.headerLookup["element"]]) || 0,
+            
+            // Target and mechanics
+            targetType: parseInt(entry[skillData.headerLookup["targetType"]]) || 0,
+            minHts: parseInt(entry[skillData.headerLookup["minHts"]]) || 1,
+            maxHits: parseInt(entry[skillData.headerLookup["maxHits"]]) || 1,
+            accuracy: parseFloat(entry[skillData.headerLookup["accuracy"]]) || 100,
+            
+            // Critical and special effects
+            critRate: parseInt(entry[skillData.headerLookup["critRate"]]) || 0,
+            HPDrain: parseInt(entry[skillData.headerLookup["HPDrain"]]) || 0,
+            SPDrain: parseInt(entry[skillData.headerLookup["SPDrain"]]) || 0,
+            recoil: parseInt(entry[skillData.headerLookup["recoil"]]) || 0,
+            
+            // Conditional modifiers
+            damageBonusConditional: parseInt(entry[skillData.headerLookup["???_damage_increase_conditional"]]) || 0, // Damage increase conditional
+            increasedDmgTargetHPPercent: parseInt(entry[skillData.headerLookup["increasedDmgTagetHPPercent"]]) || 0,
+            critRateIfFirst: parseInt(entry[skillData.headerLookup["crtRateIfFirst"]]) || 0,
+            
+            // Unknown/reserved fields
+            unknown_0: entry[skillData.headerLookup["???_0"]] || 0, // 1-0 range
+            unknown_1: entry[skillData.headerLookup["???_1"]] || 0,
+            
+            // Empty/reserved slots
+            empty_0: entry[skillData.headerLookup["empty_0"]] || null,
+            empty_1: entry[skillData.headerLookup["empty_1"]] || null
+        };
+    }
 
         /*
         
@@ -964,6 +1030,7 @@ function GameFileManagerTS(){
             moveNames: moveNames, 
             sigMoves: sigMoveNames, 
             moveDescriptions: moveDescriptions, 
+            autoMoveDescriptions: autoMoveDescriptions,
             digimonNames: digimonNames, 
             digimonDescriptions: digimonDescriptions, 
            // supportSkillNames: supportSkillNames, 
@@ -972,7 +1039,9 @@ function GameFileManagerTS(){
             personalityNames: personalityNames,
             itemNames: itemNames,
             categoryNames: categoryNames,
-            classNames: classNames
+            classNames: classNames,
+            skillData: skillDataLookup,
+            elementNames: elementNames
         };
     }
 

@@ -541,6 +541,73 @@ DexPane.prototype.createStatsBlock = function(monInfo){
     return content;
 }
 
+DexPane.prototype.substituteTokens = function(templateString, tokens){
+    let result = templateString;
+    for(let token in tokens){
+        result = result.replace(token, tokens[token]);
+    }       
+    return result;
+}
+
+DexPane.prototype.getMoveDesc = function(skillId){
+    const skillTextId = getSkillTextIdInfo()[skillId]
+    if(!isTSMode()){
+        return localizationData[currentLocale].moveDesc[skillTextId];
+    } else {
+        
+        const skillInfo = cachedGameData.skillData[skillId];
+        if(skillInfo.skillFixedDescId * 1){
+            return localizationData[currentLocale].moveDesc[skillInfo.skillFixedDescId];
+        } else {
+            let descParts = [];
+            const templateStrings = localizationData[currentLocale].autoMoveDescriptions;
+            const targetType  = templateStrings[skillInfo.targetType];
+            descParts.push(targetType);
+
+            
+            if(skillInfo.dmgType == 1){
+                let templateString = templateStrings[1014];
+                let tokens = {
+                    "{d1}": localizationData[currentLocale].elementNames[skillInfo.element],
+                    "{d0}{d2}": skillInfo.power
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));
+            }
+             if(skillInfo.dmgType == 2){
+                let templateString = templateStrings[1015];
+                let tokens = {
+                    "{d1}": localizationData[currentLocale].elementNames[skillInfo.element],
+                    "{d0}{d2}": skillInfo.power
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));
+            }
+
+            if(skillInfo.HPDrain * 1 && skillInfo.SPDrain * 1 && skillInfo.HPDrain * 1 == skillInfo.SPDrain * 1){
+                let templateString = templateStrings[32];
+                let tokens = {
+                    "{d0}": skillInfo.HPDrain,
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));
+            } else if(skillInfo.HPDrain * 1){
+                let templateString = templateStrings[30];
+                let tokens = {
+                    "{d0}": skillInfo.HPDrain,
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));
+            } else if(skillInfo.SPDrain * 1){
+                let templateString = templateStrings[31];
+                let tokens = {
+                    "{d0}": skillInfo.HPDrain,
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));
+            }
+
+
+            return descParts.join("<br>").replace(/[(\r\n]/g, "<br>").replace(/(<br\s*\/?>){2,}/gi, '<br>');
+        }
+    }
+}
+
 
 DexPane.prototype.createMovesBlock = function(monInfo){
     let content = "";
@@ -572,7 +639,7 @@ DexPane.prototype.createMovesBlock = function(monInfo){
     }
     for(let entry of sortedSigMoves){
         let nameContent = "<div class='skill_entry'>" + localizationData[currentLocale].sigMoves[getSkillTextIdInfo()[entry.id]] + "</div>";
-        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[getSkillTextIdInfo()[entry.id]] || "---"]);
+        tableContent.push([nameContent, this.getMoveDesc(entry.id) || "---"]);
     }
 
     content+=this.arrayToTableContent(tableContent);
@@ -607,7 +674,7 @@ DexPane.prototype.createMovesBlock = function(monInfo){
     for(let entry of sortedMoves){
         let isWanted = pathFinder.wantedSkills[entry.id];
         let nameContent = "<div class='skill_entry "+(isWanted ? "wanted" : "")+"'>" + localizationData[currentLocale].sigMoves[getSkillTextIdInfo()[entry.id]] + "</div>";
-        tableContent.push([nameContent, localizationData[currentLocale].moveDesc[getSkillTextIdInfo()[entry.id]] || "---", entry.level]);
+        tableContent.push([nameContent, this.getMoveDesc(entry.id) || "---", entry.level]);
     }
 
     content+=this.arrayToTableContent(tableContent);

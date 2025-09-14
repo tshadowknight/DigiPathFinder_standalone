@@ -1019,6 +1019,7 @@ function initPathFinder(forceReload){
 			for(let locale in localizationConfig){
 				localizationData[locale].moves = gameData.moveNames?.[locale] || {};
 				localizationData[locale].moveDesc = gameData.moveDescriptions?.[locale] || {};
+				localizationData[locale].autoMoveDescriptions = gameData.autoMoveDescriptions?.[locale] || {};
 				localizationData[locale].digimon = gameData.digimonNames?.[locale] || {};
 				localizationData[locale].digimonDesc = gameData.digimonDescriptions?.[locale] || {};
 				localizationData[locale].supportSkills = gameData.supportSkillNames?.[locale] || {};
@@ -1029,6 +1030,7 @@ function initPathFinder(forceReload){
 				localizationData[locale].itemNames = gameData.itemNames?.[locale] || {};	
 				localizationData[locale].categoryNames = gameData.categoryNames?.[locale] || {};	
 				localizationData[locale].classNames = gameData.classNames?.[locale] || {};			
+				localizationData[locale].elementNames = gameData.elementNames?.[locale] || {};					
 			}	
 
 

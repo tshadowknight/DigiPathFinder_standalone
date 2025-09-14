@@ -13,7 +13,7 @@
 	"discord_promotion": "Join the <a href='https://discord.gg/8yYyb7t'>PVP - Digimon Story Fightclub Discord Channel</a> for all things related to Digimon Cyber Sleuth PVP!",
 	"txt_devolve_to": "Devolve to",
 	"txt_evolve_to": "Evolve to",
-	"loader_msg": "Loading Game Files...<br>If this takes a long time consider moving the app to same disk drive as the game install.",
+	"loader_msg": "Loading Game Files...<br>For best performance consider moving the app to same disk drive as the game install.",
 	"loader_msg_web": "Loading Game Data...",
 	"loader_msg_imgs": "Loading Digmon Images...",
 	"game_path": "CS/HaMe Files Location",

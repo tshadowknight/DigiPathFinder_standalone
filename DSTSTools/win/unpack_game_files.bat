@@ -7,6 +7,8 @@ rem evo info
 rem main monster db
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\main\data\digimon_status.mbe ..\..\game_data_TS\unpacked\main\
 
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\main\data\battle_skill.mbe ..\..\game_data_TS\unpacked\main\
+
 rem jpn strings
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\digimon_profile.mbe ..\..\game_data_TS\unpacked\txt_jpn\
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\char_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
