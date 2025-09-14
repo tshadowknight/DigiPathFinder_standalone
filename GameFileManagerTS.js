@@ -653,7 +653,7 @@ function GameFileManagerTS(){
             
             // Target and mechanics
             targetType: parseInt(entry[skillData.headerLookup["targetType"]]) || 0,
-            minHts: parseInt(entry[skillData.headerLookup["minHts"]]) || 1,
+            minHits: parseInt(entry[skillData.headerLookup["minHits"]]) || 1,
             maxHits: parseInt(entry[skillData.headerLookup["maxHits"]]) || 1,
             accuracy: parseFloat(entry[skillData.headerLookup["accuracy"]]) || 100,
             

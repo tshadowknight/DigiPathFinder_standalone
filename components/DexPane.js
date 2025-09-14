@@ -554,56 +554,109 @@ DexPane.prototype.getMoveDesc = function(skillId){
     if(!isTSMode()){
         return localizationData[currentLocale].moveDesc[skillTextId];
     } else {
+
+        const templateKeys = {
+            "inflict_phys": 1014,
+            "inflict_magic": 1015,
+            "hits": 25,
+            "hits_range": 26,
+            "drain_hp_sp": 32,
+            "drain_sp": 31,
+            "drain_hp": 30,
+            "hit_rate": 28,
+            "crit_rate": 29,
+            "recoil": 33
+        };
         
         const skillInfo = cachedGameData.skillData[skillId];
         if(skillInfo.skillFixedDescId * 1){
-            return localizationData[currentLocale].moveDesc[skillInfo.skillFixedDescId];
+            return localizationData[currentLocale].moveDesc[skillInfo.skillFixedDescId].replace(/[(\r\n]/g, "<br>").replace(/(<br\s*\/?>){2,}/gi, '<br>');;
         } else {
             let descParts = [];
             const templateStrings = localizationData[currentLocale].autoMoveDescriptions;
             const targetType  = templateStrings[skillInfo.targetType];
             descParts.push(targetType);
 
+            let hitsString = "";
+            if(skillInfo.minHits > 1 && skillInfo.maxHits > 1){
+                let templateString;
+                if(skillInfo.minHits == skillInfo.maxHits){
+                    templateString = templateStrings[templateKeys["hits"]];
+                } else {
+                    templateString = templateStrings[templateKeys["hits_range"]];
+                }
+                let tokens = {
+                    "{d0}": skillInfo.minHits,
+                    "{d1}": skillInfo.maxHits,
+                };
+                hitsString = this.substituteTokens(templateString, tokens);
+            }
             
             if(skillInfo.dmgType == 1){
-                let templateString = templateStrings[1014];
+                let templateString = templateStrings[templateKeys["inflict_phys"]];
                 let tokens = {
                     "{d1}": localizationData[currentLocale].elementNames[skillInfo.element],
-                    "{d0}{d2}": skillInfo.power
+                    "{d0}": skillInfo.power,
+                    "{d2}": hitsString
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             }
              if(skillInfo.dmgType == 2){
-                let templateString = templateStrings[1015];
+                let templateString = templateStrings[templateKeys["inflict_magic"]];
                 let tokens = {
                     "{d1}": localizationData[currentLocale].elementNames[skillInfo.element],
-                    "{d0}{d2}": skillInfo.power
+                    "{d0}": skillInfo.power,
+                    "{d2}": hitsString
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             }
 
             if(skillInfo.HPDrain * 1 && skillInfo.SPDrain * 1 && skillInfo.HPDrain * 1 == skillInfo.SPDrain * 1){
-                let templateString = templateStrings[32];
+                let templateString = templateStrings[templateKeys["drain_hp_sp"]];
                 let tokens = {
                     "{d0}": skillInfo.HPDrain,
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             } else if(skillInfo.HPDrain * 1){
-                let templateString = templateStrings[30];
+                let templateString = templateStrings[templateKeys["drain_hp"]];
                 let tokens = {
                     "{d0}": skillInfo.HPDrain,
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             } else if(skillInfo.SPDrain * 1){
-                let templateString = templateStrings[31];
+                let templateString = templateStrings[templateKeys["drain_sp"]];
                 let tokens = {
-                    "{d0}": skillInfo.HPDrain,
+                    "{d0}": skillInfo.SPDrain,
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));
+            }
+
+            if(skillInfo.accuracy != 100){
+                let templateString = templateStrings[templateKeys["hit_rate"]];
+                let tokens = {
+                    "{d0}": skillInfo.accuracy,
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));
+            }
+
+            if(skillInfo.critRate > 5){
+                let templateString = templateStrings[templateKeys["crit_rate"]];
+                let tokens = {
+                    "{d0}": skillInfo.critRate,
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));
+            }
+
+            if(skillInfo.recoil > 0){
+                let templateString = templateStrings[templateKeys["recoil"]];
+                let tokens = {
+                    "{d0}": skillInfo.recoil,
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             }
 
 
-            return descParts.join("<br>").replace(/[(\r\n]/g, "<br>").replace(/(<br\s*\/?>){2,}/gi, '<br>');
+            return descParts.join("<br>").replace(/[(\r\n]/g, "").replace(/(<br\s*\/?>){2,}/gi, '<br>');
         }
     }
 }
