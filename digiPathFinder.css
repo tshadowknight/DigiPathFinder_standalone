@@ -108,6 +108,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', e
 	cursor: pointer;
 }
 
+#game_mode {
+	display: flex;
+	align-items: center;
+	margin-left: 11px;
+}
+
 #reload_btn {
 	padding: 20px;
 	cursor: pointer;
@@ -126,6 +132,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', e
 	font-size: 2rem;
 	height: 37px;
 	align-items: center;
+	white-space: nowrap;
+}
+
+#header_container {
+	max-width: 90vw;
 }
 
 .header {
@@ -584,6 +595,10 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 }
 
+.control_section.game_banner {
+	font-size: 2rem;
+}
+
 .controls_digi_icon {
 	
 }
@@ -918,7 +933,13 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	white-space: nowrap;
     flex-wrap: wrap;
 	display: flex;
+	border-bottom: 1px solid #E0E0E0;
 }
+
+.dex_pane .evo_entry:last-child {
+	border-bottom: 0px;
+}
+
 
 .dex_pane .evo_entries {
 	width: fit-content;
@@ -1030,6 +1051,10 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     min-width: calc(65% - 34px);
     justify-content: space-around;
     flex-grow: 1;
+}
+
+.evo_reqs_flex.previous {
+	min-width: calc(65% - 134px);	
 }
 
 .evo_reqs_flex .block{

@@ -54,7 +54,7 @@ DexPane.prototype.getMonInfo = function(monId){
             evosReqs: digiData.conditions,
             neighBours: digiData.neighBours,
             traits: digiData.traits,
-            resistances: digiData.resistances
+            resistances: digiData.resistances,
         };
     }
     return monInfo;
@@ -169,6 +169,9 @@ DexPane.prototype.show = function(context){
             traitString.push(localizationData[currentLocale].classNames[entry]);
         }
         tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_traits+"</div>", traitString.join(", ")]);
+
+        tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_default_pers+"</div>", localizationData[currentLocale].personalityNames[monInfo.baseStats.basePersonality]]);
+        
     }
     content+="<table id='general_table' class='stats'>";  
     content+=this.arrayToTableContent(tableContent, true);
@@ -909,11 +912,30 @@ DexPane.prototype.createEvosBlock = function(monInfo){
         content+="</div>";
         content+="</div>";
 
-        /*content+="<table id='evo_reqs_table' class='stats'>";  
+        if(isTSMode()){
+           // content+="<table id='evo_reqs_table' class='stats'>";  
 
-        content+=this.createEvoReqs(targetMonInfo);
-    
-        content+="</table>";*/
+            content+="<div class='evo_reqs_flex previous'>";
+
+            let requirements = monInfo.evosReqs;
+            let row = [];
+          
+            content+="<div class='block'>"
+            content+="<div class='label condition'>"
+            content+=localizationData[currentLocale].app.DEX_general_default_pers;
+            content+="</div>";
+            
+            content+="<div class='value'>"
+            content+=localizationData[currentLocale].personalityNames[targetMonInfo.baseStats.basePersonality];
+            content+="</div>";
+            content+="</div>";
+            
+
+            content+="</div>";
+        
+         //   content+="</table>";
+        }
+        
         content+="</div>";
     }
     content+="</div>";

@@ -403,6 +403,7 @@ function createControls(){
 	var content = "";
 	
 	
+	
 	content+="<div class='control_section'>";
 	content+="<div data-appstring='header_digimon' class='header'>Digimon</div>";
 	content+="<div class='control_block' >";	
@@ -480,6 +481,17 @@ function createControls(){
 	content+="<div data-appstringhint='hint_copy' title='Copy the current path to text' id='copy_to_clipboard'><i class='fa fa-files-o' aria-hidden='true'></i></div>";
 	
 	$("#path_tools_container").html(content);
+
+	let modeContent = " - ";
+	modeContent+="<div class='control_section game_banner'>";
+	if(isTSMode()){
+		modeContent+="<span class='control_title'><span data-appstring='game_label_TS'>Time Stranger</span>";
+	} else {
+		modeContent+="<span class='control_title'><span data-appstring='game_label'>Cyber Sleuth and Hacker's Memory</span>";
+	}
+	modeContent+="</div>";
+	
+	$("#game_mode").html(modeContent);
 	
 	localizePage();
 	
@@ -662,7 +674,12 @@ var gameVersions = [
 ];
 
 var preferredGameVersion = localStorage.getItem("DigiPathFinder_gameVersion");
-var currentGameVersion = preferredGameVersion || 0;
+var currentGameVersion;
+if(preferredGameVersion == null){
+	currentGameVersion = 1;
+} else {
+	currentGameVersion = preferredGameVersion;
+}
 
 if(currentGameVersion == 0){
 	activeGameFileManager = gameFileManager;

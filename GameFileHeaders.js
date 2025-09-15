@@ -316,6 +316,7 @@ const hardDefinedHeaders = {
       //base stats
       "stageId": 4,
       "typeId": 6,
+      "basePersonality": 61,
       "baseHP": 64,
       "baseSP": 65,
       "baseATK": 66,
@@ -365,30 +366,6 @@ const hardDefinedHeaders = {
       "jogressDbIdB": 27,
       "jogressPersonalityB": 29
     },   
-    "txt_eng/char_name.mbe/00_Sheet1.csv": {
-      "strKey": 0,
-      "value": 1
-    },
-    "txt_jpn/char_name.mbe/00_Sheet1.csv": {
-      "strKey": 0,
-      "value": 1
-    },
-    "txt_eng/digimon_profile.mbe/00_Sheet1.csv": {
-      "strKey": 0,
-      "value": 1
-    },
-    "txt_jpn/digimon_profile.mbe/00_Sheet1.csv": {
-      "strKey": 0,
-      "value": 1
-    },
-    "txt_eng/skill_name.mbe/00_Sheet1.csv": {
-      "skillId": 0,
-      "value": 1
-    },
-    "txt_jpn/skill_name.mbe/00_Sheet1.csv": {
-      "skillId": 0,
-      "value": 1
-    },
     "main/battle_skill.mbe/00_battle_skill_list.csv": {
       "skillId": 0,
       "skillFixedDescId": 5,
@@ -411,87 +388,38 @@ const hardDefinedHeaders = {
       "increasedDmgTagetHPPercent": 49,
       "crtRateIfFirst": 50,
       "empty_1": 51,
+      "buffSet": 54, //id into main\battle_skill.mbe\02_buff_set.csv
       //remaing fields are anim/etc related?
-    },
-    "txt_eng/jogress_skill_name.mbe/00_Sheet1.csv": {
-      "skillId": 0,
-      "value": 1
-    },
-    "txt_jpn/jogress_skill_name.mbe/00_Sheet1.csv": {
-      "skillId": 0,
-      "value": 1
-    }, 
-    "txt_eng/skill_explanation.mbe/00_Sheet1.csv": {
-      "skillId": 0,
-      "value": 1
-    }, 
-    "txt_jpn/skill_explanation.mbe/00_Sheet1.csv": {
-      "skillId": 0,
-      "value": 1
-    }, 
-    "txt_eng/skill_auto_explanation.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_jpn/skill_auto_explanation.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_eng/generation_name.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_jpn/generation_name.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_eng/digimon_type.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_jpn/digimon_type.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_eng/element.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_jpn/element.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_eng/personality_name.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_jpn/personality_name.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_eng/item_name.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_jpn/item_name.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_eng/belong.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_jpn/belong.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_eng/digimon_class_name.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    }, 
-    "txt_jpn/digimon_class_name.mbe/00_Sheet1.csv": {
-      "id": 0,
-      "value": 1
-    },          
-    
+    },   
   }
+
+  const locales = [
+    "txt_eng",
+    "txt_jpn"
+  ]
+
+  const localizedStringFiles = [
+    "/jogress_skill_name.mbe/00_Sheet1.csv",
+    "/skill_explanation.mbe/00_Sheet1.csv",
+    "/skill_auto_explanation.mbe/00_Sheet1.csv",
+    "/generation_name.mbe/00_Sheet1.csv",
+    "/digimon_type.mbe/00_Sheet1.csv",
+    "/element.mbe/00_Sheet1.csv",
+    "/personality_name.mbe/00_Sheet1.csv",
+    "/item_name.mbe/00_Sheet1.csv",
+    "/belong.mbe/00_Sheet1.csv",
+    "/digimon_class_name.mbe/00_Sheet1.csv",
+    "/char_name.mbe/00_Sheet1.csv",
+    "/digimon_profile.mbe/00_Sheet1.csv",
+    "/skill_name.mbe/00_Sheet1.csv",
+  ]
+
+for(let locale of locales){
+  for(let stringFile of localizedStringFiles){
+    hardDefinedHeadersTS[locale+stringFile] = {
+      "id": 0,
+      "value": 1
+    }
+  }
+}
+

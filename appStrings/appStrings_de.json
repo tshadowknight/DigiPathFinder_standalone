@@ -1,5 +1,7 @@
 {
-	"app_title": "Digimon Evolution Path Finder CS/HaMe/TS v4.0",
+	"app_title": "Digimon Evolution Path Finder v4.0",
+	"game_label": "Cyber Sleuth and Hacker's Memory",
+	"game_TS": "Time Stranger",
 	"calculate_path": "Calculate Path",
 	"label_language": "Digmon Info Language",
 	"label_game_version": "Game Mode",
@@ -64,6 +66,7 @@
     "DEX_general_equipSlots": "Equip Slots",
 	"DEX_general_category": "Category",
 	"DEX_general_traits": "Traits",
+	"DEX_general_default_pers": "Default Personality",
     "DEX_general_memoryUse": "Memory Usage",
 	"types": {       
 		"free": "Free",

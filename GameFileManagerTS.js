@@ -389,7 +389,7 @@ function GameFileManagerTS(){
                 digimonNames[locale] = {};
             }
             for(let row of entry.names.data){
-                const strKey = row[entry.names.headerLookup["strKey"]];      
+                const strKey = row[entry.names.headerLookup["id"]];      
                 const dbId = strKeyLookup[strKey];          
                 digimonNames[locale][dbId] = escapeHTML(row[entry.names.headerLookup["value"]]);		
             }
@@ -398,7 +398,7 @@ function GameFileManagerTS(){
                 digimonDescriptions[locale] = {};
             }
             for(let row of entry.descriptions.data){
-                const strKey = row[entry.descriptions.headerLookup["strKey"]];                     
+                const strKey = row[entry.descriptions.headerLookup["id"]];                     
                 let dbId = parseInt(strKey.replace(/^digimon_/, "").replace(/_profile$/, ""));
                 digimonDescriptions[locale][dbId] = escapeHTML(row[entry.descriptions.headerLookup["value"]]);		
             }
@@ -410,7 +410,7 @@ function GameFileManagerTS(){
                 sigMoveNames[locale] = {};
             }
             for(let row of entry.moveNames.data){
-                const skillId = row[entry.moveNames.headerLookup["skillId"]];        
+                const skillId = row[entry.moveNames.headerLookup["id"]];        
                 skillTextIds[skillId] = skillId;//TS data does not need an additional translation layer   
                 if(skillId.match(/^3.*/)){//only regular skills
                     moveNames[locale][skillId] = escapeHTML(row[entry.moveNames.headerLookup["value"]]);
@@ -419,7 +419,7 @@ function GameFileManagerTS(){
             }
 
             for(let row of entry.jogressMoveNames.data){
-                const skillId = row[entry.jogressMoveNames.headerLookup["skillId"]];        
+                const skillId = row[entry.jogressMoveNames.headerLookup["id"]];        
                 skillTextIds[skillId] = skillId;//TS data does not need an additional translation layer                         		
                 sigMoveNames[locale][skillId] = escapeHTML(row[entry.jogressMoveNames.headerLookup["value"]]);	                
             }
@@ -429,7 +429,7 @@ function GameFileManagerTS(){
             }
 
             for(let row of entry.moveDescriptions.data){
-                const skillId = row[entry.moveNames.headerLookup["skillId"]];   
+                const skillId = row[entry.moveNames.headerLookup["id"]];   
                 moveDescriptions[locale][skillId] = escapeHTML(substituteDescriptionText(row[entry.moveDescriptions.headerLookup["value"]]));	                
             }
 
@@ -543,6 +543,8 @@ function GameFileManagerTS(){
             baseStats[dbId].level = commonFieldTranslationsTS.level[escapeHTML(entry[digimonListData.headerLookup["stageId"]])];
 
             baseStats[dbId].type = commonFieldTranslationsTS.type[escapeHTML(entry[digimonListData.headerLookup["typeId"]])];
+
+            baseStats[dbId].basePersonality = escapeHTML(entry[digimonListData.headerLookup["basePersonality"]]);
 
             baseStats[dbId].baseHP = escapeHTML(entry[digimonListData.headerLookup["baseHP"]]);
             baseStats[dbId].baseSP = escapeHTML(entry[digimonListData.headerLookup["baseSP"]]);
