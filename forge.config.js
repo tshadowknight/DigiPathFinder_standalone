@@ -1,11 +1,66 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
+const fse = require('fs-extra');
+const path = require('path');
+
 module.exports = {
   packagerConfig: {
     asar: true,
-	extraResource: ['./DSCSTools', "./game_data"]
+	
+	"ignore": [
+		"^/node_modules",
+		"^/game_data",
+		"^/game_data_TS",
+	]
   },
+  hooks: {
+	  postPackage: async(forgeConfig, options) => {
+		console.warn("postPackage hook");  
+		console.warn(forgeConfig);  
+		console.warn("==options=="); 
+		console.warn(options);  
+	  
+	  
+		  for(const outputPath of options.outputPaths){
+				const resources = [
+				{
+				  from: './DSCSTools',
+				  to: path.join(outputPath, "resources", 'DSCSTools')
+				},
+				{
+				  from: './game_data_TS/unpacked/digi_data.json',
+				  to: path.join(outputPath, "resources", 'game_data_TS/unpacked/digi_data.json')
+				},
+				{
+				  from: './game_data_TS/unpacked/images/converted',
+				  to: path.join(outputPath, "resources", 'game_data_TS/unpacked/images/converted')
+				},
+				{
+				  from: './DSTSTools',
+				  to: path.join(outputPath, "resources", 'DSTSTools')
+				}
+			  ];
+
+			  for (const resource of resources) {
+				try {
+				  await fse.copy(resource.from, resource.to, {
+					overwrite: true,
+					filter: (src, dest) => {
+					  // Custom filtering logic
+					  return !src.includes('node_modules');
+					}
+				  });
+				  console.log(`✓ Copied: ${resource.from}`);
+				} catch (error) {
+				  console.error(`✗ Failed to copy ${resource.from}:`, error.message);
+				}
+			  }	
+		  }
+	  }
+  },
+  
+
   rebuildConfig: {},
   makers: [
     {
@@ -26,10 +81,10 @@ module.exports = {
     },
   ],
   plugins: [
-    {
+    /*{
       name: '@electron-forge/plugin-auto-unpack-natives',
       config: {},
-    },
+    },*/
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
     new FusesPlugin({

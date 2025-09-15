@@ -33,7 +33,23 @@
   "build": {
     "extraResources": [
       "./DSCSTools",
-      "./game_data"
+	  "./DSTSTools",
+      "./game_data",
+	  "./game_data_TS"
     ]
-  }
+  },
+  "packagerConfig": {
+    "ignore": [
+        "^\\/public$",
+        "^\\/src$",
+        "^\\/node_modules$",
+        "^\\/[.].+",
+		"^\\/game_data\\/packed$",
+		"^\\/game_data\\/unpacked$",
+		"^\\/game_data\\/game_data_TS$",
+		"^\\/game_data\\/game_data_TS\\/main$",
+		"^\\/game_data\\/game_data_TS\\/txt_.*$",
+		"^\\/game_data\\/game_data_TS\\/img\\/.*\\.dds$"
+		]
+	}
 }

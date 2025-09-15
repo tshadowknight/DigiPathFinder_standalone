@@ -1060,7 +1060,7 @@ function initPathFinder(forceReload){
 			gameData = cachedGameData;
 			finalize();
 		} else {
-			activeGameFileManager.preparePathFinderData().then(function(data){
+			activeGameFileManager.preparePathFinderData(forceReload).then(function(data){
 				gameData = data;
 				cachedGameData = data;
 				finalize();

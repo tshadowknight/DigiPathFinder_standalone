@@ -292,14 +292,21 @@ function GameFileManagerTS(){
 
     
 
-    GameFileManagerTS.prototype.preparePathFinderData = async function(){
+    GameFileManagerTS.prototype.preparePathFinderData = async function(forceReload){
        if(!isElectron()){
             //const DDSCacheContent_A = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_a.txt'));
             //const DDSCacheContent_B = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_b.txt'));
             //DDSCache = JSON.parse(DDSCacheContent_A + DDSCacheContent_B);
             return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/game_data.json'));
+        } else {
+            if(!forceReload){
+                if(fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json")) && fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "unpacked", "images", "converted"))){
+                    return await Promise.resolve($.getJSON(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json")));
+                }
+            }
         }
 
+        
         let digimonNames = {};
         let moveNames = {};
         let sigMoveNames = {};
@@ -1024,8 +1031,7 @@ function GameFileManagerTS(){
                 }
             }        
         }
-
-        return {
+        const cacheData = {
             digiData: digiData, 
             //levellUpGrowths: levellUpGrowths, 
             //fieldNames: fieldNames, 
@@ -1045,6 +1051,10 @@ function GameFileManagerTS(){
             skillData: skillDataLookup,
             elementNames: elementNames
         };
+
+        fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json"), JSON.stringify(cacheData));
+
+        return cacheData;
     }
 
 }
