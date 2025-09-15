@@ -735,6 +735,42 @@ function showGameFileLoader(msg){
 	document.getElementById("particles").classList.add("game_loader");
 }
 
+function showGameFileLoaderConfirm(msg){
+	return new Promise(function(resolve, reject){
+		let elem = document.getElementById("spoiler_warning");
+		if(!elem){
+			elem = document.createElement("div");
+			elem.id = "spoiler_warning";
+		}
+		elem.classList.remove("hidden");
+		elem.classList.add("global_warning");
+	
+		let content = "";
+		content+="<div style='width: 75%; padding: 45px; border-radius: 50px; background-color: rgba(0,0,0,0.25);text-align: center;border: 10px solid rgba(0,0,0,0.5);'>";
+		content+="<div style='color: #EE2222'>";
+		content+=msg;
+		content+="</div>";
+		content+="<br>";
+		content+="<div class='overlayOK'>";
+		content+="OK";
+		content+="</div>";
+		content+="</div>";
+		elem.innerHTML = content;
+
+		
+
+		document.body.append(elem);
+
+		document.querySelector(".overlayOK").addEventListener("click", function(){
+			elem.classList.add("hidden");
+			resolve();
+		});
+
+
+		document.getElementById("particles").classList.add("game_loader");
+	});
+	
+}
 function setLoaderError(error){
 	let elem = document.getElementById("game_file_loader");
 	if(elem){
@@ -1065,7 +1101,7 @@ function initPathFinder(forceReload){
 	}
 }
 
-$(document).ready(function(){
+document.addEventListener("DOMContentLoaded", async function(){
 
 	$("#options").on("click", function(){
 		toggleOptions();
@@ -1083,11 +1119,20 @@ $(document).ready(function(){
 			localizationData[locale].app = data;
 		}));
 	});
-	$.when.apply($, deferreds).then(function(){
-		particlesJS.load('particles', 'particles.json', function() {
-			console.log('callback - particles.js config loaded');
-		});	
-		initPathFinder();	
-		refreshWarnings();
+	await Promise.all(deferreds);
+	
+	particlesJS.load('particles', 'particles.json', function() {
+		console.log('callback - particles.js config loaded');
 	});	
+	
+	let spoilersOK = localStorage.getItem("DigiPathFinder_spoilers_OK");
+	if(!spoilersOK){
+		$("#no_game_files_warning").hide();	
+		await showGameFileLoaderConfirm(localizationData[currentLocale].app.loader_spoiler);
+
+	}
+	localStorage.setItem("DigiPathFinder_spoilers_OK", 1);
+	initPathFinder();	
+	refreshWarnings();
+	
 });

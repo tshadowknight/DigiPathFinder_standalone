@@ -667,13 +667,21 @@ DexPane.prototype.getMoveDesc = function(skillId){
 
 DexPane.prototype.createMovesBlock = function(monInfo){
     let content = "";
+    
+
+    
     content+="<div class='section moves'>";
     
-    content+="<div class='section_header'>";
-    
+    content+="<div class='section_header'>";    
     content+=localizationData[currentLocale].app.DEX_header_moves;
     content+="</div>";
     content+="<div class='inner'>";
+
+    if(isTSMode()){
+        content+="<div class='section_sub_header wip_warning'>";    
+        content+=localizationData[currentLocale].app.DEX_skills_WIP;
+        content+="</div>";
+    }
 
     content+="<div class='section_sub_header'>";
     

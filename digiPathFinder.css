@@ -685,7 +685,8 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	justify-content: center;
 	width: calc(100vw - 100px);
 	height: calc(100vh - 57px);
-	transition: 1s;
+	transition: background-color 1s;
+	transition: opacity 1s;
 	background-color: rgba(51,78,155,0.7);
 	font-size: 50px;
 	animation-name: glow;
@@ -706,9 +707,58 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	100% {opacity: 1;}
   }
 
+#spoiler_warning.hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
+#spoiler_warning.global_warning {
+	top: 0;
+	height: 100vh;
+	z-index: 100;
+	animation-name: none;
+}
+
+
+#spoiler_warning {
+	position: fixed;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: calc(100vw - 100px);
+	height: 100vh;
+	transition: background-color 1s;
+	transition: opacity 1s;
+	background-color: rgba(51,78,155,0.7);
+	font-size: 50px;
+	/*animation-name: glow;*/
+  	animation-duration: 4s;
+	font-weight: bold; 
+	color: #F1F1F1;
+	z-index: 11;
+	top: 0px;
+	padding-left: 50;
+    padding-right: 50;
+}
+
+@keyframes glow {
+	0%   {opacity: 1;}
+	25%  {opacity: 0.8;}
+	50%  {opacity: 1;}
+	75%  {opacity: 0.8;}
+	100% {opacity: 1;}
+  }
+
 #game_file_loader.hidden {
 	opacity: 0;
 	pointer-events: none;
+}
+
+#game_file_loader.global_warning {
+	top: 0;
+	height: 100vh;
+	z-index: 100;
+	animation-name: none;
 }
 
 .digi_icon_container {
@@ -859,6 +909,13 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     margin-bottom: 20px;
     font-size: 20px;
     font-weight: bold;
+}
+
+.dex_pane .section_sub_header.wip_warning {
+	font-size: 14px;
+	font-style: italic;
+	margin-bottom: 5px;
+	color: #444444;
 }
 
 .dex_pane table.stats {
@@ -1337,4 +1394,14 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 .label.condition {
 	display: flex;
 	justify-content: center;
+}
+
+.overlayOK {
+	font-size: 48px;
+	background-color: #334e9b;
+    color: #FFFFFF;
+    font-weight: bold;
+	border-radius: 22px;
+	padding: 30px;
+	cursor: pointer;
 }
