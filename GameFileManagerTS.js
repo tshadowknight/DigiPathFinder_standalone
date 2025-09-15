@@ -67,6 +67,11 @@ function GameFileManagerTS(){
     ];
     GameFileManagerTS.prototype.hasGameFiles = function(){
         let isKitValid = true;
+         
+        if(fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json")) && fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "unpacked", "images", "converted"))){
+            return true;
+        }
+    
         for(let file of requiredFiles){
             if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked', file))) {
                 isKitValid = false;
@@ -178,16 +183,16 @@ function GameFileManagerTS(){
                 }
                 
                 const requiredFiles = [
-                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/data'),
-                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/images'),
-                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/shaders'),
-                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua')
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/data/'),
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/images/'),
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/shaders/'),
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua/')
                 ];
 
                 let retryCount = 0;
                 let retryTime = 15;
                 
-
+                
                 let missingFiles = [];
                 for(const entry of requiredFiles){
                     if(!fs.existsSync(entry)){

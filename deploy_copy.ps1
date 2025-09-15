@@ -1,0 +1,4 @@
+cd out 
+7zip\7za.exe a -tzip DigiPathFinder-v4.0-win32-ia32.zip ../README.md DigiPathFinder-win32-ia32 -xr!DigiPathFinder-win32-ia32\resources\game_data\unpacked -xr!DigiPathFinder-win32-ia32\resources\game_data\packed -xr!DigiPathFinder-win32-ia32\resources\game_data\clean\images_unpacked -xr!"DigiPathFinder-win32-ia32\resources\game_data\dds_cache.json" -xr!DigiPathFinder-win32-ia32\resources\game_data_TS\unpacked\main -xr!DigiPathFinder-win32-ia32\resources\game_data_TS\unpacked\txt_eng -xr!DigiPathFinder-win32-ia32\resources\game_data_TS\unpacked\txt_jpn -xr!DigiPathFinder-win32-ia32\resources\game_data_TS\unpacked\images\*.img -xr!DigiPathFinder-win32-ia32\resources\game_data_TS\packed
+Move-Item -Force -Path DigiPathFinder-v4.0-win32-ia32.zip -Destination "E:\Google Drive\DigiPathFinder Standalone\Releases"	
+cd..

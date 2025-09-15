@@ -9,7 +9,6 @@ module.exports = {
     asar: true,
 	
 	"ignore": [
-		"^/node_modules",
 		"^/game_data",
 		"^/game_data_TS",
 	]
@@ -39,6 +38,10 @@ module.exports = {
 				{
 				  from: './DSTSTools',
 				  to: path.join(outputPath, "resources", 'DSTSTools')
+				},
+				{
+				  from: './node_modules/@imagemagick/magick-wasm/dist/magick.wasm',
+				  to: path.join(outputPath, "resources", 'node_modules/@imagemagick/magick-wasm/dist/magick.wasm')
 				}
 			  ];
 
@@ -46,10 +49,6 @@ module.exports = {
 				try {
 				  await fse.copy(resource.from, resource.to, {
 					overwrite: true,
-					filter: (src, dest) => {
-					  // Custom filtering logic
-					  return !src.includes('node_modules');
-					}
 				  });
 				  console.log(`✓ Copied: ${resource.from}`);
 				} catch (error) {
@@ -81,10 +80,10 @@ module.exports = {
     },
   ],
   plugins: [
-    /*{
+    {
       name: '@electron-forge/plugin-auto-unpack-natives',
       config: {},
-    },*/
+    },
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
     new FusesPlugin({

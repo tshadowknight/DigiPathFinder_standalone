@@ -21,35 +21,13 @@
     "xhr": "^2.6.0"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.3.0",
-    "@electron-forge/maker-deb": "^7.3.0",
-    "@electron-forge/maker-rpm": "^7.3.0",
-    "@electron-forge/maker-squirrel": "^7.3.0",
-    "@electron-forge/maker-zip": "^7.3.0",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.3.0",
-    "@electron-forge/plugin-fuses": "^7.3.0",
+    "@electron-forge/cli": "^7.9.0",
+    "@electron-forge/maker-deb": "^7.9.0",
+    "@electron-forge/maker-rpm": "^7.9.0",
+    "@electron-forge/maker-squirrel": "^7.9.0",
+    "@electron-forge/maker-zip": "^7.9.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.9.0",
+    "@electron-forge/plugin-fuses": "^7.9.0",
     "electron": "^29.1.4"
-  },
-  "build": {
-    "extraResources": [
-      "./DSCSTools",
-	  "./DSTSTools",
-      "./game_data",
-	  "./game_data_TS"
-    ]
-  },
-  "packagerConfig": {
-    "ignore": [
-        "^\\/public$",
-        "^\\/src$",
-        "^\\/node_modules$",
-        "^\\/[.].+",
-		"^\\/game_data\\/packed$",
-		"^\\/game_data\\/unpacked$",
-		"^\\/game_data\\/game_data_TS$",
-		"^\\/game_data\\/game_data_TS\\/main$",
-		"^\\/game_data\\/game_data_TS\\/txt_.*$",
-		"^\\/game_data\\/game_data_TS\\/img\\/.*\\.dds$"
-		]
-	}
+  }
 }

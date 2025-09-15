@@ -22,7 +22,8 @@ if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron'))
 		Quantum,
 	} = require('@imagemagick/magick-wasm');
 
-	const wasmLocation = './node_modules/@imagemagick/magick-wasm/dist/magick.wasm';
+
+	const wasmLocation = getResourcesFolder() + '/node_modules/@imagemagick/magick-wasm/dist/magick.wasm';
 	const wasmBytes = fs.readFileSync(wasmLocation);
 	initializeImageMagick(wasmBytes).then(() => {
 		/*console.log(Magick.imageMagickVersion);
@@ -47,6 +48,13 @@ if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron'))
 }
 
 
+function getResourcesFolder(){
+	if(__dirname.match(/.*\.asar$/)){
+		return pathLib.dirname(__dirname);
+	} else {
+		return __dirname;
+	}
+}
 
 const commonFieldTranslations = {    
 	attribute: {
@@ -371,10 +379,10 @@ async function setDDSImage(elem, digimonId){
 	let targetPath;
 	if(isTSMode()){
 		targetCache = DDSCacheTS;
-		targetPath = "./game_data_TS/unpacked/images/converted";
+		targetPath = getResourcesFolder() + "/game_data_TS/unpacked/images/converted";
 	} else{
 		targetCache = DDSCache;
-		targetPath = "./game_data/unpacked/images/converted";
+		targetPath = getResourcesFolder() + "/game_data/unpacked/images/converted";
 	}
 	/*if(isElectron()){
 		
