@@ -28,21 +28,34 @@ module.exports = {
 				  to: path.join(outputPath, "resources", 'DSCSTools')
 				},
 				{
-				  from: './game_data_TS/unpacked/digi_data.json',
-				  to: path.join(outputPath, "resources", 'game_data_TS/unpacked/digi_data.json')
+				  from: './game_data/clean',
+				  to: path.join(outputPath, "resources", 'game_data/clean')
 				},
 				{
-				  from: './game_data_TS/unpacked/images/converted',
-				  to: path.join(outputPath, "resources", 'game_data_TS/unpacked/images/converted')
+				  from: './game_data/unpacked/images/converted',
+				  to: path.join(outputPath, "resources", 'game_data/unpacked/images/converted')
+				},
+				{
+				  from: './game_data/unpacked/digi_data.json',
+				  to: path.join(outputPath, "resources", 'game_data/unpacked/digi_data.json')
 				},
 				{
 				  from: './DSTSTools',
 				  to: path.join(outputPath, "resources", 'DSTSTools')
 				},
 				{
+				  from: './game_data_TS/unpacked/digi_data.json',
+				  to: path.join(outputPath, "resources", 'game_data_TS/unpacked/digi_data.json')
+				},				
+				{
+				  from: './game_data_TS/unpacked/images/converted',
+				  to: path.join(outputPath, "resources", 'game_data_TS/unpacked/images/converted')
+				},
+				
+				{
 				  from: './node_modules/@imagemagick/magick-wasm/dist/magick.wasm',
 				  to: path.join(outputPath, "resources", 'node_modules/@imagemagick/magick-wasm/dist/magick.wasm')
-				}
+				},
 			  ];
 
 			  for (const resource of resources) {
@@ -62,7 +75,7 @@ module.exports = {
 
   rebuildConfig: {},
   makers: [
-    {
+    /*{
       name: '@electron-forge/maker-squirrel',
       config: {},
     },
@@ -77,7 +90,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-rpm',
       config: {},
-    },
+    },*/
   ],
   plugins: [
     {
