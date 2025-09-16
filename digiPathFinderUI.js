@@ -375,43 +375,22 @@ async function convertDDSImage(digimonId){
 
 async function setDDSImage(elem, digimonId){
 	//in electron context convert the DDS image from the game files
-	let targetCache;
 	let targetPath;
 	if(isElectron()){
 		if(isTSMode()){
-			targetCache = DDSCacheTS;
 			targetPath = getResourcesFolder() + "/game_data_TS/unpacked/images/converted";
 		} else{
-			targetCache = DDSCache;
 			targetPath = getResourcesFolder() + "/game_data/unpacked/images/converted";
 		}
 	} else {
 		if(isTSMode()){
-			targetCache = DDSCacheTS;
-			targetPath = "https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/unpacked/images/converted";
-		} else{
-			targetCache = DDSCache;
 			targetPath = "https://tshadowknight.github.io/DigiPathFinder_standalone/game_data_TS/unpacked/images/converted";
+		} else{
+			targetPath = "https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/unpacked/images/converted";
 		}
 	}
 	
-	/*if(isElectron()){
-		
-		let imgData;
-		if(targetCache[digimonId]){
-			imgData = targetCache[digimonId];
-		} else {
-			imgData = await convertDDSImage(digimonId);
-		} 
 	
-		if(imgData){
-			elem.src = imgData;
-			elem.style.display = "block";
-		} else {
-			elem.style.display = "none";
-		}
-	} else {*/
-		//in web context use a pre-converted image
 		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
 		elem.src = targetPath+"/ui_chara_icon_"+imgId+".png";
 		elem.style.display = "block";
@@ -420,7 +399,7 @@ async function setDDSImage(elem, digimonId){
 			this.src = "./img/ui_icon/ui_icon_effst_05.png";
 			this.classList.add("error");
 		}
-	//}	
+	
 }
 
 function createControls(){

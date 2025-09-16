@@ -75,7 +75,8 @@ module.exports = {
 
   rebuildConfig: {},
   makers: [
-    /*{
+    {
+	"disabled": true,
       name: '@electron-forge/maker-squirrel',
       config: {},
     },
@@ -90,7 +91,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-rpm',
       config: {},
-    },*/
+    },
   ],
   plugins: [
     {
