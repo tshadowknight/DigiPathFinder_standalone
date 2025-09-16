@@ -1403,10 +1403,17 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 .overlayOK {
 	font-size: 48px;
-	background-color: #334e9b;
+	background-color: #445fab;
     color: #FFFFFF;
     font-weight: bold;
 	border-radius: 22px;
 	padding: 30px;
 	cursor: pointer;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border: 10px solid #334e9b;	
+}
+
+.overlayOK:hover {
+	background-color: #334e9b;	
 }

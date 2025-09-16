@@ -688,17 +688,25 @@ var gameVersions = [
 
 var preferredGameVersion = localStorage.getItem("DigiPathFinder_gameVersion");
 var currentGameVersion;
+
+
+function initGameMangagers(){
+	if(currentGameVersion == 0){
+		activeGameFileManager = gameFileManager;
+	} else {
+		activeGameFileManager = gameFileManagerTS;
+	}
+}
+
+initGameMangagers();
+
 if(preferredGameVersion == null){
 	currentGameVersion = 1;
 } else {
 	currentGameVersion = preferredGameVersion;
 }
 
-if(currentGameVersion == 0){
-	activeGameFileManager = gameFileManager;
-} else {
-	activeGameFileManager = gameFileManagerTS;
-}
+
 
 function isTSMode(){
 	return currentGameVersion == 1;
@@ -784,6 +792,61 @@ function showGameFileLoaderConfirm(msg){
 	});
 	
 }
+
+function showInitialVersionSelect(msg){
+	return new Promise(function(resolve, reject){
+		let elem = document.getElementById("spoiler_warning");
+		if(!elem){
+			elem = document.createElement("div");
+			elem.id = "spoiler_warning";
+		}
+		elem.classList.remove("hidden");
+		elem.classList.add("global_warning");
+	
+		let content = "";
+		content+="<div style='width: 75%; padding: 45px; border-radius: 50px; background-color: rgba(0,0,0,0.25);text-align: center;border: 10px solid rgba(0,0,0,0.5);'>";
+		content+="<div style=''>";
+		content+=msg;
+		content+="</div>";
+		content+="<br>";
+		/*"game_label": "Cyber Sleuth and Hacker's Memory",
+		"game_TS": "Time Stranger", */
+		content+="<div class='overlayOK' id='version_cshm'>";
+		content+=localizationData[currentLocale].app.game_label;
+		content+="</div>";
+
+		content+="<div class='overlayOK' id='version_ts'>";
+		content+=localizationData[currentLocale].app.game_TS;
+		content+="</div>";
+		content+="</div>";
+		elem.innerHTML = content;
+
+		
+
+		document.body.append(elem);
+
+		document.querySelector("#version_cshm").addEventListener("click", function(){
+			currentGameVersion = 0;
+			localStorage.setItem("DigiPathFinder_gameVersion", currentGameVersion);
+			initGameMangagers();
+			elem.classList.add("hidden");
+			resolve();
+		});
+
+		document.querySelector("#version_ts").addEventListener("click", function(){
+			currentGameVersion = 1;
+			localStorage.setItem("DigiPathFinder_gameVersion", currentGameVersion);
+			initGameMangagers();
+			elem.classList.add("hidden");
+			resolve();
+		});
+
+
+		document.getElementById("particles").classList.add("game_loader");
+	});
+	
+}
+
 function setLoaderError(error){
 	let elem = document.getElementById("game_file_loader");
 	if(elem){
@@ -859,6 +922,8 @@ function createOptions(){
 			content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path' aria-hidden='true'></i>";
 			content+="</div>"
 			content+="</div>"
+
+
 
 			content+="<div class='row no_files'>";
 			if(!gameFileManager.hasInstalledGameFiles()){
@@ -1152,9 +1217,18 @@ document.addEventListener("DOMContentLoaded", async function(){
 	if(!spoilersOK){
 		$("#no_game_files_warning").hide();	
 		await showGameFileLoaderConfirm(localizationData[currentLocale].app.loader_spoiler);
-
+		localStorage.setItem("DigiPathFinder_spoilers_OK", 1);
 	}
-	localStorage.setItem("DigiPathFinder_spoilers_OK", 1);
+	
+
+	let initialGameSelection = localStorage.getItem("DigiPathFinder_initial_selection");
+
+	if(!initialGameSelection){
+		await showInitialVersionSelect(localizationData[currentLocale].app.game_prompt);
+		localStorage.setItem("DigiPathFinder_initial_selection", 1);
+	}
+		
+
 	initPathFinder();	
 	refreshWarnings();
 	
