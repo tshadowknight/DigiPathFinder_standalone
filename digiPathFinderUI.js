@@ -1,3 +1,5 @@
+var versionId = "4.0b.0";
+
 if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron')){
 	var pathLib = require('path');
 	var parse_dds = require('./lib/parseDDS');

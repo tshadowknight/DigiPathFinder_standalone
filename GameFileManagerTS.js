@@ -308,7 +308,7 @@ function GameFileManagerTS(){
             //const DDSCacheContent_A = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_a.txt'));
             //const DDSCacheContent_B = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_b.txt'));
             //DDSCache = JSON.parse(DDSCacheContent_A + DDSCacheContent_B);
-            return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data_TS/unpacked/digi_data.json'));
+            return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data_TS/unpacked/digi_data.json?cacheBust='+versionId));
         } else {
             if(!forceReload){
                 if(fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json")) && fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "unpacked", "images", "converted"))){
