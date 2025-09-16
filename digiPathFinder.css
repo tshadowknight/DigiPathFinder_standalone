@@ -689,7 +689,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	transition: opacity 1s;
 	background-color: rgba(51,78,155,0.7);
 	font-size: 50px;
-	animation-name: glow;
+	/*animation-name: glow;*/
   	animation-duration: 4s;
 	font-weight: bold; 
 	color: #F1F1F1;
@@ -784,6 +784,11 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 .digi_icon.TS {
 	transform: none;
 }
+
+.controls_digi_icon.digi_icon.error {
+	filter: brightness(0) saturate(100%) invert(61%) sepia(1%) saturate(1459%) hue-rotate(262deg) brightness(99%) contrast(72%);
+}
+
 
 .path_img_container {
 	width: 62px;

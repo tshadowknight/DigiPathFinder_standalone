@@ -48,6 +48,11 @@ function GameFileManager(){
     ];
 
     GameFileManager.prototype.hasGameFiles = function(){
+
+        if(fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json")) && fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "unpacked", "images", "converted"))){
+            return true;
+        }
+
         let isKitValid = true;
         for(let file of requiredFiles){
             if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/unpacked', file))) {
@@ -125,43 +130,46 @@ function GameFileManager(){
     }
 
     GameFileManager.prototype.fetchGameFiles = async function(){	
-    
-            const process = require('child_process');   
-            if(!this.hasInstalledGameFiles()){
-                return;
-            }
 
-            let cmd;
-            if(os.platform() === "win32"){
-                let cmdDir = pathLib.join(this.getResourcesFolder(), "DSCSTools/win")
-                cmd = "\""+this.getResourcesFolder()+""+'\\DSCSTools\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
+        const process = require('child_process');   
+        if(!this.hasInstalledGameFiles()){
+            return;
+        }
 
-                const exetractorPath = pathLib.join(this.getResourcesFolder(), 'DSCSTools/win/DSCSToolsCLI.exe');
-                const dbFilePath = pathLib.join(this.gameFilesPath, 'resources/DSDBP.steam.mvgl');
-                const targetPath = pathLib.join(this.getResourcesFolder(), 'game_data/packed');
-                
-                const mainExtractCmd =  '"'+exetractorPath+'" --extract "' + dbFilePath + '" "' + targetPath + '"';
-                await this.runCmd(mainExtractCmd);
-                if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed/data')) && !fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed/text'))  && !fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed/images'))) {
-                    setLoaderError(localizationData[currentLocale].app.warn_no_extract); 
-                    throw("Failed extract.");
-                }
-                
-                let result = await this.runCmd(cmd);
-            } else if(os.platform() === "linux"){
-                let cmdDir = pathLib.join(this.getResourcesFolder(), "DSCSTools/linux")
-                cmd =  "\""+this.getResourcesFolder()+""+'\\DSCSTools\\linux\\unpack_game_files.bat\"  \"'+cmdDir+'\" \"'+this.gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
-            } else {
-                setLoaderError("Unsupported platform."); 
-                throw("Unsupported platform.");
+        let cmd;
+        if(os.platform() === "win32"){
+            let cmdDir = pathLib.join(this.getResourcesFolder(), "DSCSTools/win")
+            cmd = "\""+this.getResourcesFolder()+""+'\\DSCSTools\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
+
+            const exetractorPath = pathLib.join(this.getResourcesFolder(), 'DSCSTools/win/DSCSToolsCLI.exe');
+            const dbFilePath = pathLib.join(this.gameFilesPath, 'resources/DSDBP.steam.mvgl');
+            const targetPath = pathLib.join(this.getResourcesFolder(), 'game_data/packed');
+            
+            const mainExtractCmd =  '"'+exetractorPath+'" --extract "' + dbFilePath + '" "' + targetPath + '"';
+            await this.runCmd(mainExtractCmd);
+            if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed/data')) && !fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed/text'))  && !fs.existsSync(pathLib.join(this.getResourcesFolder(), './game_data/packed/images'))) {
+                setLoaderError(localizationData[currentLocale].app.warn_no_extract); 
+                throw("Failed extract.");
             }
 
             
-
             
-            fs.rm(pathLib.join(this.getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
-            await this.cachceDDSImages();    
+            let result = await this.runCmd(cmd);
+        } else if(os.platform() === "linux"){
+            let cmdDir = pathLib.join(this.getResourcesFolder(), "DSCSTools/linux")
+            cmd =  "\""+this.getResourcesFolder()+""+'\\DSCSTools\\linux\\unpack_game_files.bat\"  \"'+cmdDir+'\" \"'+this.gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
+        } else {
+            setLoaderError("Unsupported platform."); 
+            throw("Unsupported platform.");
+        }
+
         
+
+        
+        // fs.rm(pathLib.join(this.getResourcesFolder(), "game_data/packed"), { recursive: true, force: true });
+        await this.cachceDDSImages();    
+        showGameFileLoader("Done!");
+    
     }
 
     GameFileManager.prototype.cachceDDSImages = async function(){
@@ -228,22 +236,19 @@ function GameFileManager(){
         console.log(result);
     }
 
-    GameFileManager.prototype.preparePathFinderData = async function(){
-        //browser version loads two premade cache files to get its data
-        if(isTSMode()){
-            //for TS data, load from file
-            if(!isElectron()){
-                return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/game_data_TS.json'));
-            } else {
-                return await Promise.resolve($.getJSON('./game_data/game_data_TS.json'));
-            }
-            
-        }
+    GameFileManager.prototype.preparePathFinderData = async function(forceReload){
+
         if(!isElectron()){
             //const DDSCacheContent_A = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_a.txt'));
             //const DDSCacheContent_B = await Promise.resolve($.get('https://tshadowknight.github.io/DigiPathFinder_standalone/dds_cache_b.txt'));
             //DDSCache = JSON.parse(DDSCacheContent_A + DDSCacheContent_B);
             return await Promise.resolve($.getJSON('https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/game_data.json'));
+        } else {
+            if(!forceReload){
+                if(fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json")) && fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "unpacked", "images", "converted"))){
+                    return await Promise.resolve($.getJSON(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json")));
+                }
+            }
         }
 
         let digimonNames = {};
@@ -677,7 +682,7 @@ function GameFileManager(){
             }        
         }
 
-        return {
+         const cacheData = {
             digiData: digiData, 
             levellUpGrowths: levellUpGrowths, 
             fieldNames: fieldNames, 
@@ -690,6 +695,10 @@ function GameFileManager(){
             supportSkillDescriptions: supportSkillDescriptions,
             skillTextIds: skillTextIds
         };
+
+        fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json"), JSON.stringify(cacheData));
+
+        return cacheData;
     }
 
 }

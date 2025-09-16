@@ -404,6 +404,11 @@ async function setDDSImage(elem, digimonId){
 		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
 		elem.src = targetPath+"/ui_chara_icon_"+imgId+".png";
 		elem.style.display = "block";
+		elem.classList.remove("error");
+		elem.onerror = function(){
+			this.src = "./img/ui_icon/ui_icon_effst_05.png";
+			this.classList.add("error");
+		}
 	//}	
 }
 
@@ -842,46 +847,49 @@ function createOptions(){
 	content+="</div>"
 */
 	if(isElectron()){
-		content+="<div class='row'>";
-		content+="<div class='label'>";
-		content+=localizationData[currentLocale].app.game_path;
-		content+="</div>"
-		content+="<div class='value'>";
-		content+="<input id='gameFilesPath' value='"+gameFileManager.gameFilesPath+"'></input>";
-		content+="</div>"
-		content+="<div class='value'>";
-		content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path' aria-hidden='true'></i>";
-		content+="</div>"
-		content+="</div>"
-
-		content+="<div class='row no_files'>";
-		if(!gameFileManager.hasInstalledGameFiles()){
-			content+="<div class='label no_files'>";
-			content+=localizationData[currentLocale].app.no_game_files;
+		if(!isTSMode()){		
+			content+="<div class='row'>";
+			content+="<div class='label'>";
+			content+=localizationData[currentLocale].app.game_path;
 			content+="</div>"
-		}		
-		content+="</div>"
-
-		content+="<div class='row'>";
-		content+="<div class='label'>";
-		content+=localizationData[currentLocale].app.game_path_TS;
-		content+="</div>"
-		content+="<div class='value'>";
-		content+="<input id='gameFilesPathTS' value='"+gameFileManagerTS.gameFilesPath+"'></input>";
-		content+="</div>"
-		content+="<div class='value'>";
-		content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path_TS' aria-hidden='true'></i>";
-		content+="</div>"
-		content+="</div>"
-
-		content+="<div class='row no_files'>";
-		if(!gameFileManagerTS.hasInstalledGameFiles()){
-			content+="<div class='label no_files'>";
-			content+=localizationData[currentLocale].app.no_game_files;
+			content+="<div class='value'>";
+			content+="<input id='gameFilesPath' value='"+gameFileManager.gameFilesPath+"'></input>";
 			content+="</div>"
-		}		
-		content+="</div>"
+			content+="<div class='value'>";
+			content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path' aria-hidden='true'></i>";
+			content+="</div>"
+			content+="</div>"
 
+			content+="<div class='row no_files'>";
+			if(!gameFileManager.hasInstalledGameFiles()){
+				content+="<div class='label no_files'>";
+				content+=localizationData[currentLocale].app.no_game_files;
+				content+="</div>"
+			}		
+			content+="</div>"
+		}
+
+		if(isTSMode()){	
+			content+="<div class='row'>";
+			content+="<div class='label'>";
+			content+=localizationData[currentLocale].app.game_path_TS;
+			content+="</div>"
+			content+="<div class='value'>";
+			content+="<input id='gameFilesPathTS' value='"+gameFileManagerTS.gameFilesPath+"'></input>";
+			content+="</div>"
+			content+="<div class='value'>";
+			content+="<i title='Set to default' class='fa fa-refresh' id='refresh_path_TS' aria-hidden='true'></i>";
+			content+="</div>"
+			content+="</div>"
+
+			content+="<div class='row no_files'>";
+			if(!gameFileManagerTS.hasInstalledGameFiles()){
+				content+="<div class='label no_files'>";
+				content+=localizationData[currentLocale].app.no_game_files;
+				content+="</div>"
+			}		
+			content+="</div>"
+		}
 		
 
 		content+="<div class='row'>";
@@ -900,29 +908,36 @@ function createOptions(){
 	elem.innerHTML = content;
 
 	if(isElectron()){
-		elem.querySelector("#gameFilesPath").addEventListener("change", function(){
-			gameFileManager.updateGameFilesPath(this.value);
-			createOptions();
-			refreshWarnings();
-		});
 
-		elem.querySelector("#refresh_path").addEventListener("click", function(){
-			gameFileManager.updateGameFilesPath();
-			createOptions();
-			refreshWarnings();
-		});
+		if(!isTSMode()){	
+			elem.querySelector("#gameFilesPath").addEventListener("change", function(){
+				gameFileManager.updateGameFilesPath(this.value);
+				createOptions();
+				refreshWarnings();
+			});
 
-		elem.querySelector("#gameFilesPathTS").addEventListener("change", function(){
-			gameFileManagerTS.updateGameFilesPath(this.value);
-			createOptions();
-			refreshWarnings();
-		});
+			elem.querySelector("#refresh_path").addEventListener("click", function(){
+				gameFileManager.updateGameFilesPath();
+				createOptions();
+				refreshWarnings();
+			});
+		}
 
-		elem.querySelector("#refresh_path_TS").addEventListener("click", function(){
-			gameFileManagerTS.updateGameFilesPath();
-			createOptions();
-			refreshWarnings();
-		});
+		if(isTSMode()){	
+			elem.querySelector("#gameFilesPathTS").addEventListener("change", function(){
+				gameFileManagerTS.updateGameFilesPath(this.value);
+				createOptions();
+				refreshWarnings();
+			});
+
+			elem.querySelector("#refresh_path_TS").addEventListener("click", function(){
+				gameFileManagerTS.updateGameFilesPath();
+				createOptions();
+				refreshWarnings();
+			});
+		}
+
+		
 
 		elem.querySelector("#reload_btn").addEventListener("click", function(){
 			toggleOptions();

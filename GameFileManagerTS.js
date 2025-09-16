@@ -189,8 +189,11 @@ function GameFileManagerTS(){
                     pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua/')
                 ];
 
+                showGameFileLoader("Verifying upack...");
+
                 let retryCount = 0;
-                let retryTime = 15;
+                const maxRetryCount = 50;
+                let retryTime = 5;
                 
                 
                 let missingFiles = [];
@@ -199,9 +202,9 @@ function GameFileManagerTS(){
                         missingFiles.push(entry);
                     }
                 }
-                while(missingFiles.length && retryCount++ < 3){
+                while(missingFiles.length && retryCount++ < maxRetryCount){
                     console.log("Files missing on attempt " + retryCount);
-                    await new Promise(resolve => setTimeout(resolve, 15000));
+                    await new Promise(resolve => setTimeout(resolve, retryTime * 1000));
                     missingFiles = [];
                     for(const entry of requiredFiles){
                         if(!fs.existsSync(entry)){
@@ -226,8 +229,11 @@ function GameFileManagerTS(){
                 throw("Unsupported platform.");
             }
             
+            showGameFileLoader("Cleaning up unpack...");
             fs.rm(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/packed"), { recursive: true, force: true });
+            showGameFileLoader("Processing images...");
             await this.cachceDDSImages();    
+            showGameFileLoader("Done!");
         
     }
 
@@ -692,318 +698,7 @@ function GameFileManagerTS(){
         };
     }
 
-        /*
-        
-        const digmonDescData = await this.parseGameFile("digimon_book_explanation.mbe/Sheet1");
-        for(let entry of digmonDescData.data){
-            const entryId = entry[digmonDescData.headerLookup["ID"]];
-            for(let locale in localizationConfig){
-                if(!digimonDescriptions[locale]){
-                    digimonDescriptions[locale] = {};
-                }
-                digimonDescriptions[locale][entryId] = escapeHTML(entry[digmonDescData.headerLookup[locale]]);	
-            }		
-        }
-
-        let movesAvailable = {};
-        let moveNames = {};
-        
-
-        
-
-        const commonStatFields = ["level", "attribute","type"];
-        const commonData = await this.parseGameFile("digimon_common_para.mbe/digimon");
-        for(let entry of commonData.data){
-            const digimonId = escapeHTML(entry[farmData.headerLookup["id"]]);
-            if(!baseStats[digimonId]){
-                baseStats[digimonId] = {};
-            }
-            for(let field of commonStatFields){
-                baseStats[digimonId][field] =  commonFieldTranslations[field][escapeHTML(entry[commonData.headerLookup[field]])];
-            }
-        }
-
-        let moveNamesFull = {};
-        const moveNameData = await this.parseGameFile("skill_name.mbe/Sheet1");
-        for(let entry of moveNameData.data){
-            const entryId = escapeHTML(entry[moveNameData.headerLookup["ID"]]);		
-
-            for(let locale in localizationConfig){
-                if(!moveNamesFull[locale]){
-                    moveNamesFull[locale] = {};
-                }
-                moveNamesFull[locale][entryId] = escapeHTML(entry[moveNameData.headerLookup[locale]]);	
-            }				
-        }
-
-        for(let locale in localizationConfig){
-            if(!moveNames[locale]){
-                moveNames[locale] = {};
-            }
-            for(let moveId in movesAvailable){
-                moveNames[locale][moveId] = moveNamesFull[locale][moveId];
-            }
-        }
-
-        let moveDescriptions = {};
-        const moveDescData = await this.parseGameFile("skill_content_name.mbe/Sheet1");
-        for(let entry of moveDescData.data){
-            const entryId = entry[moveDescData.headerLookup["ID"]];
-            for(let locale in localizationConfig){
-                if(!moveDescriptions[locale]){
-                    moveDescriptions[locale] = {};
-                }
-                moveDescriptions[locale][entryId] = escapeHTML(entry[moveDescData.headerLookup[locale]]);	
-            }		
-        }
-        
-        let supportSkillNames = {};
-        const supportSkillNameData = await this.parseGameFile("support_skill_name.mbe/Sheet1");
-        for(let entry of supportSkillNameData.data){
-            const entryId = entry[supportSkillNameData.headerLookup["ID"]];
-            for(let locale in localizationConfig){
-                if(!supportSkillNames[locale]){
-                    supportSkillNames[locale] = {};
-                }
-                supportSkillNames[locale][entryId] = escapeHTML(entry[supportSkillNameData.headerLookup[locale]]);	
-            }		
-        }
-
-        let supportSkillDescriptions = {};
-        const supportSkillDescData = await this.parseGameFile("support_skill_content_name.mbe/Sheet1");
-        for(let entry of supportSkillDescData.data){
-            const entryId = entry[supportSkillDescData.headerLookup["ID"]];
-            for(let locale in localizationConfig){
-                if(!supportSkillDescriptions[locale]){
-                    supportSkillDescriptions[locale] = {};
-                }
-                supportSkillDescriptions[locale][entryId] = escapeHTML(entry[supportSkillDescData.headerLookup[locale]]);	
-            }		
-        }
-
-        //growth rates
-        let levellUpGrowths = {};
-        const growthRateData = await this.parseGameFile("lvup_para.mbe/table");
-        for(let entry of growthRateData.data){
-            const curveId = escapeHTML(entry[growthRateData.headerLookup["id"]]);
-            levellUpGrowths[curveId] = {
-                HP: escapeHTML(entry[growthRateData.headerLookup["HP"]]),
-                SP: escapeHTML(entry[growthRateData.headerLookup["SP"]]),
-                ATK: escapeHTML(entry[growthRateData.headerLookup["ATK"]]),
-                DEF: escapeHTML(entry[growthRateData.headerLookup["DEF"]]),
-                INT: escapeHTML(entry[growthRateData.headerLookup["INT"]]),
-                SPD: escapeHTML(entry[growthRateData.headerLookup["SPD"]])
-            };        		
-        }
-
-    //evo conditions 
-
-    const evoCondTypes ={
-            1: "LVL",
-            2: "HP", 
-            3: "SP",
-            4: "ATK",
-            5: "DEF",
-            6: "INT",
-            7: "SPD",
-            8: "ABI",
-            9: "CAM",
-            10: "Other"
-    }
-
-    let evoConditions = {};
-    const evoConditionData = await this.parseGameFile("evolution_condition_para.mbe/digimon");
-    for(let entry of evoConditionData.data){
-        const digimonId = escapeHTML(entry[evoConditionData.headerLookup["id"]]);
-        let conditions = {};
-        for(let i = 1; i <= 10; i++){
-                let type = escapeHTML(entry[evoConditionData.headerLookup["condType"+i]]);
-                if(type > 0){
-                    const value = escapeHTML(entry[evoConditionData.headerLookup["condValue"+i]]);
-                    if(type > 9){
-                        type = 10;
-                        conditions[evoCondTypes[type]] = 1;
-                    } else {
-                        conditions[evoCondTypes[type]] = value;
-                    } 
-                }                      
-        }  		
-        evoConditions[digimonId] = conditions;
-    }
-
-
-    //encounters
-    let digimonIdToCouplings = {};
-    let couplingIdsToDigimon = {};
-    const couplingData = await this.parseGameFile("mon_cpl.mbe/Coupling");
-
-    //hacky fix for inconsistent headers from unpacked game files, older version?
-    couplingData.headerLookup["level1"] = 7;
-    couplingData.headerLookup["level2"] = 8;
-    couplingData.headerLookup["level3"] = 9;
-    couplingData.headerLookup["level4"] = 10;
-    couplingData.headerLookup["level5"] = 11;
-    couplingData.headerLookup["level6"] = 12;
-
-    for(let entry of couplingData.data){
-            let couplingId =  escapeHTML(entry[couplingData.headerLookup["id"]]);
-            for(let i = 1; i <= 6; i++){
-                const digimonId = escapeHTML(entry[couplingData.headerLookup["digi"+i]]);
-                const level = escapeHTML(entry[couplingData.headerLookup["level"+i]]);
-                if(digimonId != -1){
-                    if(!digimonIdToCouplings[digimonId]){
-                        digimonIdToCouplings[digimonId] = {};
-                    }
-                    digimonIdToCouplings[digimonId][couplingId] = { level: level};
-                    if(!couplingIdsToDigimon[couplingId]){
-                        couplingIdsToDigimon[couplingId] = [];
-                    }
-                    couplingIdsToDigimon[couplingId].push(digimonId);
-                }            
-            }
-    }
-
-
-    let areaParaToFieldId = {};
-    const fieldListData = await this.parseGameFile("field_area_para.mbe/Field_List");
-
-    for(let entry of fieldListData.data){
-            const areaPara = escapeHTML(entry[fieldListData.headerLookup["map"]]);
-            const fieldId = escapeHTML(entry[fieldListData.headerLookup["field_name_id"]]);
-            areaParaToFieldId[areaPara] = fieldId;
-    }
-
-    let areaParaToFieldIdHame = {};
-    const fieldListDataHame = await this.parseGameFile("field_area_para_add.mbe/Field_List");
-
-    for(let entry of fieldListDataHame.data){
-            const areaPara = escapeHTML(entry[fieldListDataHame.headerLookup["map"]]);
-            const fieldId = escapeHTML(entry[fieldListDataHame.headerLookup["field_name_id"]]);
-            areaParaToFieldIdHame[areaPara] = fieldId;
-    }
-
-    let fieldNames = {};
-    const fieldNameData = await this.parseGameFile("fieldname.mbe/Sheet1");
-    for(let entry of fieldNameData.data){
-        const entryId = entry[fieldNameData.headerLookup["ID"]];
-        for(let locale in localizationConfig){
-            if(!fieldNames[locale]){
-                    fieldNames[locale] = {};
-            }
-            fieldNames[locale][entryId] = escapeHTML(entry[fieldNameData.headerLookup[locale]]);	
-        }		
-    }
-
-
-    let digimonToEncounters = {};
-    let digimonToUsedAreas = {}; 
-    const encounterParamData = await this.parseGameFile("map_encount_param.mbe/Field");
-    for(let entry of encounterParamData.data){
-            const mapId = escapeHTML(entry[encounterParamData.headerLookup["map_id"]]);
-            for(let i = 6; i <= 12; i++){
-                let encounterParamParts = escapeHTML(entry[i]).split(" ");
-                const couplingId = encounterParamParts[0];
-                const rate = encounterParamParts[2];
-                if(couplingIdsToDigimon[couplingId]){
-                    for(let digimonId of couplingIdsToDigimon[couplingId]){
-                        if(!digimonToEncounters[digimonId]){
-                            digimonToEncounters[digimonId] = [];
-                        }
-                        if(!digimonToUsedAreas[digimonId]){
-                            digimonToUsedAreas[digimonId] = {};                   
-                        }
-                        
-                        let areaPara = mapId.substring(0, mapId.length - 2);
-                        areaPara = "d" + areaPara.padStart(2, 0);
-                        if(!digimonToUsedAreas[digimonId][areaPara+ "_" + i]){
-                            digimonToUsedAreas[digimonId][areaPara+ "_" + i] = true;
-                            digimonToEncounters[digimonId].push({
-                                level: digimonIdToCouplings[digimonId][couplingId].level,
-                                rate: rate,
-                                mapId: mapId,
-                                fieldNameId: areaParaToFieldId[areaPara]
-                            });
-                        }                    
-                    }
-                }            
-            }
-    }
-
-    let digimonToEncountersHame = {};
-    let digimonToUsedAreasHame = {}; 
-    const encounterParamDataHame = await this.parseGameFile("map_encount_param_add.mbe/Field");
-    for(let entry of encounterParamDataHame.data){
-            const mapId = escapeHTML(entry[encounterParamDataHame.headerLookup["map_id"]]);
-            for(let i = 6; i <= 12; i++){
-                let encounterParamParts = escapeHTML(entry[i]).split(" ");
-                const couplingId = encounterParamParts[0];
-                const rate = encounterParamParts[2];
-                if(couplingIdsToDigimon[couplingId]){
-                    for(let digimonId of couplingIdsToDigimon[couplingId]){
-                        if(!digimonToEncountersHame[digimonId]){
-                            digimonToEncountersHame[digimonId] = [];
-                        }
-                        if(!digimonToUsedAreasHame[digimonId]){
-                            digimonToUsedAreasHame[digimonId] = [];
-                        }
-                        
-                        let areaPara = mapId.substring(0, mapId.length - 2);
-                        areaPara = "d" + areaPara.padStart(2, 0);
-                        if(!digimonToUsedAreasHame[digimonId][areaPara+ "_" + i]){
-                            digimonToUsedAreasHame[digimonId][areaPara+ "_" + i] = true;
-                            
-                            digimonToEncountersHame[digimonId].push({
-                                level: digimonIdToCouplings[digimonId][couplingId].level,
-                                rate: rate,
-                                mapId: mapId,
-                                fieldNameId: areaParaToFieldIdHame[areaPara]
-                            });
-                        }
-                    }
-                }            
-            }
-    }
-
-    
-    
-        let skillTextIds = {};
-        const skillTextIdData = await this.parseGameFile("battle_command.mbe/Command");
-        for(let entry of skillTextIdData.data){
-            const skillId = escapeHTML(entry[skillTextIdData.headerLookup["ID"]]);
-            const skillTextId = escapeHTML(entry[skillTextIdData.headerLookup["TextId"]]);
-            skillTextIds[skillId] = skillTextId;
-        }
-        const maxLevel = 99;
-
-        if (!fs.existsSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, 'dds_cache.json'))) {
-            showGameFileLoader(localizationData[currentLocale].app.loader_msg_imgs);
-            await this.cachceDDSImages();
-            hideGameFileLoader();
-        } else {
-            DDSCache = JSON.parse(fs.readFileSync(pathLib.join(this.getResourcesFolder(),  gameDataFolder, 'dds_cache.json')));
-        }
-        
-        function getStatValueAtLevel(digimonId, levellUpGrowths, stat, level){
-            try {
-                let targetBaseStats = baseStats[digimonId];
-                let baseStatValue = targetBaseStats["base"+stat];
-                let growthType = targetBaseStats.growthType;
-                let growthTable = levellUpGrowths[growthType];
-                let growthAmount = growthTable[stat];
-                statValue = Math.floor(baseStatValue * 1 + (growthAmount * (level - 1)));
-            
-                statValue/=100;
-                if(stat == "HP"){  
-                    statValue = Math.floor(statValue);
-                    statValue*=10;
-                } 
-                return Math.floor(statValue);
-            } catch(e){
-                console.log("Error while calculating stats for Digimon "+digimonId+": " + e);
-            }
-            return 0;	
-        }
-*/  
+       
 
     
 

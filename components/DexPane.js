@@ -159,18 +159,18 @@ DexPane.prototype.show = function(context){
         if(attr.localizer){
             value = attr.localizer[value];
         } 
-        tableContent.push(["<div class='row_label'>"+attr.label+"</div>", value]);
+        tableContent.push(["<div class='row_label'>"+attr.label+"</div>", value || "???"]);
     }
     if(isTSMode()){
-        tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_category+"</div>", localizationData[currentLocale].categoryNames[this._activeId]]);
+        tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_category+"</div>", localizationData[currentLocale].categoryNames[this._activeId] || "???"]);
 
         let traitString = [];
         for(let entry of monInfo.traits){
             traitString.push(localizationData[currentLocale].classNames[entry]);
         }
-        tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_traits+"</div>", traitString.join(", ")]);
+        tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_traits+"</div>", traitString.join(", ") || "???"]);
 
-        tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_default_pers+"</div>", localizationData[currentLocale].personalityNames[monInfo.baseStats.basePersonality]]);
+        tableContent.push(["<div class='row_label'>"+localizationData[currentLocale].app.DEX_general_default_pers+"</div>", localizationData[currentLocale].personalityNames[monInfo.baseStats.basePersonality] || "???"]);
         
     }
     content+="<table id='general_table' class='stats'>";  
@@ -207,7 +207,7 @@ DexPane.prototype.show = function(context){
 
     content+="<div class='row digi_desc'>";
     content+="<div class='desc'>";
-    content+=monInfo.description;
+    content+=monInfo.description || "???";
     content+="</div>";
     content+="</div>";
 
@@ -843,11 +843,11 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
          } else {                
             if(requirements[condition] * 1){
                 if(condition == "needsItem"){    
-                     content+=localizationData[currentLocale].itemNames[requirements.needsItem];
+                     content+=localizationData[currentLocale].itemNames[requirements.needsItem] || "???";
                 } else if(condition == "Other"){
-                    content+= (localizationData[currentLocale].app.DEX_evos_label_has_additional);
+                    content+= (localizationData[currentLocale].app.DEX_evos_label_has_additional) || "???";
                 } else {
-                    content+=(requirements[condition]);
+                    content+=(requirements[condition]) || "???";
                 }
                 
             } else {
