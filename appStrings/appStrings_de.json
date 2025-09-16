@@ -131,6 +131,11 @@
         "Mega": "Mega",
         "Mega +": "Mega +",
         "Armor": "Armor",
+		"Hybrid_0": "Human H.",
+        "Hybrid_1": "Beast H.",
+        "Hybrid_2": "Fusion H.",
+        "Hybrid_3": "Transc. H.",
+		"Gold Armor": "Gold Armor",
         "Hybrid": "Hybrid",
         "Cannot Train": "Cannot Train"
 	},

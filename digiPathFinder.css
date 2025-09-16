@@ -828,7 +828,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 }
 
 .dex_pane_scroll {
-	overflow-x: hidden;
+	overflow-x: auto;
     overflow-y: scroll;
 	width: 100%;
 	height: calc(100% - 90px);
@@ -1045,14 +1045,17 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 .dex_pane .evos_summary {
 	justify-content: flex-start;
     align-items: flex-start;
+	flex-wrap: wrap;
 }
 
 .dex_pane .section_prev {
 	width: 28%;
+	flex: 1 1 250px;
 }
 
 .dex_pane .section_next {
 	width: 72%;
+	flex-grow: 1;
 }
 
 .dex_pane_header {
@@ -1213,7 +1216,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     border-radius: 20px;
     margin-left: auto;
     margin-right: auto;
-    width: 100%;
+    width: 106%;
 	z-index: 5;
 	position: absolute;
 	top: 76px;

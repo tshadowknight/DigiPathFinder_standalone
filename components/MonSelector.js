@@ -28,7 +28,11 @@ function MonSelector(containerId, callbacks, monData){
                 "Mega": true,
                 "Mega +": true,
                 "Armor": true,
-                "Hybrid": true,
+                "Gold Armor": true,
+                "Hybrid_0": true,
+                "Hybrid_1": true,
+                "Hybrid_2": true,
+                "Hybrid_3": true,
                 "Cannot Train": true
             }
         }

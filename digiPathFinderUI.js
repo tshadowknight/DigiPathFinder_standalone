@@ -119,11 +119,11 @@ const commonFieldTranslationsTS = {
         "6": "Mega",
         "7": "Mega +",
         "8": "Armor",
-    //    "9": "Armor",
-        "10": "Hybrid",
-        //"11": "Hybrid",
-        //"12": "Hybrid",
-        //"13": "Hybrid",
+        "9": "Gold Armor",
+        "10": "Hybrid_0",
+        "11": "Hybrid_1",
+        "12": "Hybrid_2",
+        "13": "Hybrid_3",
         //"14": "Cannot Train"
     }
 };
