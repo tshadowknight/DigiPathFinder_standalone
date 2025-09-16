@@ -377,13 +377,24 @@ async function setDDSImage(elem, digimonId){
 	//in electron context convert the DDS image from the game files
 	let targetCache;
 	let targetPath;
-	if(isTSMode()){
-		targetCache = DDSCacheTS;
-		targetPath = getResourcesFolder() + "/game_data_TS/unpacked/images/converted";
-	} else{
-		targetCache = DDSCache;
-		targetPath = getResourcesFolder() + "/game_data/unpacked/images/converted";
+	if(isElectron()){
+		if(isTSMode()){
+			targetCache = DDSCacheTS;
+			targetPath = getResourcesFolder() + "/game_data_TS/unpacked/images/converted";
+		} else{
+			targetCache = DDSCache;
+			targetPath = getResourcesFolder() + "/game_data/unpacked/images/converted";
+		}
+	} else {
+		if(isTSMode()){
+			targetCache = DDSCacheTS;
+			targetPath = "https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/unpacked/images/converted";
+		} else{
+			targetCache = DDSCache;
+			targetPath = "https://tshadowknight.github.io/DigiPathFinder_standalone/game_data_TS/unpacked/images/converted";
+		}
 	}
+	
 	/*if(isElectron()){
 		
 		let imgData;
