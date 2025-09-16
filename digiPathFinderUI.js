@@ -130,8 +130,8 @@ const commonFieldTranslationsTS = {
 
 const dexPane = new DexPane("details_pane");
 
-const gameFileManager = new GameFileManager();
-const gameFileManagerTS = new GameFileManagerTS();
+let gameFileManager;
+let gameFileManagerTS;
 
 let activeGameFileManager;
 
@@ -402,7 +402,7 @@ async function setDDSImage(elem, digimonId){
 			imgData = targetCache[digimonId];
 		} else {
 			imgData = await convertDDSImage(digimonId);
-		}
+		} 
 	
 		if(imgData){
 			elem.src = imgData;
@@ -1239,7 +1239,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 		localStorage.setItem("DigiPathFinder_initial_selection", 1);
 	}
 		
-
+	gameFileManager = new GameFileManager();
+	gameFileManagerTS = new GameFileManagerTS();
+	initGameMangagers();
 	initPathFinder();	
 	refreshWarnings();
 	
