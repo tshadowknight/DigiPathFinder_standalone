@@ -1,6 +1,7 @@
 {
 	"app_title": "サイスル進化パスファインダー",
 	"calculate_path": "計算する",
+	"edit": "Edit",
 	"label_language": "言語",
 	"start_digimon": "始めのデジモン",
 	"end_digimon": "目的のデジモン",

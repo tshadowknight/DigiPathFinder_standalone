@@ -407,7 +407,13 @@ async function setDDSImage(elem, digimonId){
 function createControls(){
 	var content = "";
 	
-	
+	content+="<div id='edit_btn' class='flex-container'>";		
+	content+="<div class='flex-item flex-container' id='find_move_path'>";
+	content+="<div data-appstring='edit' class='flex-item'>";
+	//content+="Calculate Path";
+	content+="</div>";
+	content+="</div>";
+	content+="</div>";
 	
 	content+="<div class='control_section'>";
 	content+="<div data-appstring='header_digimon' class='header'>Digimon</div>";
@@ -506,6 +512,13 @@ function createControls(){
 	$("#path_tools").on("click", function(){
 		findSkillRoute();
 	});	
+
+
+	$("#edit_btn").on("click", function(){
+		$("#controls")[0].classList.remove("collapsed");
+		$("#panes")[0].classList.remove("extended");
+	});
+
 	$("#DNA_ban").on("click", function(){
 		pathFinder.defaultBans.DNA.applied = $(this)[0].checked;
 	});	
@@ -598,6 +611,9 @@ var digiWorker;
 var pathsTried = 0;
 var totalPaths = 1;
 function findSkillRoute(source, target){
+	$("#controls")[0].classList.add("collapsed");
+	$("#panes")[0].classList.add("extended");
+
 	$("#path_container_content").fadeOut("fast");
 	overlayTimer = (new Date).getTime();
 	$("#overlay").fadeIn("fast");

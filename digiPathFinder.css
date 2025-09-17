@@ -1420,3 +1420,152 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 .overlayOK:hover {
 	background-color: #334e9b;	
 }
+
+/*Mobile layout only components*/
+
+#close_button {
+	display: none;
+}
+
+#edit_btn {
+	display: none;
+}
+
+@media screen and (max-width: 480px) {
+
+	#standalone_version_link {
+		display: none;
+	}
+
+	.tool_header {
+		font-size: 1.3rem;
+        height: 30px;
+	}
+
+	.controls_arrow {
+		display: none;
+	}
+
+	#controls {
+		height: 325px;
+		max-height: 50vh;
+		overflow-y: auto;
+		transition: height 0.5s;
+	}
+
+	#controls .control_section {
+		transition: opacity 0.5s;
+	}
+
+	#controls.collapsed .control_section {
+		opacity: 0;
+	}
+
+	#controls.collapsed {
+		height: 50px;
+		overflow: hidden;
+	}
+
+	#details_pane {
+		position: fixed;
+		top: 30px;
+		right: 100%;
+	}
+
+	#path_pane {
+		width: 100%;
+	}	
+
+	#panes {
+		width: 100vw;
+		transition: height 0.5s;
+	}
+
+	#panes.extended {
+		height: calc(100vh - 102px);
+	}
+
+	#panes.extended #path_tools {
+		display: none;
+	}
+
+	#path_container {
+		max-height: 100%;
+		height: 100%;
+	}	       
+
+	#path_tools {
+		width: 224px;
+	}
+
+	.mon_selector {
+		position: fixed;
+		top: 41px;
+		left: -3px;
+		width: calc(100vw - 20px);
+		height: calc(100vh - 74px);
+		border-radius: 0;
+	}
+
+	.mon_selector .filter_container {
+		height: 290px;
+	}
+
+	.mon_selector .scroll{
+		max-height: calc(100vh - 378px);
+	}
+
+	#close_button {
+		display: block;
+        position: absolute;
+        top: 2px;
+        right: 9px;
+        font-size: 29px;    
+	}
+
+	#no_path_warning {
+		color: #c62e2e;
+		width: 80%;
+		text-align: center;
+		font-size: 30px;
+		margin-right: auto;
+		margin-left: auto;
+	}
+
+	#edit_btn {
+		display: block;
+	}
+
+	#edit_btn {
+		bottom: 0;
+        position: absolute;
+        width: 224px;
+        height: 40px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        background-color: #476dd9;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        border-top-right-radius: 50px;
+        border-top-left-radius: 50px;
+        cursor: pointer;
+        border-top: 2px solid #334e9b;
+        border-right: 2px solid #334e9b;
+        border-left: 2px solid #334e9b;
+        left: 50%;
+        transform: translate(-50%, 0);
+        display: none;
+		z-index: 2;
+	}
+
+	#controls.collapsed #edit_btn{
+		display: flex;
+	}
+
+	#edit_btn:hover {
+		background-color: #334e9b;
+	}
+
+}

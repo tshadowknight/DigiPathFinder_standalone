@@ -84,7 +84,11 @@ MonSelector.prototype.show = function(selectedId){
     content = "";
     content+= "<div class='mon_selector hidden'>";
 
-    content+= "<div class='row controls'>";
+    content+= "<div id='close_button'>";
+    content+="<i class='fa fa-close' aria-hidden='true'></i>";
+    content+="</div>";
+
+    content+= "<div class='row controls filter_container'>";
     content+= "<input id='mon_search' value='"+_this._filters.text+"'></input>";
 
     //types filter
@@ -249,6 +253,9 @@ MonSelector.prototype.show = function(selectedId){
 */
     
 
+    contentContainer.querySelector("#close_button").addEventListener("click", function(){
+        _this.hide();
+    });
     contentContainer.querySelector("#mon_search").focus();
 
     
@@ -257,7 +264,7 @@ MonSelector.prototype.show = function(selectedId){
         if(e.target.closest(".control_block") == null && !e.target.classList.contains("digi_btn")){
             _this.hide();
         }
-    })
+    });
 }
 
 MonSelector.prototype.getSortedIds = function(){
