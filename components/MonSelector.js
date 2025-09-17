@@ -84,8 +84,8 @@ MonSelector.prototype.show = function(selectedId){
     content = "";
     content+= "<div class='mon_selector hidden'>";
 
-    content+= "<div id='close_button'>";
-    content+="<i class='fa fa-close' aria-hidden='true'></i>";
+    content+= "<div id='close_button' class='close_button'>";
+    content+="<i class='fa fa-close' aria-hidden='true'  ></i>";
     content+="</div>";
 
     content+= "<div class='row controls filter_container'>";

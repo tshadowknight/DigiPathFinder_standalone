@@ -775,7 +775,7 @@ function showGameFileLoaderConfirm(msg){
 		elem.classList.add("global_warning");
 	
 		let content = "";
-		content+="<div style='width: 75%; padding: 45px; border-radius: 50px; background-color: rgba(0,0,0,0.25);text-align: center;border: 10px solid rgba(0,0,0,0.5);'>";
+		content+="<div class='overlayWarning'>";
 		content+="<div style='color: #EE2222'>";
 		content+=msg;
 		content+="</div>";
@@ -812,7 +812,7 @@ function showInitialVersionSelect(msg){
 		elem.classList.add("global_warning");
 	
 		let content = "";
-		content+="<div style='width: 75%; padding: 45px; border-radius: 50px; background-color: rgba(0,0,0,0.25);text-align: center;border: 10px solid rgba(0,0,0,0.5);'>";
+		content+="<div class='overlayWarning'>";
 		content+="<div style=''>";
 		content+=msg;
 		content+="</div>";
@@ -1141,7 +1141,7 @@ function initPathFinder(forceReload){
 			phase2();
 		}
 	} else {
-		$("#standalone_version_link").show();
+		$("#standalone_version_link")[0].classList.add("visible");
 		$("#standalone_version_link a").html(localizationData[currentLocale].app.standalone_link)
 		showGameFileLoader(localizationData[currentLocale].app.loader_msg_web);
 		phase2();

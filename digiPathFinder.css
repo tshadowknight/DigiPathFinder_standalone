@@ -649,9 +649,13 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 #standalone_version_link {
 	margin-left: auto;
-	display: "none";
+	display: none;
 	font-size: 13px;
 	color: #FFFFFF;
+}
+
+#standalone_version_link.visible {
+	display: block;
 }
 
 #standalone_version_link a{
@@ -1123,7 +1127,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 }
 
 .evo_reqs_flex .block{
-	border-bottom: 1px solid #F1F1F1;
+	border-bottom: 1px solid #E0E0E0;
 }
 
 .evo_reqs_flex .block .label{
@@ -1421,9 +1425,18 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	background-color: #334e9b;	
 }
 
+.overlayWarning {
+	width: 75%; 
+	padding: 45px; 
+	border-radius: 50px; 
+	background-color: rgba(0,0,0,0.25);
+	text-align: center;
+	border: 10px solid rgba(0,0,0,0.5);
+}
+
 /*Mobile layout only components*/
 
-#close_button {
+.close_button {
 	display: none;
 }
 
@@ -1431,14 +1444,18 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	display: none;
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 660px),  (max-height: 480px){
 
 	#standalone_version_link {
 		display: none;
 	}
 
+	#standalone_version_link.visible {
+		display: none;
+	}
+
 	.tool_header {
-		font-size: 1.3rem;
+		font-size: 1.1rem;
         height: 30px;
 	}
 
@@ -1468,13 +1485,29 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 	#details_pane {
 		position: fixed;
-		top: 30px;
-		right: 100%;
+        top: 58px;
+        width: 100vw;
+        right: 0;
+        z-index: 5;
+        display: none;
+        height: calc(100vh - 50px);
 	}
 
 	#path_pane {
 		width: 100%;
+	}
+	
+	#content.details_view #path_pane{
+		display: none;
 	}	
+
+	#content.details_view #details_pane{
+		display: block;
+	}
+
+	#content.details_view #controls{
+		display: none;
+	}
 
 	#panes {
 		width: 100vw;
@@ -1515,7 +1548,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 		max-height: calc(100vh - 378px);
 	}
 
-	#close_button {
+	.close_button {
 		display: block;
         position: absolute;
         top: 2px;
@@ -1568,4 +1601,59 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 		background-color: #334e9b;
 	}
 
+	.dex_pane_header .name {
+		margin-left: 20;
+		margin-right: 40;
+		font-size: 34px;
+		font-weight: bold;
+		font-style: italic;
+	}
+
+	.dex_pane .section {
+		min-width: 90vw;
+	}
+
+	#close_dex_pane_button {
+		color: #FFF;
+		right: 4px;
+        top: -1px;
+        font-size: 29px;
+	}
+
+	#game_mode {
+		display: none;
+	}
+
+	#locale_select_container {
+		margin-left: auto;
+	}
+
+	.cssload-loader {
+		width: 380;
+    	height: 380;
+	}
+
+	#gameVersion {
+		display: block;
+	}
+
+	#spoiler_warning {
+		font-size: 20px;
+	}
+
+	.overlayWarning {
+		padding: 20;
+		border: 4px solid rgba(0, 0, 0, 0.5);
+		border-radius: 16px;
+	}
+
+	.overlayOK {
+		font-size: 30px;
+		border-radius: 16px;
+		padding: 5;
+		margin-top: 4;
+		margin-bottom: 4;
+		border: 4px solid #334e9b;
+	}
 }
+

@@ -69,6 +69,10 @@ DexPane.prototype.show = function(context){
 
     content+="<div class='dex_pane_header'>"; 
 
+    content+= "<div id='close_dex_pane_button' class='close_button'>";
+    content+="<i class='fa fa-close' aria-hidden='true'></i>";
+    content+="</div>";
+
     content+="<div class='row name_info'>";
     content+="<div class='banner'>";
     content+="<div class='icon dex_img_container'>";
@@ -251,6 +255,10 @@ DexPane.prototype.show = function(context){
             _this.showDigimon(monId, "evos");
         })
     }
+
+    contentContainer.querySelector("#close_dex_pane_button").addEventListener("click", function(){
+        $("#content")[0].classList.remove("details_view");
+    });
 
     const scrollPane = contentContainer.querySelector(".dex_pane_scroll");
     scrollPane.scrollTop = this._lastScroll;
@@ -1093,6 +1101,7 @@ DexPane.prototype.createEncountersBlock = function(monInfo){
 
 
 DexPane.prototype.showDigimon = function(id, context){
+    $("#content")[0].classList.add("details_view");
     this.setActiveId(id);
     this.show(context);
 }
