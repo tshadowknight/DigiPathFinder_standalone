@@ -93,7 +93,14 @@ MonSelector.prototype.show = function(selectedId){
 
     //types filter
 
-    content+= "<div class='row controls type_filter filter'>";
+    content+= "<div class='row controls type_filter filter button' data-filtertarget='types'>";
+    content+= "<div class='label'>";
+    content+= localizationData[currentLocale].app.label_types_filter;   
+    content+="</div>";
+    content+="<i class='caret fa fa-caret-down'></i>";
+    content+="</div>";
+
+    content+= "<div class='row controls type_filter filter filter_target' data-filtertarget='types'>";
     content+= "<div class='label'>";
     content+= localizationData[currentLocale].app.label_types_filter;
     
@@ -128,8 +135,15 @@ MonSelector.prototype.show = function(selectedId){
     content+="<i data-type='types' class='clear_all fa fa-square-o' aria-hidden='true'></i>";
     content+="</div>";
     content+="</div>";
+
+    content+= "<div class='row controls type_filter filter button' data-filtertarget='levels'>";
+    content+= "<div class='label'>";
+    content+= localizationData[currentLocale].app.label_levels_filter;   
+    content+="</div>";
+    content+="<i class='caret fa fa-caret-down'></i>";
+    content+="</div>";
     
-    content+= "<div class='row controls level_filter filter'>";
+    content+= "<div class='row controls level_filter filter filter_target' data-filtertarget='levels'>";
     content+= "<div class='label'>";
     content+= localizationData[currentLocale].app.label_levels_filter;
     
@@ -256,14 +270,43 @@ MonSelector.prototype.show = function(selectedId){
     contentContainer.querySelector("#close_button").addEventListener("click", function(){
         _this.hide();
     });
-    contentContainer.querySelector("#mon_search").focus();
+    //contentContainer.querySelector("#mon_search").focus();
 
-    
+    let openFilter;
+
+    const filterButtons = contentContainer.querySelectorAll(".filter.button");
+    for(const filterButton of filterButtons){
+        filterButton.addEventListener("click", function(){
+            const fitlerTargetString = this.getAttribute("data-filtertarget");
+            const filterTargetElem = contentContainer.querySelector(".filter_target[data-filtertarget='"+fitlerTargetString+"']");
+            filterTargetElem.style.display = "flex";
+            const boundBox = this.getBoundingClientRect();
+            openFilter = fitlerTargetString;
+            //filterTargetElem.style.top = boundBox.top + "px";
+            //filterTargetElem.style.left = boundBox.left + "px";
+            //filterTargetElem.style.width = (boundBox.width - 8) + "px";
+        });
+    }
+
+    function handleFilterHiding(e){
+         if(openFilter){
+            if(e.target.closest(".filter_target[data-filtertarget='"+openFilter+"']") == null && !e.target.classList.contains("button")){
+                contentContainer.querySelector(".filter_target[data-filtertarget='"+openFilter+"']").style.display = "none";
+                openFilter = null;
+            }
+        }
+    }
 
     window.addEventListener("click", function(e){
         if(e.target.closest(".control_block") == null && !e.target.classList.contains("digi_btn")){
             _this.hide();
         }
+        handleFilterHiding(e);
+        
+    });
+
+    window.addEventListener("touchstart", function(e){
+        handleFilterHiding(e);
     });
 }
 

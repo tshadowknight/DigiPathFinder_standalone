@@ -5,10 +5,13 @@ body {
 	overflow: hidden;
 	height: 100%;
 	
-background: -moz-linear-gradient(top,  rgba(51,78,155,0.65) 0%, rgba(51,78,155,0.64) 2%, rgba(0,0,0,0) 100%);
-background: -webkit-linear-gradient(top,  rgba(51,78,155,0.65) 0%,rgba(51,78,155,0.64) 2%,rgba(0,0,0,0) 100%);
-background: linear-gradient(to bottom,  rgba(51,78,155,0.65) 0%,rgba(51,78,155,0.64) 2%,rgba(0,0,0,0) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', endColorstr='#00000000',GradientType=0 );
+	background: -moz-linear-gradient(top,  rgba(51,78,155,0.65) 0%, rgba(51,78,155,0.64) 2%, rgba(0,0,0,0) 100%);
+	background: -webkit-linear-gradient(top,  rgba(51,78,155,0.65) 0%,rgba(51,78,155,0.64) 2%,rgba(0,0,0,0) 100%);
+	background: linear-gradient(to bottom,  rgba(51,78,155,0.65) 0%,rgba(51,78,155,0.64) 2%,rgba(0,0,0,0) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', endColorstr='#00000000',GradientType=0 );
+
+	height: 100vh; /* Viewport height */
+    height: 100dvh; /* Dynamic viewport height - newer, better support */
 
 }
 
@@ -19,6 +22,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', e
 	height: 100vh;
 	background-color: #FFFFFF;
 	top: 57px;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 }
 
 #content {
@@ -27,6 +31,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', e
 	top: 0;
 	height: 100vh;
 	width: 100vw;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 }
 
 #particles {
@@ -34,6 +39,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', e
 	position: fixed;
 	top: 0;
 	height: 100vh;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 	width: 100vw;
 	pointer-events: none;
 }
@@ -54,6 +60,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6334e9b', e
 	position: fixed;
 	width: 100vw;
 	height: 100vh;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 	background-color: rgba(255,255,255,0.5);
 	display: none;
 	top: 57px;
@@ -360,6 +367,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 #overlay {
 	position: fixed;
 	height: 100vh;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 	width: 100vw;
 	z-index: 9999;
 	background-color: rgba(32, 146, 227, 0.5);
@@ -719,6 +727,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 #spoiler_warning.global_warning {
 	top: 0;
 	height: 100vh;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 	z-index: 100;
 	animation-name: none;
 }
@@ -731,6 +740,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	justify-content: center;
 	width: calc(100vw - 100px);
 	height: 100vh;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 	transition: background-color 1s;
 	transition: opacity 1s;
 	background-color: rgba(51,78,155,0.7);
@@ -761,6 +771,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 #game_file_loader.global_warning {
 	top: 0;
 	height: 100vh;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 	z-index: 100;
 	animation-name: none;
 }
@@ -818,7 +829,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 #panes {
 	display: flex;
-	height: calc(100vh - 297px);
+	height: calc(100dvh - 297px);
 }
 
 #path_pane {
@@ -1346,6 +1357,15 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	cursor: pointer;
 }
 
+.row.filter.button {
+	border: 2px solid #C0C0C0;
+	height: 30px;
+}
+
+.row.filter.button .caret {
+	margin-left: auto;
+}
+
 #options_container .row .label.no_files {
 	color: red;
 	font-weight: bold;
@@ -1461,6 +1481,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 #portrait_mode_warning.global_warning {
 	top: 0;
 	height: 100vh;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 	z-index: 100;
 	animation-name: none;
 }
@@ -1472,6 +1493,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	justify-content: center;
 	width: calc(100vw - 100px);
 	height: 100vh;
+	height: 100dvh; /* Dynamic viewport height - newer, better support */
 	transition: background-color 1s;
 	transition: opacity 1s;
 	background-color: rgba(51,78,155,1);
@@ -1486,6 +1508,11 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     padding-right: 50;
 
 }
+
+.row.filter.button {
+	display: none;
+}
+
 /*
 @media screen and (orientation: landscape) and (max-width: 660px),  (max-height: 660px){
 	#content {
@@ -1499,6 +1526,31 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 }
 */
 @media screen and (max-width: 660px),  (max-height: 660px){
+
+	.mon_selector .controls {
+		font-size: 14px;
+	}
+
+	.row.filter.button {
+		display: flex;
+		position: relative;
+	}
+
+	.row.filter {
+		position: fixed;
+		display: none;		
+	}
+
+	.row.filter.filter_target{
+		z-index: 99;
+		border: 2px solid #C0C0C0;
+		margin-top: 0px;
+		-webkit-box-shadow: 0px 3px 4px 3px rgba(0,0,0,0.69); 
+		box-shadow: 0px 3px 4px 3px rgba(0,0,0,0.69);
+		top: 43px;
+        left: 5px;
+        width: 94vw;
+	}
 
 	#standalone_version_link {
 		display: none;
@@ -1569,7 +1621,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	}
 
 	#panes.extended {
-		height: calc(100vh - 102px);
+		height: calc(100dvh - 102px);
 	}
 
 	#panes.extended #path_tools {
@@ -1595,16 +1647,16 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 		top: 41px;
 		left: -3px;
 		width: calc(100vw - 20px);
-		height: calc(100vh - 74px);
+		height: calc(100dvh - 74px);
 		border-radius: 0;
 	}
 
 	.mon_selector .filter_container {
-		height: 290px;
+		height: 105px;
 	}
 
 	.mon_selector .scroll{
-		max-height: calc(100vh - 378px);
+		max-height: calc(100dvh - 188px);
 	}
 
 	.close_button {
