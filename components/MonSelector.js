@@ -84,6 +84,10 @@ MonSelector.prototype.show = function(selectedId){
     content = "";
     content+= "<div class='mon_selector hidden'>";
 
+    content+= "<div class='filter_overlay'>";
+
+    content+="</div>";
+
     content+= "<div id='close_button' class='close_button'>";
     content+="<i class='fa fa-close' aria-hidden='true'  ></i>";
     content+="</div>";
@@ -272,7 +276,7 @@ MonSelector.prototype.show = function(selectedId){
     });
     //contentContainer.querySelector("#mon_search").focus();
 
-    let openFilter;
+    _this.openFilter;
 
     const filterButtons = contentContainer.querySelectorAll(".filter.button");
     for(const filterButton of filterButtons){
@@ -281,7 +285,9 @@ MonSelector.prototype.show = function(selectedId){
             const filterTargetElem = contentContainer.querySelector(".filter_target[data-filtertarget='"+fitlerTargetString+"']");
             filterTargetElem.style.display = "flex";
             const boundBox = this.getBoundingClientRect();
-            openFilter = fitlerTargetString;
+            contentContainer.querySelector(".filter_overlay").style.display = "block";
+            _this.openFilter = fitlerTargetString;
+           
             //filterTargetElem.style.top = boundBox.top + "px";
             //filterTargetElem.style.left = boundBox.left + "px";
             //filterTargetElem.style.width = (boundBox.width - 8) + "px";
@@ -289,10 +295,12 @@ MonSelector.prototype.show = function(selectedId){
     }
 
     function handleFilterHiding(e){
-         if(openFilter){
-            if(e.target.closest(".filter_target[data-filtertarget='"+openFilter+"']") == null && !e.target.classList.contains("button")){
-                contentContainer.querySelector(".filter_target[data-filtertarget='"+openFilter+"']").style.display = "none";
-                openFilter = null;
+         if(_this.openFilter){
+            if(e.target.closest(".filter_target[data-filtertarget='"+_this.openFilter+"']") == null && !e.target.classList.contains("button")){
+                contentContainer.querySelector(".filter_target[data-filtertarget='"+_this.openFilter+"']").style.display = "none";
+                contentContainer.querySelector(".filter_overlay").style.display = "none";
+                _this.openFilter = null;
+                
             }
         }
     }
@@ -301,12 +309,23 @@ MonSelector.prototype.show = function(selectedId){
         if(e.target.closest(".control_block") == null && !e.target.classList.contains("digi_btn")){
             _this.hide();
         }
-        handleFilterHiding(e);
+        //handleFilterHiding(e);
         
     });
-
-    window.addEventListener("touchstart", function(e){
+    const filterOverlay =  contentContainer.querySelector(".filter_overlay");
+    filterOverlay.addEventListener("touchstart", function(e){
         handleFilterHiding(e);
+        _this._wasClickOffFilter = true;
+        setTimeout(function(){
+            _this._wasClickOffFilter = false;
+        }, 50);
+    });
+    filterOverlay.addEventListener("click", function(e){
+       handleFilterHiding(e);      
+        _this._wasClickOffFilter = true;
+        setTimeout(function(){
+            _this._wasClickOffFilter = false;
+        }, 50);
     });
 }
 
@@ -399,14 +418,22 @@ MonSelector.prototype.showList = function(managedKeys){
         }
 
         function setImages(){
+            //check if image is still within rendered bound
+            const scrollContainerBounds = scrollContainer.getBoundingClientRect();
+            let topBound = scrollContainerBounds.top;
+            let bottomBound = scrollContainerBounds.bottom;
             let monImgs = contentContainer.querySelectorAll(".icon img");
             for(let img of monImgs){
                 if(!img.isRendered){
-                    const monId = img.getAttribute("data-id");
-                    img.isRendered = true;
-                    if(monId != -1){
-                        setDDSImage(img, monId);
+                    const imgBounds = img.getBoundingClientRect();
+                    if(imgBounds.top <= bottomBound && imgBounds.top >= topBound - 80){ 
+                        const monId = img.getAttribute("data-id");
+                        img.isRendered = true;
+                        if(monId != -1){
+                            setDDSImage(img, monId);
+                        }
                     }
+                    
                 }                
             }   
         }
@@ -414,7 +441,7 @@ MonSelector.prototype.showList = function(managedKeys){
         if(immediate){
             setImages();
         }
-        imageRenderTimeout = setTimeout(setImages, 100);  
+        imageRenderTimeout = setTimeout(setImages, 5);  
          
     }
     renderBlocks(true);
@@ -424,21 +451,24 @@ MonSelector.prototype.showList = function(managedKeys){
     if(!scrollContainer.scrollBound){
         scrollContainer.scrollBound = true;
         scrollContainer.addEventListener("scroll", function(){
-            if(scrollTimeOut != null){
+            /*if(scrollTimeOut != null){
                 clearTimeout(scrollTimeOut);
             }
-            scrollTimeOut = setTimeout(renderBlocks, 10);         
-        })
+            scrollTimeOut = setTimeout(renderBlocks, 10);    */     
+            renderBlocks();
+        });
     }
     
     
     let monBtns = contentContainer.querySelectorAll(".entry");
     for(let entry of monBtns){
-        entry.addEventListener("click", function(){
-            if(_this._callbacks.selected){
-                _this._callbacks.selected(this.getAttribute("data-id"));
-            }  
-        })
+        entry.addEventListener("click", function(){     
+            if(!_this._wasClickOffFilter){  
+                if(_this._callbacks.selected){
+                    _this._callbacks.selected(this.getAttribute("data-id"));
+                }   
+            }                                       
+        });
 
         entry.addEventListener("keydown", function(e){
             if(e.keyCode == 13){
@@ -446,7 +476,7 @@ MonSelector.prototype.showList = function(managedKeys){
                     _this._callbacks.selected(this.getAttribute("data-id"));
                 } 
             }             
-        })
+        });
     } 
 
 }

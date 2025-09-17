@@ -375,8 +375,7 @@ async function convertDDSImage(digimonId){
 	});
 }
 
-async function setDDSImage(elem, digimonId){
-	//in electron context convert the DDS image from the game files
+async function getDDSPath(digimonId){
 	let targetPath;
 	if(isElectron()){
 		if(isTSMode()){
@@ -391,10 +390,15 @@ async function setDDSImage(elem, digimonId){
 			targetPath = "https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/unpacked/images/converted";
 		}
 	}
+	const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
+	return targetPath+"/ui_chara_icon_"+imgId+".png";
+}
+
+async function setDDSImage(elem, digimonId){
+	//in electron context convert the DDS image from the game files
 	
-	
-		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-		elem.src = targetPath+"/ui_chara_icon_"+imgId+".png";
+		const iconPath = await getDDSPath(digimonId);		
+		elem.src = iconPath;
 		elem.style.display = "block";
 		elem.classList.remove("error");
 		elem.onerror = function(){
