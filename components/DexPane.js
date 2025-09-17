@@ -294,6 +294,34 @@ DexPane.prototype.arrayToTableContent = function(array, headless){
     return result;
 }
 
+DexPane.prototype.arrayToFlexContent = function(array, headless) {
+    if (!array || array.length === 0) return "";
+    let result = "";
+
+    const numColumns = array[0].length;
+    result += '<div class="evo_reqs_flex">';
+    
+    // Generate each column
+    for (let colIndex = 0; colIndex < numColumns; colIndex++) {
+        result += '<div class="block">';
+        
+        // Generate cells for this column
+        for (let rowIndex = 0; rowIndex < array.length; rowIndex++) {
+            const isHeader = !headless && rowIndex === 0;
+            const cellClass = isHeader ? 'label' : 'value';
+            const cellValue = array[rowIndex][colIndex] || '';
+            
+            result += `<div class="${cellClass}">${cellValue}</div>`;
+        }
+        
+        result += '</div>';
+    }
+    
+    result += '</div>';
+   
+    return result;
+};
+
 DexPane.prototype.createStatsBlock = function(monInfo){
     let content = "";
     content+="<div class='section'>";
@@ -330,7 +358,7 @@ DexPane.prototype.createStatsBlock = function(monInfo){
         content+="</div>";
 
         content+="<div class='row stats'>";
-        content+="<table class='stats level_up_ts'>";   
+       // content+="<table class='stats level_up_ts'>";   
 
         let header = [];
         let data = [];
@@ -347,7 +375,7 @@ DexPane.prototype.createStatsBlock = function(monInfo){
 
     } else {
         content+="<div class='row stats'>";
-        content+="<table class='stats level_up'>";   
+       // content+="<table class='stats level_up'>";   
         tableContent.push(["", localizationData[currentLocale].app.DEX_label_lv1,localizationData[currentLocale].app.DEX_label_lv50, localizationData[currentLocale].app.DEX_label_lv99]); 
     
 
@@ -383,9 +411,9 @@ DexPane.prototype.createStatsBlock = function(monInfo){
             tableContent.push(row);
         }
         }
-    content+=this.arrayToTableContent(tableContent);
+    content+=this.arrayToFlexContent(tableContent);
 
-    content+="</table>";
+   // content+="</table>";
     content+="</div>";   
 
     const effectivenessIcons = {
@@ -441,7 +469,7 @@ DexPane.prototype.createStatsBlock = function(monInfo){
 
             
 
-            content+="<table class='stats effectiveness level_up_ts'>";   
+          //  content+="<table class='stats effectiveness level_up_ts'>";   
             let header = [];
             let data = [];
 
@@ -455,10 +483,10 @@ DexPane.prototype.createStatsBlock = function(monInfo){
             tableContent.push(header);
             tableContent.push(data);
 
-            content+=this.arrayToTableContent(tableContent);
+            content+=this.arrayToFlexContent(tableContent);
 
 
-            content+="</table>";
+         //   content+="</table>";
             content+="</div>";
 
         }
@@ -523,7 +551,7 @@ DexPane.prototype.createStatsBlock = function(monInfo){
 
             
 
-            content+="<table class='stats effectiveness level_up_ts'>";   
+         //   content+="<table class='stats effectiveness level_up_ts'>";   
             let header = [];
             let data = [];
 
@@ -537,10 +565,10 @@ DexPane.prototype.createStatsBlock = function(monInfo){
             tableContent.push(header);
             tableContent.push(data);
 
-            content+=this.arrayToTableContent(tableContent);
+            content+=this.arrayToFlexContent(tableContent);
 
 
-            content+="</table>";
+          //  content+="</table>";
             content+="</div>";
         }
         createElementalView();

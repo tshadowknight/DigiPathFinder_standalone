@@ -855,6 +855,35 @@ function showInitialVersionSelect(msg){
 	
 }
 
+function createPortraitModeWarning(msg){
+	return new Promise(function(resolve, reject){
+		let elem = document.getElementById("portrait_mode_warning");
+		if(!elem){
+			elem = document.createElement("div");
+			elem.id = "portrait_mode_warning";
+		}
+		elem.classList.remove("hidden");
+		elem.classList.add("global_warning");
+	
+		let content = "";
+		content+="<div class='overlayWarning'>";
+		content+="<div style=''>";
+		content+="Please use Portrait Mode";
+		content+="</div>";
+		
+		content+="</div>";
+		elem.innerHTML = content;
+
+		
+		document.body.append(elem);
+
+
+
+		document.getElementById("particles").classList.add("game_loader");
+	});
+	
+}
+
 function setLoaderError(error){
 	let elem = document.getElementById("game_file_loader");
 	if(elem){
@@ -1198,7 +1227,7 @@ function initPathFinder(forceReload){
 }
 
 document.addEventListener("DOMContentLoaded", async function(){
-
+	createPortraitModeWarning();
 	$("#options").on("click", function(){
 		toggleOptions();
 	});
