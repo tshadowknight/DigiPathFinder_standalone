@@ -56,8 +56,17 @@ function MonSelector(containerId, callbacks, monData){
             }
         }
     }
+    this._sortOrder = 0;
+    if(isTSMode()){
+        this._sortOrder = localStorage.getItem("DigiPathFinder_sort_order_TS");
+        if(this._sortOrder == null){
+            this._sortOrder = 1;
+        }
+    }
     this._callbacks = callbacks;
 }
+
+MonSelector.radioGroupCtr = 0;
 
 MonSelector.prototype.toggle = function(selectedId){
     const contentContainer = document.getElementById(this._containerId);
@@ -172,7 +181,30 @@ MonSelector.prototype.show = function(selectedId){
     content+="</div>";  
     
 
+    content+= "<div class='row controls sort_order filter "+(isTSMode() ? "TS" : "")+"' data-filtertarget='order'>";
+    content+= "<div class='label'>";
+    content+= localizationData[currentLocale].app.label_sort_order;
+    
+    content+="</div>";
 
+    //levels filter
+    content+="<div class='options'>";
+
+   // content+="<div>";
+   const groupCtr = MonSelector.radioGroupCtr++;
+    content+="<input type='radio' class='sort_alpha' name='sort_order_"+groupCtr+"' value='0' "+(_this._sortOrder == 0 ? "checked" : "")+" />";
+    content+="<label for=''>"+localizationData[currentLocale].app.label_sort_alpha+"</label>";
+   // content+="</div>";
+
+  //  content+="<div>";
+    content+="<input type='radio' class='sort_alpha' name='sort_order_"+groupCtr+"' value='1' "+(_this._sortOrder == 1 ? "checked" : "")+" />";
+    content+="<label for=''>"+localizationData[currentLocale].app.label_sort_field+"</label>";
+ //   content+="</div>";
+
+
+    content+="</div>";
+
+    content+="</div>";
     content+="</div>";
 
     content+= "<div id='list_container' class='row list'>";
@@ -187,6 +219,14 @@ MonSelector.prototype.show = function(selectedId){
     contentContainer.querySelector(".mon_selector").classList.remove("hidden");
     _this.showList(_this.getSortedIds());
    
+    const sortOrderBtns = contentContainer.querySelectorAll(".sort_alpha");
+    for(let sortOrderBtn of sortOrderBtns){
+        sortOrderBtn.addEventListener("change", function(){
+            _this._sortOrder = this.value;
+            localStorage.setItem("DigiPathFinder_sort_order_TS", _this._sortOrder);
+            _this.showList(_this.getSortedIds());
+        });
+    }
    
     
     contentContainer.querySelector("#mon_search").addEventListener("keyup", function(e){
@@ -333,7 +373,19 @@ MonSelector.prototype.getSortedIds = function(){
     const _this = this;
     let monDisplayList = structuredClone(this._monData);
     let managedKeys = Object.keys(monDisplayList);
-    managedKeys = managedKeys.sort((a, b) => String(localizationData[currentLocale].digimon[a]).localeCompare(localizationData[currentLocale].digimon[b]))
+
+    const alphaSorter = (a, b) => String(localizationData[currentLocale].digimon[a]).localeCompare(localizationData[currentLocale].digimon[b]);
+    const fieldSorter = (a, b) => monDisplayList[a].baseStats.fieldGuideId - monDisplayList[b].baseStats.fieldGuideId;
+
+    let sorter = alphaSorter;
+    if(isTSMode()){
+       if(_this._sortOrder == 0){
+            sorter = alphaSorter;
+       } else {
+            sorter = fieldSorter;
+       }
+    }
+    managedKeys = managedKeys.sort(sorter)
 
     managedKeys = managedKeys.filter(x => {
         const name = localizationData[currentLocale].digimon[x];

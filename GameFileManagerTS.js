@@ -557,6 +557,8 @@ function GameFileManagerTS(){
                 baseStats[dbId] = {};
             }
 
+            baseStats[dbId].fieldGuideId = escapeHTML(entry[digimonListData.headerLookup["fieldGuideId"]]);
+            baseStats[dbId].scriptId = escapeHTML(entry[digimonListData.headerLookup["scriptId"]]);
           
             baseStats[dbId].level = commonFieldTranslationsTS.level[escapeHTML(entry[digimonListData.headerLookup["stageId"]])];
 
@@ -727,7 +729,7 @@ function GameFileManagerTS(){
                     },*/
                     encounters: {base: digimonToEncounters[digimonId] || [], hame: digimonToEncountersHame[digimonId] || []},
                     traits: traits[digimonId] || [],
-                    resistances:  resistances[digimonId] || {}
+                    resistances:  resistances[digimonId] || {},
                 }
             }        
         }

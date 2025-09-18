@@ -617,7 +617,7 @@ function populateDigimonList(btnTarget, target, prepopulate){
 	});
 
 	if(prepopulate){
-		updateSelection(Object.keys(digimonNames).sort(function(a,b){return String(digimonNames[a]).localeCompare( digimonNames[b])})[0]);
+		updateSelection(selector.getSortedIds()[0]);
 	}
 }
 

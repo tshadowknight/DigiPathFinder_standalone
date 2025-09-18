@@ -337,7 +337,9 @@ const hardDefinedHeaders = {
       "resSteel": 14,
       "resWind": 15,
       "resLight": 16,
-      "resDark": 17,      
+      "resDark": 17,
+      "fieldGuideId": 131,
+      "scriptId": 132
     },
     "main/evolution.mbe/01_evolution_to.csv": {
       "idx": 0,

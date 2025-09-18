@@ -159,6 +159,9 @@
 	"DEF_undef_mon": "Undefined Digimon: ",
 	"label_types_filter": "Types",
 	"label_levels_filter": "Levels",
+	"label_sort_order": "Sort",
+	"label_sort_alpha": "Alphabetic",
+	"label_sort_field": "Field guide",
 	"warn_no_extract": "A game install was detected but extraction failed, please move this app to another location or run as admin.",
 	"standalone_link": "Click here to download the standalone Windows version. With mod support!"
 }

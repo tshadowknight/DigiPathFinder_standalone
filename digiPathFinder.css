@@ -15,6 +15,12 @@ body {
 
 }
 
+.left_controls {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+}
+
 #load_hider {
 	z-index: 9;
 	position: fixed;
@@ -1546,6 +1552,29 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	padding: 5px;
 }	
 
+.sort_order {
+	display: none;
+}
+
+.sort_order.TS {
+	display: flex;
+}
+
+.sort_order .options {
+	display: flex;
+	align-items: center;
+}
+
+.sort_order .options input{
+	margin: 0;
+	margin-right: 4px;
+	margin-left: 4px;
+}
+
+.row.filter.sort_order {
+	padding: 6px;
+}
+
 /*Mobile layout only components*/
 
 .close_button {
@@ -1652,6 +1681,11 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 		position: fixed;
 		display: none;		
 	}
+	
+	.row.filter.sort_order.TS {
+		position: relative;
+		display: flex;
+	}
 
 	.row.filter.filter_target{
 		z-index: 99;
@@ -1708,7 +1742,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
         right: 0;
         z-index: 5;
         display: none;
-        height: calc(100vh - 50px);
+        height: calc(100dvh - 50px);
 	}
 
 	#path_pane {
@@ -1777,7 +1811,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	}
 
 	.mon_selector .filter_container {
-		height: 105px;
+		height: 133px;
 	}
 
 	.mon_selector.skill_selector .filter_container {
@@ -1789,7 +1823,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     }
 
 	.mon_selector .scroll{
-		max-height: calc(100dvh - 188px);
+		max-height: calc(100dvh - 216px);
 	}
 
 	.close_button {
