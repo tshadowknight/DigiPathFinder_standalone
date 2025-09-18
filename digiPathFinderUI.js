@@ -1,3 +1,4 @@
+
 var versionId = "4.0b.0";
 
 if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron')){
@@ -10,6 +11,7 @@ if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron'))
 	var DDSUtils = require('./lib/DDSUtils');
 	var DexPane = require('./components/DexPane');
 	var MonSelector = require('./components/MonSelector');
+	var SkillSelector = require('./components/SkillSelector');
 	var GameFileManager = require('./GameFileManager');
 	var GameFileManagerTS = require('./GameFileManagerTS');
 	var fs_promise = require('fs').promises
@@ -460,9 +462,17 @@ function createControls(){
 	content+="<div class='control_section'>";
 	content+="<div data-appstring='header_skills' class='header'>Skills (Max. 8)</div>";
 	content+="<div class='skill_controls flex-container'>";
-	content+="<select class='digi_select flex-item' id='end_move'>";
+	//content+="<select class='digi_select flex-item' id='end_move'>";
 	
-	content+="</select>";
+
+	
+	//content+="</select>";
+
+	content+="<div class='digi_btn skill_btn' id='skill_btn'>";		
+	content+="</div>";	
+
+	content+="<div class='' id='skill'>";		
+	content+="</div>";	
 	//content+="<div class='go_button' id='add_skill'>Add</div>";
 	//content+="<div class='go_button' id='find_move_path' style='margin-left: 2px;'>Go!</div>";
 
@@ -480,7 +490,8 @@ function createControls(){
 	
 	
 	
-	populateMoveList();
+	//populateMoveList();
+	populateSkillList("skill_btn", "skill");
 	populateDigimonList("start_digi_btn", "start_digi", true);
 	populateDigimonList("end_digi_btn", "end_digi");
 	//secondary control pane
@@ -592,8 +603,40 @@ function populateDigimonList(btnTarget, target, prepopulate){
 	}
 }
 
+function populateSkillList(btnTarget, target){
+	var content = "";
+	var moveNames = localizationData[currentLocale].moves;
+	
+	const btn = document.querySelector("#"+btnTarget);
+	
+	function updateSelection(){	
+		const skillCount = Object.keys(pathFinder.wantedSkills).length;
+		if(skillCount.length == 1){
+			btn.innerHTML = skillCount + " Skill Selected";
+		} else{
+			btn.innerHTML = skillCount + " Skills Selected";
+		}		
+	}
 
-function populateMoveList(){
+	
+
+	let selector = new SkillSelector(target, {
+		selected: function(newSelection){
+			pathFinder.wantedSkills = newSelection;
+			updateSelection();
+			showSkills();
+		}
+	}, getFullDigiData());
+
+	btn.addEventListener("click", function(){
+		selector.toggle(currentPathSelections[target]);
+	});
+	updateSelection();
+	
+}
+
+
+function populateMoveList(btnTarget, target){
 	var content = "";
 	var moveNames = localizationData[currentLocale].moves;
 	content+="<option value='-1'></option>";

@@ -611,8 +611,30 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	
 }
 
+#skill {
+	position: absolute;
+	top: 0;
+}
+
 .skill_controls {
-	height: 24px;
+	height: 40px;
+	position: relative;
+	align-items: center;;
+}
+
+#skill_btn {
+	width: 152px;
+	background-color: #F1F1F1;
+	top: 0;
+	left: 0;
+	position: relative;
+	height: fit-content;
+}
+
+#skill_btn:hover {
+	background-color: #476dd9;
+	color: #FFF;
+	border-color: #334e9b ;
 }
 
 .skill_controls #end_move {
@@ -1231,6 +1253,22 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	width: calc(60% - 24px);
 }
 
+.mon_selector.skill_selector {
+	width: 320px;
+	top: 33px;
+}
+
+.mon_selector.skill_selector .entry_select {
+	width: 20px;
+	height: 20px;
+	margin-left: auto;
+}
+
+.skill_selection_entry {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 .mon_selector {
 	text-align: center;
     padding: 10;
@@ -1240,7 +1278,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     border-radius: 20px;
     margin-left: auto;
     margin-right: auto;
-    width: 106%;
+    width: 100%;
 	z-index: 5;
 	position: absolute;
 	top: 76px;
@@ -1249,6 +1287,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     -moz-box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.75);
     box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 }
+
 
 .mon_selector.hidden {
 	display: none;
@@ -1307,7 +1346,7 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	border-radius: 12px;
 	display: flex;
 	align-items: center;
-	font-size: 12px;
+	font-size: 11px;
 	padding-left: 4px;
 	padding-right: 4px;
 	
@@ -1462,6 +1501,28 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	text-align: center;
 	border: 10px solid rgba(0,0,0,0.5);
 }
+
+.selector_control {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #476dd9;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    border: 2px solid #334e9b;
+	width: fit-content;
+	border-radius: 15px;
+	padding: 2 5 2 5;
+}
+
+.selector_control:hover {
+	background-color: #334e9b;
+}
+
+.row.filter_container.buttons {	
+	padding: 5px;
+}	
 
 /*Mobile layout only components*/
 
