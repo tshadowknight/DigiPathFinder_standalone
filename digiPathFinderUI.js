@@ -1,6 +1,8 @@
 
 var versionId = "4.0b.0";
 
+var resourceProvider = ""; //https://tshadowknight.github.io/DigiPathFinder_standalone/
+
 if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron')){
 	var pathLib = require('path');
 	var parse_dds = require('./lib/parseDDS');
@@ -389,11 +391,14 @@ async function getDDSPath(digimonId){
 			targetPath = getResourcesFolder() + "/game_data/unpacked/images/converted";
 		}
 	} else {
+		
 		if(isTSMode()){
-			targetPath = "https://tshadowknight.github.io/DigiPathFinder_standalone/game_data_TS/unpacked/images/converted";
+			targetPath = resourceProvider + "game_data_TS/unpacked/images/converted";
 		} else{
-			targetPath = "https://tshadowknight.github.io/DigiPathFinder_standalone/game_data/unpacked/images/converted";
+			targetPath = resourceProvider + "game_data/unpacked/images/converted";
 		}
+			
+		
 	}
 	const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
 	return targetPath+"/ui_chara_icon_"+imgId+".png";
