@@ -189,7 +189,7 @@ function GameFileManagerTS(){
                     pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua/')
                 ];
 
-                showGameFileLoader("Verifying upack...");
+                showGameFileLoader("Verifying unpack...");
 
                 let retryCount = 0;
                 const maxRetryCount = 50;
@@ -342,6 +342,7 @@ function GameFileManagerTS(){
                 categoryNames: await this.parseGameFile("txt_eng/belong.mbe/00_Sheet1"),  
                 classNames: await this.parseGameFile("txt_eng/digimon_class_name.mbe/00_Sheet1"),  
                 elementNames: await this.parseGameFile("txt_eng/element.mbe/00_Sheet1"),  
+                buffNames: await this.parseGameFile("txt_eng/buff_name.mbe/00_Sheet1"),  
             },
             {
                 locale: "Japanese", 
@@ -356,6 +357,7 @@ function GameFileManagerTS(){
                 categoryNames: await this.parseGameFile("txt_jpn/belong.mbe/00_Sheet1"),  
                 classNames: await this.parseGameFile("txt_jpn/digimon_class_name.mbe/00_Sheet1"),  
                 elementNames: await this.parseGameFile("txt_jpn/element.mbe/00_Sheet1"),
+                buffNames: await this.parseGameFile("txt_jpn/buff_name.mbe/00_Sheet1"),  
             }
         ];
         
@@ -495,7 +497,7 @@ function GameFileManagerTS(){
                 classNames[locale][id] = row[entry.classNames.headerLookup["value"]];       
             }
 
-             if(!elementNames[locale]){
+            if(!elementNames[locale]){
                 elementNames[locale] = {};
             }
             for(let row of entry.elementNames.data){
@@ -503,6 +505,13 @@ function GameFileManagerTS(){
                 elementNames[locale][id] = row[entry.elementNames.headerLookup["value"]];       
             }
             
+            if(!buffNames[locale]){
+                buffNames[locale] = {};
+            }
+            for(let row of entry.buffNames.data){
+                const id = row[entry.buffNames.headerLookup["id"]];        
+                buffNames[locale][id] = row[entry.buffNames.headerLookup["value"]];       
+            }
         }
 
         let movesLearned = {};
@@ -753,7 +762,8 @@ function GameFileManagerTS(){
             categoryNames: categoryNames,
             classNames: classNames,
             skillData: skillDataLookup,
-            elementNames: elementNames
+            elementNames: elementNames,
+            buffNames: buffNames
         };
 
         fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json"), JSON.stringify(cacheData));

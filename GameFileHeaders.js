@@ -330,12 +330,12 @@ const hardDefinedHeaders = {
       "resNull": 7,
       "resFire": 8,
       "resWater": 9,
-      "resGrass": 10,
-      "resIce": 11,
-      "resElec": 12,
-      "resGround": 13,
-      "resSteel": 14,
-      "resWind": 15,
+      "resIce": 10,
+      "resGrass": 11,
+      "resWind": 12,
+      "resElec": 13,
+      "resGround": 14,
+      "resSteel": 15,
       "resLight": 16,
       "resDark": 17,
       "fieldGuideId": 131,
@@ -393,6 +393,68 @@ const hardDefinedHeaders = {
       "buffSet": 54, //id into main\battle_skill.mbe\02_buff_set.csv
       //remaing fields are anim/etc related?
     },   
+
+    "main/battle_skill.mbe/02_buff_set.csv": {
+      "setId": 0,
+      "unk0": 1,
+      "unk1": 2,
+      "unk2": 3,
+
+      "buff0_eff": 6,
+      "buff0_rate": 7,
+      "buff0_unk0": 8,
+      "buff0_unk1": 9,
+
+      "buff1_eff": 11,
+      "buff1_rate": 12,
+      "buff1_unk0": 13,
+      "buff1_unk1": 14,
+
+      "buff2_eff": 16,
+      "buff2_rate": 17,
+      "buff2_unk0": 18,
+      "buff2_unk1": 19,
+
+      "buff3_eff": 21,
+      "buff3_rate": 22,
+      "buff3_unk0": 23,
+      "buff3_unk1": 24,
+
+      "buff4_eff": 26,
+      "buff4_rate": 27,
+      "buff4_unk0": 28,
+      "buff4_unk1": 29,
+
+      "buff5_eff": 31,
+      "buff5_rate": 32,
+      "buff5_unk0": 33,
+      "buff5_unk1": 34,
+
+      "buff6_eff": 36,
+      "buff6_rate": 37,
+      "buff6_unk0": 38,
+      "buff6_unk1": 39,
+
+      "buff7_eff": 41,
+      "buff7_rate": 42,
+      "buff7_unk0": 43,
+      "buff7_unk1": 44,
+
+      "buff8_eff": 46,
+      "buff8_rate": 47,
+      "buff8_unk0": 48,
+      "buff8_unk1": 49,
+
+      "buff9_eff": 51,
+      "buff9_rate": 52,
+      "buff9_unk0": 53,
+      "buff9_unk1": 54,
+
+      "buff10_eff": 56,      
+      "buff10_rate": 57,
+      "buff10_unk0": 58,
+      "buff10_unk1": 59,
+    }
   }
 
   const locales = [
@@ -414,6 +476,7 @@ const hardDefinedHeaders = {
     "/char_name.mbe/00_Sheet1.csv",
     "/digimon_profile.mbe/00_Sheet1.csv",
     "/skill_name.mbe/00_Sheet1.csv",
+    "/buff_name.mbe"
   ]
 
 for(let locale of locales){
