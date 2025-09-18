@@ -797,23 +797,7 @@ var localizationConfigTS = {
 }
 
 
-if(isTSMode()){
-	var preferredLocale = localStorage.getItem("DigiPathFinder_locale_TS");
-	var currentLocale = preferredLocale || "English";
-	if(!localizationConfig[currentLocale]){
-		currentLocale = "English";
-	}
-} else {
-	var preferredLocale = localStorage.getItem("DigiPathFinder_locale");
-	var currentLocale = preferredLocale || "English";
-	if(!localizationConfig[currentLocale]){
-		currentLocale = "English";
-	}
-}
-var gameVersions = [
-	{id: "Cyber Sleuth + HaMe", sourceType: ""},
-	{id: "Time Stranger", sourceType: ""},	
-];
+
 
 var preferredGameVersion = localStorage.getItem("DigiPathFinder_gameVersion");
 var currentGameVersion;
@@ -840,6 +824,24 @@ if(preferredGameVersion == null){
 function isTSMode(){
 	return currentGameVersion == 1;
 }
+
+if(isTSMode()){
+	var preferredLocale = localStorage.getItem("DigiPathFinder_locale_TS");
+	var currentLocale = preferredLocale || "English";
+	if(!localizationConfig[currentLocale]){
+		currentLocale = "English";
+	}
+} else {
+	var preferredLocale = localStorage.getItem("DigiPathFinder_locale");
+	var currentLocale = preferredLocale || "English";
+	if(!localizationConfig[currentLocale]){
+		currentLocale = "English";
+	}
+}
+var gameVersions = [
+	{id: "Cyber Sleuth + HaMe", sourceType: ""},
+	{id: "Time Stranger", sourceType: ""},	
+];
 
 
 var localizationData = {
