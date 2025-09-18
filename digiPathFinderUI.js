@@ -566,7 +566,12 @@ function createControls(){
 	
 	$("#locale_select").on("change", function(){
 		currentLocale = $(this).val();
-		localStorage.setItem("DigiPathFinder_locale", currentLocale);
+		if(isTSMode()){
+			localStorage.setItem("DigiPathFinder_locale_TS", currentLocale);
+		} else {
+			localStorage.setItem("DigiPathFinder_locale", currentLocale);
+		}
+		
 		populateMoveList();
 		populateDigimonList("start_digi");
 		populateDigimonList("end_digi", true);
@@ -780,15 +785,31 @@ var localizationConfig = {
 	}*/
 }
 
-var preferredLocale = localStorage.getItem("DigiPathFinder_locale");
-var currentLocale = preferredLocale || "English";
-if(!localizationConfig[currentLocale]){
-	currentLocale = 
-	 "English";
+var localizationConfigTS = {
+	English: {
+		app: "appStrings_en.json"
+	},
+	/*JPN: {
+		moves: "moveNames_jp.json",
+		digimon: "digiNames_jp.json",
+		app: "appStrings_jp.json"	
+	}*/
 }
 
 
-
+if(isTSMode()){
+	var preferredLocale = localStorage.getItem("DigiPathFinder_locale_TS");
+	var currentLocale = preferredLocale || "English";
+	if(!localizationConfig[currentLocale]){
+		currentLocale = "English";
+	}
+} else {
+	var preferredLocale = localStorage.getItem("DigiPathFinder_locale");
+	var currentLocale = preferredLocale || "English";
+	if(!localizationConfig[currentLocale]){
+		currentLocale = "English";
+	}
+}
 var gameVersions = [
 	{id: "Cyber Sleuth + HaMe", sourceType: ""},
 	{id: "Time Stranger", sourceType: ""},	
