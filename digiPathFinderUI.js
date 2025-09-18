@@ -262,6 +262,7 @@ function showRoute(route){
 			findSkillRoute();
 		}
 		showBans();
+		updateBanListButton();
 	});
 	$(".db_link").off().on("click", function(){				;
 		//window.open(pathFinder.digiData[$(this).data("target")].url, '_blank');
@@ -313,6 +314,7 @@ function showBans(){
 		delete pathFinder.bannedDigis[$(this).data("id")];
 		findSkillRoute();
 		showBans();
+		updateBanListButton();
 	});	
 	localizePage();
 }
@@ -326,6 +328,7 @@ function showSkills(){
 	$(".remove_skill_button").on("click", function(){		
 		delete pathFinder.wantedSkills[$(this).data("id")];		
 		showSkills();
+		updateSkillListButton();
 		//findSkillRoute();
 	});	
 	localizePage();
@@ -458,6 +461,8 @@ function createControls(){
 	content+="</div>";
 	content+="</div>";
 	content+="</div>";
+
+	content+="<div class='skills_and_bans_section'>";
 	
 	content+="<div class='control_section'>";
 	content+="<div data-appstring='header_skills' class='header'>Skills (Max. 8)</div>";
@@ -479,9 +484,21 @@ function createControls(){
 	content+="<div id='skills_container'></div>";
 	content+="</div>";
 	content+="</div>";
-	content+="<div class='control_section flex-container'>";
+	content+="<div class='control_section bans'>";
 	content+="<div style='margin-right: 5px;' data-appstring='header_bans' class='header'>Bans</div>";
+	content+="<div class='ban_controls flex-container'>";
+	
+
+	content+="<div class='digi_btn ban_btn' id='ban_btn'>";		
+	content+="</div>";	
+
+	content+="<div class='' id='bans'>";		
+	content+="</div>";	
+	
+
 	content+="<div id='bans_container'></div>";
+	content+="</div>";
+	content+="</div>";
 	content+="</div>";
 	content+="</div>";
 	
@@ -491,7 +508,8 @@ function createControls(){
 	
 	
 	//populateMoveList();
-	populateSkillList("skill_btn", "skill");
+	populateSkillList("skill");
+	populateBanList("bans");
 	populateDigimonList("start_digi_btn", "start_digi", true);
 	populateDigimonList("end_digi_btn", "end_digi");
 	//secondary control pane
@@ -603,36 +621,71 @@ function populateDigimonList(btnTarget, target, prepopulate){
 	}
 }
 
-function populateSkillList(btnTarget, target){
+function updateSkillListButton(){
+	const btn = document.querySelector("#skill_btn");
+	
+	
+	const skillCount = Object.keys(pathFinder.wantedSkills).length;
+	if(skillCount == 1){
+		btn.innerHTML = skillCount + " Skill Selected";
+	} else{
+		btn.innerHTML = skillCount + " Skills Selected";
+	}		
+	
+}
+
+function populateSkillList(target){
 	var content = "";
 	var moveNames = localizationData[currentLocale].moves;
-	
-	const btn = document.querySelector("#"+btnTarget);
-	
-	function updateSelection(){	
-		const skillCount = Object.keys(pathFinder.wantedSkills).length;
-		if(skillCount.length == 1){
-			btn.innerHTML = skillCount + " Skill Selected";
-		} else{
-			btn.innerHTML = skillCount + " Skills Selected";
-		}		
-	}
-
-	
 
 	let selector = new SkillSelector(target, {
 		selected: function(newSelection){
 			pathFinder.wantedSkills = newSelection;
-			updateSelection();
+			updateSkillListButton();
 			showSkills();
 		}
 	}, getFullDigiData());
 
+	const btn = document.querySelector("#skill_btn");
 	btn.addEventListener("click", function(){
 		selector.toggle(currentPathSelections[target]);
 	});
-	updateSelection();
 	
+	updateSkillListButton();	
+}
+
+function updateBanListButton(){
+	const btn = document.querySelector("#ban_btn");
+	
+	
+	const skillCount = Object.keys(pathFinder.bannedDigis).length;
+	if(skillCount == 1){
+		btn.innerHTML = skillCount + " Ban";
+	} else{
+		btn.innerHTML = skillCount + " Bans";
+	}		
+	
+}
+
+function populateBanList(target){
+	var content = "";
+	var moveNames = localizationData[currentLocale].moves;
+
+	let selector = new BanSelector(target, {
+		selected: function(newSelection){
+			pathFinder.bannedDigis = newSelection;
+			updateBanListButton();
+			showBans();
+		}
+	}, getFullDigiData());
+
+	const btn = document.querySelector("#ban_btn");
+	btn.addEventListener("click", function(){
+		selector.setSelection(pathFinder.bannedDigis);
+		selector.toggle();
+	});
+	
+	updateBanListButton();	
 }
 
 
