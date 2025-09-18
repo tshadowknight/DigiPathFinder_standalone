@@ -604,7 +604,8 @@ DexPane.prototype.getMoveDesc = function(skillId){
             "drain_hp": 30,
             "hit_rate": 28,
             "crit_rate": 29,
-            "recoil": 33
+            "recoil": 33,
+            "always_hits": 27
         };
         
         const skillInfo = cachedGameData.skillData[skillId];
@@ -674,6 +675,13 @@ DexPane.prototype.getMoveDesc = function(skillId){
                 let templateString = templateStrings[templateKeys["hit_rate"]];
                 let tokens = {
                     "{d0}": skillInfo.accuracy,
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));
+            }
+
+            if(skillInfo.alwaysHits * 1){
+                let templateString = templateStrings[templateKeys["always_hits"]];
+                let tokens = {
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             }

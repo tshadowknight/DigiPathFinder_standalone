@@ -378,6 +378,7 @@ const hardDefinedHeaders = {
       "targetType": 33,
       "minHits": 34,
       "maxHits": 35,
+      "alwaysHits": 39,
       "accuracy": 40,
       "???_0": 41,//1-0
       "critRate": 42,
@@ -390,7 +391,11 @@ const hardDefinedHeaders = {
       "increasedDmgTagetHPPercent": 49,
       "crtRateIfFirst": 50,
       "empty_1": 51,
-      "buffSet": 54, //id into main\battle_skill.mbe\02_buff_set.csv
+      "buffSet_0": 52, //id into main\battle_skill.mbe\02_buff_set.csv
+      "buffSet_1": 54, //id into main\battle_skill.mbe\02_buff_set.csv
+      "buffSet_2": 56, //id into main\battle_skill.mbe\02_buff_set.csv
+      "buffSet_3": 58, //id into main\battle_skill.mbe\02_buff_set.csv
+      "buffSet_4": 60, //id into main\battle_skill.mbe\02_buff_set.csv
       //remaing fields are anim/etc related?
     },   
 
@@ -476,7 +481,7 @@ const hardDefinedHeaders = {
     "/char_name.mbe/00_Sheet1.csv",
     "/digimon_profile.mbe/00_Sheet1.csv",
     "/skill_name.mbe/00_Sheet1.csv",
-    "/buff_name.mbe"
+    "/buff_name.mbe/00_Sheet1.csv"
   ]
 
 for(let locale of locales){

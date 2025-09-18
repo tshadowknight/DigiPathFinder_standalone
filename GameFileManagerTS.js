@@ -400,6 +400,7 @@ function GameFileManagerTS(){
         let categoryNames = {};
         let classNames = {};
         let elementNames = {};
+        let buffNames = {};
 
         function substituteDescriptionText(txt){
             return txt.replace(/\{.*?\}/g, "");
@@ -670,49 +671,75 @@ function GameFileManagerTS(){
 
         let skillDataLookup = {};
 
+        const buffSetData =  await this.parseGameFile("main/battle_skill.mbe/02_buff_set");
+        const buffSetLookup = {};
+        for(let entry of buffSetData.data){
+            const id = escapeHTML(entry[buffSetData.headerLookup["setId"]]);
+            buffSetLookup[id] = [];
+            for(let i = 0; i <=10; i++){
+                buffSetLookup[id].push({
+                    effect: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_eff"]]) * 1,
+                    rate: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_eff"]]) * 1,
+                });
+            }
+        }
+
+        function retrieveBuffset(id){
+            if(id == 0){
+                return null;
+            }
+            return buffSetLookup[id];
+        }
+
         for(let entry of skillData.data){
-        const skillId = escapeHTML(entry[skillData.headerLookup["skillId"]]);
-        
-        skillDataLookup[skillId] = {
-            // Core skill properties
-            skillId: parseInt(entry[skillData.headerLookup["skillId"]]) || 0,
-            skillFixedDescId: parseInt(entry[skillData.headerLookup["skillFixedDescId"]]) || 0,
-            effectId: parseInt(entry[skillData.headerLookup["effectId"]]) || 0,
+            const skillId = escapeHTML(entry[skillData.headerLookup["skillId"]]);
             
-            // Damage properties
-            dmgType: parseInt(entry[skillData.headerLookup["dmgType"]]) || 0, // 0:none/self, 1: physical, 2: magic, 4: fixed damage, 5:fixed %, 11: 'Major Damage'
-            power: parseInt(entry[skillData.headerLookup["power"]]) || 0,
-            element: parseInt(entry[skillData.headerLookup["element"]]) || 0,
-            
-            // Target and mechanics
-            targetType: parseInt(entry[skillData.headerLookup["targetType"]]) || 0,
-            minHits: parseInt(entry[skillData.headerLookup["minHits"]]) || 1,
-            maxHits: parseInt(entry[skillData.headerLookup["maxHits"]]) || 1,
-            accuracy: parseFloat(entry[skillData.headerLookup["accuracy"]]) || 100,
-            
-            // Critical and special effects
-            critRate: parseInt(entry[skillData.headerLookup["critRate"]]) || 0,
-            HPDrain: parseInt(entry[skillData.headerLookup["HPDrain"]]) || 0,
-            SPDrain: parseInt(entry[skillData.headerLookup["SPDrain"]]) || 0,
-            recoil: parseInt(entry[skillData.headerLookup["recoil"]]) || 0,
-            
-            // Conditional modifiers
-            damageBonusConditional: parseInt(entry[skillData.headerLookup["???_damage_increase_conditional"]]) || 0, // Damage increase conditional
-            increasedDmgTargetHPPercent: parseInt(entry[skillData.headerLookup["increasedDmgTagetHPPercent"]]) || 0,
-            critRateIfFirst: parseInt(entry[skillData.headerLookup["crtRateIfFirst"]]) || 0,
-            
-            // Unknown/reserved fields
-            unknown_0: entry[skillData.headerLookup["???_0"]] || 0, // 1-0 range
-            unknown_1: entry[skillData.headerLookup["???_1"]] || 0,
-            
-            // Empty/reserved slots
-            empty_0: entry[skillData.headerLookup["empty_0"]] || null,
-            empty_1: entry[skillData.headerLookup["empty_1"]] || null
-        };
-    }
+            skillDataLookup[skillId] = {
+                // Core skill properties
+                skillId: parseInt(entry[skillData.headerLookup["skillId"]]) || 0,
+                skillFixedDescId: parseInt(entry[skillData.headerLookup["skillFixedDescId"]]) || 0,
+                effectId: parseInt(entry[skillData.headerLookup["effectId"]]) || 0,
+                
+                // Damage properties
+                dmgType: parseInt(entry[skillData.headerLookup["dmgType"]]) || 0, // 0:none/self, 1: physical, 2: magic, 4: fixed damage, 5:fixed %, 11: 'Major Damage'
+                power: parseInt(entry[skillData.headerLookup["power"]]) || 0,
+                element: parseInt(entry[skillData.headerLookup["element"]]) || 0,
+                
+                // Target and mechanics
+                targetType: parseInt(entry[skillData.headerLookup["targetType"]]) || 0,
+                minHits: parseInt(entry[skillData.headerLookup["minHits"]]) || 1,
+                maxHits: parseInt(entry[skillData.headerLookup["maxHits"]]) || 1,
+                accuracy: parseFloat(entry[skillData.headerLookup["accuracy"]]) || 100,
+                
+                // Critical and special effects
+                alwaysHits: parseInt(entry[skillData.headerLookup["alwaysHits"]]) || 0,
+                critRate: parseInt(entry[skillData.headerLookup["critRate"]]) || 0,
+                HPDrain: parseInt(entry[skillData.headerLookup["HPDrain"]]) || 0,
+                SPDrain: parseInt(entry[skillData.headerLookup["SPDrain"]]) || 0,
+                recoil: parseInt(entry[skillData.headerLookup["recoil"]]) || 0,
+                
+                // Conditional modifiers
+                damageBonusConditional: parseInt(entry[skillData.headerLookup["???_damage_increase_conditional"]]) || 0, // Damage increase conditional
+                increasedDmgTargetHPPercent: parseInt(entry[skillData.headerLookup["increasedDmgTagetHPPercent"]]) || 0,
+                critRateIfFirst: parseInt(entry[skillData.headerLookup["crtRateIfFirst"]]) || 0,
+                
+                // Unknown/reserved fields
+                unknown_0: entry[skillData.headerLookup["???_0"]] || 0, // 1-0 range
+                unknown_1: entry[skillData.headerLookup["???_1"]] || 0,
+                
+                // Empty/reserved slots
+                empty_0: entry[skillData.headerLookup["empty_0"]] || null,
+                empty_1: entry[skillData.headerLookup["empty_1"]] || null,
 
-       
+                buffset_0: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_0"]]) || 0),
+                buffset_1: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_1"]]) || 0),
+                buffset_2: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_2"]]) || 0),
+                buffset_3: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_3"]]) || 0),
+                buffset_4: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_4"]]) || 0),
+            };
 
+           
+        }   
     
 
         let digimonToEncounters = {};
