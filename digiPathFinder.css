@@ -1716,7 +1716,20 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 		width: 224px;
 	}
 
+	#skills_container {
+		display: none;
+	}
+
 	.mon_selector {
+		position: fixed;
+		top: 41px;
+		left: -3px;
+		width: calc(100vw - 20px);
+		height: calc(100dvh - 74px);
+		border-radius: 0;
+	}
+
+	.mon_selector.skill_selector {
 		position: fixed;
 		top: 41px;
 		left: -3px;
@@ -1728,6 +1741,14 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	.mon_selector .filter_container {
 		height: 105px;
 	}
+
+	.mon_selector.skill_selector .filter_container {
+		height: 28px;
+	}
+
+	.mon_selector.skill_selector .scroll {
+        max-height: calc(100dvh - 149px);
+    }
 
 	.mon_selector .scroll{
 		max-height: calc(100dvh - 188px);
