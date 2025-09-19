@@ -401,54 +401,95 @@ const hardDefinedHeaders = {
     },   
 
     /*
+    =============================================================
       # skillConditionalTypes
-      ## 2
-      If target is of attribute
+      ## 1
+      If user is affected by (de)buff
 
+      skillConditionalArg: none
+      buffSet_0: (de)buffs required for activation
+
+      ## 2
+      If target is affected by (de)buff
+      skillConditionalArg: none
+      buffSet_0: (de)buffs required for activation
+
+      ## 3
+      If target is of attribute
       skillConditionalArg: which attribute
 
+      ## 4
+      Unusued
+      skillConditionalArg: ???
+
+      ## 5
+      If target's Generation is greater than user's
+      skillConditionalArg: none
+
+      ## 6
+      If target's Generation is lesser than user's
+      skillConditionalArg: none
+
+      ## 7
+      If target has already acted
+      skillConditionalArg: none
 
       ## 8
       If target has yet to act
-
       skillConditionalArg: none
-
 
       ## 9
       If target's HP is 50% or higher
-
       skillConditionalArg: none
 
+      ## 10
+      Unknown, currently only on Magnakidmon, can't verify with demo
+
+      ## 11
+      Unknown, unusued?
+
+      ## 12
+      Unknown, unusued?
 
       ## 13
       If target is KO'd
+      skillConditionalArg: none     
 
-      skillConditionalArg: none
-     
-      
+     =============================================================  
       # skillEffectIfConditional
       ## 0
-      None
-      
+      None      
       
       ## 1
       Unknown, only on enemy skill
-
       skillEffectArg: unknown
-
 
       ## 2
       Increased Damage
-
       skillEffectArg: none
 
+      ## 3
+      CRT Rate up
+      skillEffectArg: percent
+
+      ## 4
+      None?
+      skillEffectArg: none
+      Effect seems buffset dependent?
 
       ## 5
       Restore HP
-
       skillEffectArg: percent restored
 
+      ## 6
+      Unknown, only on Forbidden Trident
 
+      ## 7
+      Unknown, only on God Flame
+
+      ## 8
+      Unknown, unusued?
+      
     */
 
     "main/battle_skill.mbe/02_buff_set.csv": {
