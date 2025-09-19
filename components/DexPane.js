@@ -596,6 +596,7 @@ DexPane.templateKeys = {
     "trait_damage": 102,
     "chance_apply": 73,
     "chance_of": 74,
+    "n_turn_boost": 85,
     "n_turn_reduction": 86,
     "reduction": 87,
     "resistance_down": 79,
@@ -617,6 +618,10 @@ DexPane.prototype.getBuffAutoDescriptionTemplate = function(buffId){
         return templateStrings[DexPane.templateKeys["chance_apply"]];
     }
 
+    if(buffId >= 25 && buffId <= 32){//buffs
+        return templateStrings[DexPane.templateKeys["chance_of"]];  
+    }
+
     if(buffId >= 33 && buffId <= 40){//debuffs
          return templateStrings[DexPane.templateKeys["chance_of"]];    
     }
@@ -625,9 +630,16 @@ DexPane.prototype.getBuffAutoDescriptionTemplate = function(buffId){
          return templateStrings[DexPane.templateKeys["reduction"]];    
     }
 
-
     if(buffId >= 118){
         return templateStrings[DexPane.templateKeys["chance_apply"]];
+    }
+
+    if(buffId >= 105 && buffId <= 107){//direct strings
+         return "{d1}";    
+    }
+
+    if(buffId >= 85 && buffId <= 105){//effect application
+         return templateStrings[DexPane.templateKeys["chance_apply"]];    
     }
 
     return "UNMAPPED_EFFECT {d1} at rate {d2}";
@@ -724,6 +736,24 @@ DexPane.prototype.getMoveDesc = function(skillId){
                                     "{d2}": entry.rate + "%"
                                 };
                                 descParts.push(this.substituteTokens(templateString, tokens));
+                            } else if(entry.effect >= 25 && entry.effect <= 32){//buffs
+                                if(entry.changePercent){
+                                    let d0 = localizationData[currentLocale].statusNames[entry.effect - 23];//align debuffs with entries from buff_name.mbe (send help)
+                                    d1 = this.substituteTokens(
+                                        templateStrings[DexPane.templateKeys["n_turn_boost"]], 
+                                        {
+                                            "{n0}": entry.changePercent,
+                                            "{d0}" : d0,
+                                            "{n1}": (entry.turnOverride == 0 ? 3 : entry.turnOverride)
+                                        }
+                                    )
+                                }
+                                let templateString = this.getBuffAutoDescriptionTemplate(entry.effect);
+                                let tokens = {
+                                    "{d1}": d1,
+                                    "{d2}": entry.rate + "%"
+                                };
+                                descParts.push(this.substituteTokens(templateString, tokens));
                             } else if(entry.effect >= 63 && entry.effect <= 73){//attribute down
                                 
                                 let d0 = localizationData[currentLocale].elementNames[entry.effect - 63];//align attribute down entries with entries from element.mbe (send help)
@@ -782,7 +812,7 @@ DexPane.prototype.getMoveDesc = function(skillId){
                 descParts.push(this.substituteTokens(templateString, tokens));
             }
 
-            if(skillInfo.alwaysHits * 1){
+            if(skillInfo.alwaysHits * 1 && skillInfo.power > 0){
                 let templateString = templateStrings[DexPane.templateKeys["always_hits"]];
                 let tokens = {
                 };
@@ -822,8 +852,10 @@ DexPane.prototype.getMoveDesc = function(skillId){
 DexPane.prototype.resolveSkillConditionals = function(skillInfo){ 
     let conditionsString = this.resolveConditions(skillInfo) 
     let effectsString = this.resolveEffects(skillInfo); 
-
-    if(!effectsString){
+    if(!conditionsString){
+        return "";
+    }
+    if(conditionsString && !effectsString){
         effectsString ="[nol]";
     }
     return conditionsString + " " + effectsString;
