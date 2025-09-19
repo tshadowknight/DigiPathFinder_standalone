@@ -5,12 +5,8 @@ var resourceProvider = ""; //https://tshadowknight.github.io/DigiPathFinder_stan
 
 if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron')){
 	var pathLib = require('path');
-	var parse_dds = require('./lib/parseDDS');
-	var { parse } = require('path');
 	var xhr = require('xhr')
-	var decodeDXT = require('decode-dxt');
-	var Jimp = require('jimp')
-	var DDSUtils = require('./lib/DDSUtils');
+
 	var DexPane = require('./components/DexPane');
 	var MonSelector = require('./components/MonSelector');
 	var SkillSelector = require('./components/SkillSelector');

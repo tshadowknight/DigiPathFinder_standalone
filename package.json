@@ -14,10 +14,7 @@
     "@imagemagick/magick-wasm": "^0.0.36",
     "child_process": "^1.0.2",
     "csv-parse": "^5.5.5",
-    "decode-dxt": "^1.0.1",
     "electron-squirrel-startup": "^1.0.0",
-    "jimp": "^0.22.12",
-    "parse-dds": "^1.2.1",
     "xhr": "^2.6.0"
   },
   "devDependencies": {
