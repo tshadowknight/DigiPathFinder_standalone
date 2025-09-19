@@ -374,6 +374,8 @@ const hardDefinedHeaders = {
       "effectId": 16,
       "dmgType": 22,//?? 0:none/self, 1: physical, 2: magic, 4: fixed damage at, 5:fixed %, 6: buff, 11: 'Major Damage'
       "power": 23,
+      "increasedDamageParam": 26,//???
+      "additionalProperty": 27,
       "element": 28,
       "increasedDmgAgainstClass": 29,
       "targetType": 33,
@@ -401,6 +403,16 @@ const hardDefinedHeaders = {
     },   
 
     /*
+    =============================================================
+      #additionalProperty
+      ## 3
+      Nullifies unfavorable compatibility
+
+      ## 8
+      Consumes all SP.
+
+      Other indices seem to be one enemy only skills mostly
+
     =============================================================
       # skillConditionalTypes
       ## 1
@@ -489,7 +501,7 @@ const hardDefinedHeaders = {
 
       ## 8
       Unknown, unusued?
-      
+
     */
 
     "main/battle_skill.mbe/02_buff_set.csv": {

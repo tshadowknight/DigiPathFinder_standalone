@@ -600,7 +600,7 @@ DexPane.templateKeys = {
     "n_turn_reduction": 86,
     "reduction": 87,
     "resistance_down": 79,
-    "nullify_compat": 45,
+   
 
     //conditional effect
     "user_is": 52,
@@ -608,7 +608,12 @@ DexPane.templateKeys = {
     "target_is": 55,
     "state": 54,
     "boost_to": 88,
-    "crt_rate": 68
+    "crt_rate": 68,
+
+    //additional properties
+    "nullify_compat": 45,
+    "consume_all_SP": 49,
+
 };
 
 //no resource found to map these strings, might just be hardcoded?
@@ -780,6 +785,14 @@ DexPane.prototype.getMoveDesc = function(skillId){
                         }
                     }
                 }                
+            }
+
+            if(skillInfo.additionalProperty * 1){
+                if(skillInfo.additionalProperty == 3){
+                    descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["nullify_compat"]], {}));
+                } else if(skillInfo.additionalProperty == 8){
+                    descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["consume_all_SP"]], {}));
+                }
             }
 
             

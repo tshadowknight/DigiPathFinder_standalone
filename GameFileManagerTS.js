@@ -731,6 +731,9 @@ function GameFileManagerTS(){
                 element: parseInt(entry[skillData.headerLookup["element"]]) || 0,
                 increasedDmgAgainstClass: parseInt(entry[skillData.headerLookup["increasedDmgAgainstClass"]]) || 0,
 
+                // Additional properties
+                additionalProperty: parseInt(entry[skillData.headerLookup["additionalProperty"]]) || 0,    
+                
                 // Target and mechanics
                 targetType: parseInt(entry[skillData.headerLookup["targetType"]]) || 0,
                 minHits: parseInt(entry[skillData.headerLookup["minHits"]]) || 1,
