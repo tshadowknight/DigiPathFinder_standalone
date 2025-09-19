@@ -343,6 +343,7 @@ function GameFileManagerTS(){
                 classNames: await this.parseGameFile("txt_eng/digimon_class_name.mbe/00_Sheet1"),  
                 elementNames: await this.parseGameFile("txt_eng/element.mbe/00_Sheet1"),  
                 buffNames: await this.parseGameFile("txt_eng/buff_name.mbe/00_Sheet1"),  
+                statusNames: await this.parseGameFile("txt_eng/status_name.mbe/00_Sheet1"),  
             },
             {
                 locale: "Japanese", 
@@ -358,6 +359,7 @@ function GameFileManagerTS(){
                 classNames: await this.parseGameFile("txt_jpn/digimon_class_name.mbe/00_Sheet1"),  
                 elementNames: await this.parseGameFile("txt_jpn/element.mbe/00_Sheet1"),
                 buffNames: await this.parseGameFile("txt_jpn/buff_name.mbe/00_Sheet1"),  
+                statusNames: await this.parseGameFile("txt_eng/status_name.mbe/00_Sheet1"),  
             }
         ];
         
@@ -401,6 +403,7 @@ function GameFileManagerTS(){
         let classNames = {};
         let elementNames = {};
         let buffNames = {};
+        let statusNames = {};
 
         function substituteDescriptionText(txt){
             return txt.replace(/\{.*?\}/g, "");
@@ -512,6 +515,14 @@ function GameFileManagerTS(){
             for(let row of entry.buffNames.data){
                 const id = row[entry.buffNames.headerLookup["id"]];        
                 buffNames[locale][id] = row[entry.buffNames.headerLookup["value"]];       
+            }
+
+            if(!statusNames[locale]){
+                statusNames[locale] = {};
+            }
+            for(let row of entry.statusNames.data){
+                const id = row[entry.statusNames.headerLookup["id"]];        
+                statusNames[locale][id] = row[entry.statusNames.headerLookup["value"]];       
             }
         }
 
@@ -679,7 +690,8 @@ function GameFileManagerTS(){
             for(let i = 0; i <=10; i++){
                 buffSetLookup[id].push({
                     effect: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_eff"]]) * 1,
-                    rate: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_eff"]]) * 1,
+                    rate: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_rate"]]) * 1,
+                    changePercent: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_changePercent"]]) * 1,
                 });
             }
         }
@@ -704,7 +716,8 @@ function GameFileManagerTS(){
                 dmgType: parseInt(entry[skillData.headerLookup["dmgType"]]) || 0, // 0:none/self, 1: physical, 2: magic, 4: fixed damage, 5:fixed %, 11: 'Major Damage'
                 power: parseInt(entry[skillData.headerLookup["power"]]) || 0,
                 element: parseInt(entry[skillData.headerLookup["element"]]) || 0,
-                
+                increasedDmgAgainstClass: parseInt(entry[skillData.headerLookup["increasedDmgAgainstClass"]]) || 0,
+
                 // Target and mechanics
                 targetType: parseInt(entry[skillData.headerLookup["targetType"]]) || 0,
                 minHits: parseInt(entry[skillData.headerLookup["minHits"]]) || 1,
@@ -790,7 +803,8 @@ function GameFileManagerTS(){
             classNames: classNames,
             skillData: skillDataLookup,
             elementNames: elementNames,
-            buffNames: buffNames
+            buffNames: buffNames,
+            statusNames: statusNames
         };
 
         fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json"), JSON.stringify(cacheData));

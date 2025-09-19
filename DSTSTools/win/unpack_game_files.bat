@@ -25,8 +25,8 @@ rem jpn strings
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\item_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\belong.mbe ..\..\game_data_TS\unpacked\txt_jpn\
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\digimon_class_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
-
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\buff_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_jpn\text\status_name.mbe ..\..\game_data_TS\unpacked\txt_jpn\
 
 
 
@@ -44,8 +44,8 @@ rem eng strings
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\item_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\belong.mbe ..\..\game_data_TS\unpacked\txt_eng\
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\digimon_class_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
-
 .\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\buff_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
+.\DSCSToolsCLI.exe --mbeextract ..\..\game_data_TS\packed\txt_eng\text\status_name.mbe ..\..\game_data_TS\unpacked\txt_eng\
 
 
 xcopy /s /Y ..\..\game_data_TS\packed\main\images\ui_chara* ..\..\game_data_TS\unpacked\images\

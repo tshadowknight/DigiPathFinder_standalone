@@ -578,13 +578,53 @@ DexPane.prototype.createStatsBlock = function(monInfo){
     content+="</div>";
 
     return content;
+
 }
+
+DexPane.templateKeys = {
+    "inflict_phys": 1014,
+    "inflict_magic": 1015,
+    "hits": 25,
+    "hits_range": 26,
+    "drain_hp_sp": 32,
+    "drain_sp": 31,
+    "drain_hp": 30,
+    "hit_rate": 28,
+    "crit_rate": 29,
+    "recoil": 33,
+    "always_hits": 27,
+    "trait_damage": 102,
+    "chance_apply": 73,
+    "chance_of": 74,
+    "n_turn_reduction": 86
+};
+
+//no resource found to map these strings, might just be hardcoded?
+DexPane.prototype.getBuffAutoDescriptionTemplate = function(buffId){
+    const templateStrings = localizationData[currentLocale].autoMoveDescriptions;
+    if(buffId <= 14){
+        return templateStrings[DexPane.templateKeys["chance_apply"]];
+    }
+
+    if(buffId >= 33 && buffId <= 40){//debuffs
+         return templateStrings[DexPane.templateKeys["chance_of"]];    
+    }
+
+
+    if(buffId >= 118){
+        return templateStrings[DexPane.templateKeys["chance_apply"]];
+    }
+
+    return "UNMAPPED_EFFECT {d1} at rate {d2}";
+}
+
 
 DexPane.prototype.substituteTokens = function(templateString, tokens){
     let result = templateString;
     for(let token in tokens){
         result = result.replace(token, tokens[token]);
     }       
+    result = result.replace(/\{.*?\}/g, "");//clean up untranslated tokens
     return result;
 }
 
@@ -594,19 +634,7 @@ DexPane.prototype.getMoveDesc = function(skillId){
         return localizationData[currentLocale].moveDesc[skillTextId];
     } else {
 
-        const templateKeys = {
-            "inflict_phys": 1014,
-            "inflict_magic": 1015,
-            "hits": 25,
-            "hits_range": 26,
-            "drain_hp_sp": 32,
-            "drain_sp": 31,
-            "drain_hp": 30,
-            "hit_rate": 28,
-            "crit_rate": 29,
-            "recoil": 33,
-            "always_hits": 27
-        };
+        
         
         const skillInfo = cachedGameData.skillData[skillId];
         if(skillInfo.skillFixedDescId * 1){
@@ -621,9 +649,9 @@ DexPane.prototype.getMoveDesc = function(skillId){
             if(skillInfo.minHits > 1 && skillInfo.maxHits > 1){
                 let templateString;
                 if(skillInfo.minHits == skillInfo.maxHits){
-                    templateString = templateStrings[templateKeys["hits"]];
+                    templateString = templateStrings[DexPane.templateKeys["hits"]];
                 } else {
-                    templateString = templateStrings[templateKeys["hits_range"]];
+                    templateString = templateStrings[DexPane.templateKeys["hits_range"]];
                 }
                 let tokens = {
                     "{d0}": skillInfo.minHits,
@@ -633,7 +661,7 @@ DexPane.prototype.getMoveDesc = function(skillId){
             }
             
             if(skillInfo.dmgType == 1){
-                let templateString = templateStrings[templateKeys["inflict_phys"]];
+                let templateString = templateStrings[DexPane.templateKeys["inflict_phys"]];
                 let tokens = {
                     "{d1}": localizationData[currentLocale].elementNames[skillInfo.element],
                     "{d0}": skillInfo.power,
@@ -642,7 +670,7 @@ DexPane.prototype.getMoveDesc = function(skillId){
                 descParts.push(this.substituteTokens(templateString, tokens));
             }
              if(skillInfo.dmgType == 2){
-                let templateString = templateStrings[templateKeys["inflict_magic"]];
+                let templateString = templateStrings[DexPane.templateKeys["inflict_magic"]];
                 let tokens = {
                     "{d1}": localizationData[currentLocale].elementNames[skillInfo.element],
                     "{d0}": skillInfo.power,
@@ -651,20 +679,51 @@ DexPane.prototype.getMoveDesc = function(skillId){
                 descParts.push(this.substituteTokens(templateString, tokens));
             }
 
+            for(let i = 0; i < 5; i++){
+                const buffset = skillInfo["buffset_"+i];
+                if(buffset){
+                    for(let entry of buffset){
+                        if(entry.effect != 0){
+                            let d1 = localizationData[currentLocale].buffNames[entry.effect];
+                            if(entry.effect >= 33 && entry.effect <= 40){//debuffs
+                                if(entry.changePercent){
+                                    let d0 = localizationData[currentLocale].statusNames[entry.effect - 31];//align debuffs with entries from buff_name.mbe (send help)
+                                    d1 = this.substituteTokens(
+                                        templateStrings[DexPane.templateKeys["n_turn_reduction"]], 
+                                        {
+                                            "{n0}": entry.changePercent,
+                                            "{d0}" : d0,
+                                            "{n1}": 3//turn count always 3?
+                                        }
+                                    )
+                                }
+                            }
+
+                            let templateString = this.getBuffAutoDescriptionTemplate(entry.effect);
+                            let tokens = {
+                                "{d1}": d1,
+                                "{d2}": entry.rate + "%"
+                            };
+                            descParts.push(this.substituteTokens(templateString, tokens));
+                        }
+                    }
+                }                
+            }
+
             if(skillInfo.HPDrain * 1 && skillInfo.SPDrain * 1 && skillInfo.HPDrain * 1 == skillInfo.SPDrain * 1){
-                let templateString = templateStrings[templateKeys["drain_hp_sp"]];
+                let templateString = templateStrings[DexPane.templateKeys["drain_hp_sp"]];
                 let tokens = {
                     "{d0}": skillInfo.HPDrain,
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             } else if(skillInfo.HPDrain * 1){
-                let templateString = templateStrings[templateKeys["drain_hp"]];
+                let templateString = templateStrings[DexPane.templateKeys["drain_hp"]];
                 let tokens = {
                     "{d0}": skillInfo.HPDrain,
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             } else if(skillInfo.SPDrain * 1){
-                let templateString = templateStrings[templateKeys["drain_sp"]];
+                let templateString = templateStrings[DexPane.templateKeys["drain_sp"]];
                 let tokens = {
                     "{d0}": skillInfo.SPDrain,
                 };
@@ -672,7 +731,7 @@ DexPane.prototype.getMoveDesc = function(skillId){
             }
 
             if(skillInfo.accuracy != 100){
-                let templateString = templateStrings[templateKeys["hit_rate"]];
+                let templateString = templateStrings[DexPane.templateKeys["hit_rate"]];
                 let tokens = {
                     "{d0}": skillInfo.accuracy,
                 };
@@ -680,22 +739,30 @@ DexPane.prototype.getMoveDesc = function(skillId){
             }
 
             if(skillInfo.alwaysHits * 1){
-                let templateString = templateStrings[templateKeys["always_hits"]];
+                let templateString = templateStrings[DexPane.templateKeys["always_hits"]];
                 let tokens = {
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             }
 
             if(skillInfo.critRate > 5){
-                let templateString = templateStrings[templateKeys["crit_rate"]];
+                let templateString = templateStrings[DexPane.templateKeys["crit_rate"]];
                 let tokens = {
                     "{d0}": skillInfo.critRate,
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             }
 
+            if(skillInfo.increasedDmgAgainstClass != -1){
+                let templateString = templateStrings[DexPane.templateKeys["trait_damage"]];
+                let tokens = {
+                    "{d0}": localizationData[currentLocale].classNames[skillInfo.increasedDmgAgainstClass],
+                };
+                descParts.push(this.substituteTokens(templateString, tokens));   
+            }
+
             if(skillInfo.recoil > 0){
-                let templateString = templateStrings[templateKeys["recoil"]];
+                let templateString = templateStrings[DexPane.templateKeys["recoil"]];
                 let tokens = {
                     "{d0}": skillInfo.recoil,
                 };
@@ -703,7 +770,7 @@ DexPane.prototype.getMoveDesc = function(skillId){
             }
 
 
-            return descParts.join("<br>").replace(/[(\r\n]/g, "").replace(/(<br\s*\/?>){2,}/gi, '<br>');
+            return descParts.join("<br>").replace(/[\r\n]/g, "").replace(/(<br\s*\/?>){2,}/gi, '<br>');
         }
     }
 }

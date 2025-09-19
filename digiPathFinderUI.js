@@ -1336,7 +1336,10 @@ function initPathFinder(forceReload){
 				localizationData[locale].itemNames = gameData.itemNames?.[locale] || {};	
 				localizationData[locale].categoryNames = gameData.categoryNames?.[locale] || {};	
 				localizationData[locale].classNames = gameData.classNames?.[locale] || {};			
-				localizationData[locale].elementNames = gameData.elementNames?.[locale] || {};					
+				localizationData[locale].elementNames = gameData.elementNames?.[locale] || {};			
+				localizationData[locale].buffNames = gameData.buffNames?.[locale] || {};		
+				localizationData[locale].statusNames = gameData.statusNames?.[locale] || {};	
+				
 			}	
 
 
