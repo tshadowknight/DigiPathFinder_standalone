@@ -386,11 +386,11 @@ const hardDefinedHeaders = {
       "HPDrain": 43,
       "SPDrain": 44,//??
       "recoil": 45,      
-      "???_damage_increase_conditional": 46,
-      "???_1": 47,
+      "skillConditionalType": 46, //13: If target is KO'ed
+      "skillEffectIfConditional": 47, //
       "empty_0": 48,
-      "increasedDmgTagetHPPercent": 49,
-      "crtRateIfFirst": 50,
+      "skillConditionalArg": 49, //used for effects like "if virus attribute apply effect" or "if target dmg is less than 50%"
+      "skillEffectArg": 50,
       "empty_1": 51,
       "buffSet_0": 52, //id into main\battle_skill.mbe\02_buff_set.csv
       "buffSet_1": 54, //id into main\battle_skill.mbe\02_buff_set.csv
@@ -399,6 +399,57 @@ const hardDefinedHeaders = {
       "buffSet_4": 60, //id into main\battle_skill.mbe\02_buff_set.csv
       //remaing fields are anim/etc related?
     },   
+
+    /*
+      # skillConditionalTypes
+      ## 2
+      If target is of attribute
+
+      skillConditionalArg: which attribute
+
+
+      ## 8
+      If target has yet to act
+
+      skillConditionalArg: none
+
+
+      ## 9
+      If target's HP is 50% or higher
+
+      skillConditionalArg: none
+
+
+      ## 13
+      If target is KO'd
+
+      skillConditionalArg: none
+     
+      
+      # skillEffectIfConditional
+      ## 0
+      None
+      
+      
+      ## 1
+      Unknown, only on enemy skill
+
+      skillEffectArg: unknown
+
+
+      ## 2
+      Increased Damage
+
+      skillEffectArg: none
+
+
+      ## 5
+      Restore HP
+
+      skillEffectArg: percent restored
+
+
+    */
 
     "main/battle_skill.mbe/02_buff_set.csv": {
       "setId": 0,
@@ -409,48 +460,48 @@ const hardDefinedHeaders = {
       "buff0_eff": 6,
       "buff0_rate": 7,
       "buff0_changePercent": 8,
-      "buff0_unk1": 9,
+      "buff0_turnOverride": 9,
 
       "buff1_eff": 11,
       "buff1_rate": 12,
       "buff1_changePercent": 13,
-      "buff1_unk1": 14,
+      "buff1_turnOverride": 14,
       "buff2_eff": 16,
       "buff2_rate": 17,
       "buff2_changePercent": 18,
-      "buff2_unk1": 19,
+      "buff2_turnOverride": 19,
       "buff3_eff": 21,
       "buff3_rate": 22,
       "buff3_changePercent": 23,
-      "buff3_unk1": 24,
+      "buff3_turnOverride": 24,
       "buff4_eff": 26,
       "buff4_rate": 27,
       "buff4_changePercent": 28,
-      "buff4_unk1": 29,
+      "buff4_turnOverride": 29,
       "buff5_eff": 31,
       "buff5_rate": 32,
       "buff5_changePercent": 33,
-      "buff5_unk1": 34,
+      "buff5_turnOverride": 34,
       "buff6_eff": 36,
       "buff6_rate": 37,
       "buff6_changePercent": 38,
-      "buff6_unk1": 39,
+      "buff6_turnOverride": 39,
       "buff7_eff": 41,
       "buff7_rate": 42,
       "buff7_changePercent": 43,
-      "buff7_unk1": 44,
+      "buff7_turnOverride": 44,
       "buff8_eff": 46,
       "buff8_rate": 47,
       "buff8_changePercent": 48,
-      "buff8_unk1": 49,
+      "buff8_turnOverride": 49,
       "buff9_eff": 51,
       "buff9_rate": 52,
       "buff9_changePercent": 53,
-      "buff9_unk1": 54,
+      "buff9_turnOverride": 54,
       "buff10_eff": 56,
       "buff10_rate": 57,
       "buff10_changePercent": 58,
-      "buff10_unk1": 59
+      "buff10_turnOverride": 59
     }
   }
 

@@ -596,7 +596,10 @@ DexPane.templateKeys = {
     "trait_damage": 102,
     "chance_apply": 73,
     "chance_of": 74,
-    "n_turn_reduction": 86
+    "n_turn_reduction": 86,
+    "reduction": 87,
+    "resistance_down": 79,
+    "nullify_compat": 45,
 };
 
 //no resource found to map these strings, might just be hardcoded?
@@ -608,6 +611,10 @@ DexPane.prototype.getBuffAutoDescriptionTemplate = function(buffId){
 
     if(buffId >= 33 && buffId <= 40){//debuffs
          return templateStrings[DexPane.templateKeys["chance_of"]];    
+    }
+
+    if(buffId >= 63 && buffId <= 73){//resistance down
+         return templateStrings[DexPane.templateKeys["reduction"]];    
     }
 
 
@@ -693,18 +700,39 @@ DexPane.prototype.getMoveDesc = function(skillId){
                                         {
                                             "{n0}": entry.changePercent,
                                             "{d0}" : d0,
-                                            "{n1}": 3//turn count always 3?
+                                            "{n1}": (entry.turnOverride == 0 ? 3 : entry.turnOverride)
                                         }
                                     )
                                 }
-                            }
-
-                            let templateString = this.getBuffAutoDescriptionTemplate(entry.effect);
-                            let tokens = {
-                                "{d1}": d1,
-                                "{d2}": entry.rate + "%"
-                            };
-                            descParts.push(this.substituteTokens(templateString, tokens));
+                                let templateString = this.getBuffAutoDescriptionTemplate(entry.effect);
+                                let tokens = {
+                                    "{d1}": d1,
+                                    "{d2}": entry.rate + "%"
+                                };
+                                descParts.push(this.substituteTokens(templateString, tokens));
+                            } else if(entry.effect >= 63 && entry.effect <= 73){//attribute down
+                                
+                                let d0 = localizationData[currentLocale].elementNames[entry.effect - 63];//align attribute down entries with entries from element.mbe (send help)
+                                d0 = this.substituteTokens(
+                                    templateStrings[DexPane.templateKeys["resistance_down"]], 
+                                    {                         
+                                        "{d0}" : d0,
+                                    }
+                                )
+                                let templateString = this.getBuffAutoDescriptionTemplate(entry.effect);
+                                let tokens = {
+                                    "{n0}": entry.rate,
+                                    "{d0}" : d0,
+                                };
+                                descParts.push(this.substituteTokens(templateString, tokens) + ".");
+                            } else {
+                                let templateString = this.getBuffAutoDescriptionTemplate(entry.effect);
+                                let tokens = {
+                                    "{d1}": d1,
+                                    "{d2}": entry.rate + "%"
+                                };
+                                descParts.push(this.substituteTokens(templateString, tokens));
+                            }                           
                         }
                     }
                 }                

@@ -692,6 +692,7 @@ function GameFileManagerTS(){
                     effect: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_eff"]]) * 1,
                     rate: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_rate"]]) * 1,
                     changePercent: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_changePercent"]]) * 1,
+                    turnOverride: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_turnOverride"]]) * 1,
                 });
             }
         }
@@ -733,7 +734,7 @@ function GameFileManagerTS(){
                 
                 // Conditional modifiers
                 damageBonusConditional: parseInt(entry[skillData.headerLookup["???_damage_increase_conditional"]]) || 0, // Damage increase conditional
-                increasedDmgTargetHPPercent: parseInt(entry[skillData.headerLookup["increasedDmgTagetHPPercent"]]) || 0,
+                skillConditional: parseInt(entry[skillData.headerLookup["skillConditional"]]) || 0,
                 critRateIfFirst: parseInt(entry[skillData.headerLookup["crtRateIfFirst"]]) || 0,
                 
                 // Unknown/reserved fields
