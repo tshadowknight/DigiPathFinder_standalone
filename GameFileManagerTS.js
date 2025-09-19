@@ -344,6 +344,7 @@ function GameFileManagerTS(){
                 elementNames: await this.parseGameFile("txt_eng/element.mbe/00_Sheet1"),  
                 buffNames: await this.parseGameFile("txt_eng/buff_name.mbe/00_Sheet1"),  
                 statusNames: await this.parseGameFile("txt_eng/status_name.mbe/00_Sheet1"),  
+                typeNames: await this.parseGameFile("txt_eng/digimon_type.mbe/00_Sheet1"),  
             },
             {
                 locale: "Japanese", 
@@ -360,6 +361,7 @@ function GameFileManagerTS(){
                 elementNames: await this.parseGameFile("txt_jpn/element.mbe/00_Sheet1"),
                 buffNames: await this.parseGameFile("txt_jpn/buff_name.mbe/00_Sheet1"),  
                 statusNames: await this.parseGameFile("txt_eng/status_name.mbe/00_Sheet1"),  
+                typeNames: await this.parseGameFile("txt_eng/digimon_type.mbe/00_Sheet1"),  
             }
         ];
         
@@ -404,6 +406,7 @@ function GameFileManagerTS(){
         let elementNames = {};
         let buffNames = {};
         let statusNames = {};
+        let typeNames = {};
 
         function substituteDescriptionText(txt){
             return txt.replace(/\{.*?\}/g, "");
@@ -524,6 +527,15 @@ function GameFileManagerTS(){
                 const id = row[entry.statusNames.headerLookup["id"]];        
                 statusNames[locale][id] = row[entry.statusNames.headerLookup["value"]];       
             }
+
+            if(!typeNames[locale]){
+                typeNames[locale] = {};
+            }
+            for(let row of entry.typeNames.data){
+                const id = row[entry.typeNames.headerLookup["id"]];        
+                typeNames[locale][id] = row[entry.typeNames.headerLookup["value"]];       
+            }
+            
         }
 
         let movesLearned = {};
@@ -733,9 +745,10 @@ function GameFileManagerTS(){
                 recoil: parseInt(entry[skillData.headerLookup["recoil"]]) || 0,
                 
                 // Conditional modifiers
-                damageBonusConditional: parseInt(entry[skillData.headerLookup["???_damage_increase_conditional"]]) || 0, // Damage increase conditional
-                skillConditional: parseInt(entry[skillData.headerLookup["skillConditional"]]) || 0,
-                critRateIfFirst: parseInt(entry[skillData.headerLookup["crtRateIfFirst"]]) || 0,
+                skillConditionalType: parseInt(entry[skillData.headerLookup["skillConditionalType"]]) || 0, 
+                skillEffectIfConditional: parseInt(entry[skillData.headerLookup["skillEffectIfConditional"]]) || 0,
+                skillConditionalArg: parseInt(entry[skillData.headerLookup["skillConditionalArg"]]) || 0,
+                skillEffectArg: parseInt(entry[skillData.headerLookup["skillEffectArg"]]) || 0,
                 
                 // Unknown/reserved fields
                 unknown_0: entry[skillData.headerLookup["???_0"]] || 0, // 1-0 range
@@ -805,7 +818,8 @@ function GameFileManagerTS(){
             skillData: skillDataLookup,
             elementNames: elementNames,
             buffNames: buffNames,
-            statusNames: statusNames
+            statusNames: statusNames,
+            typeNames: typeNames
         };
 
         fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json"), JSON.stringify(cacheData));

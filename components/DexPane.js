@@ -600,6 +600,14 @@ DexPane.templateKeys = {
     "reduction": 87,
     "resistance_down": 79,
     "nullify_compat": 45,
+
+    //conditional effect
+    "user_is": 52,
+    "target_is_affected": 53,
+    "target_is": 55,
+    "state": 54,
+    "boost_to": 88,
+    "crt_rate": 68
 };
 
 //no resource found to map these strings, might just be hardcoded?
@@ -685,8 +693,14 @@ DexPane.prototype.getMoveDesc = function(skillId){
                 };
                 descParts.push(this.substituteTokens(templateString, tokens));
             }
+            
+            const conditionstring = this.resolveSkillConditionals(skillInfo);
+            if(conditionstring){
+               descParts.push(conditionstring);     
+            }
 
-            for(let i = 0; i < 5; i++){
+            //skip buffset 0, which is used for conditional activation checks
+            for(let i = 1; i < 5; i++){
                 const buffset = skillInfo["buffset_"+i];
                 if(buffset){
                     for(let entry of buffset){
@@ -737,6 +751,8 @@ DexPane.prototype.getMoveDesc = function(skillId){
                     }
                 }                
             }
+
+            
 
             if(skillInfo.HPDrain * 1 && skillInfo.SPDrain * 1 && skillInfo.HPDrain * 1 == skillInfo.SPDrain * 1){
                 let templateString = templateStrings[DexPane.templateKeys["drain_hp_sp"]];
@@ -798,11 +814,98 @@ DexPane.prototype.getMoveDesc = function(skillId){
             }
 
 
-            return descParts.join("<br>").replace(/[\r\n]/g, "").replace(/(<br\s*\/?>){2,}/gi, '<br>');
+            return descParts.join("<br>").replace(/[\r\n]/g, "").replace(/(<br\s*\/?>){2,}/gi, '<br>').replace(/\[nol\]\<br\>/g, "");
         }
     }
 }
 
+DexPane.prototype.resolveSkillConditionals = function(skillInfo){ 
+    let conditionsString = this.resolveConditions(skillInfo) 
+    let effectsString = this.resolveEffects(skillInfo); 
+
+    if(!effectsString){
+        effectsString ="[nol]";
+    }
+    return conditionsString + " " + effectsString;
+}
+
+DexPane.prototype.resolveConditions = function(skillInfo){
+    const templateStrings = localizationData[currentLocale].autoMoveDescriptions;
+
+     function getRequiredBuffs(){
+        const result = [];
+        const buffset = skillInfo["buffset_0"];
+        const requiredBuffs = [];
+        for(let entry of buffset){
+            if(entry.effect != 0){
+                result.push(entry.effect);
+            }
+        }
+        return result;
+    }
+
+    let conditionString = "";
+    if(skillInfo.skillConditionalType && skillInfo.skillEffectIfConditional){
+       
+        if(skillInfo.skillConditionalType == 1){
+            const requiredBuffs = getRequiredBuffs();
+            if(requiredBuffs.length == 1){   
+                const buff = requiredBuffs[0];
+                let d0 = "";
+                
+                if(buff >= 25 && buff <= 32){//buffs                            
+                    d0 = localizationData[currentLocale].statusNames[buff - 23];
+
+                    d0 = this.substituteTokens( 
+                        templateStrings[DexPane.templateKeys["boost_to"]], 
+                        {
+                            "{d0}": d0,
+                        }
+                    );
+                } 
+
+                conditionString = this.substituteTokens( 
+                    templateStrings[DexPane.templateKeys["user_is"]], 
+                    {
+                        "{d0}": d0,
+                    }
+                );
+                
+                
+            }
+        }
+        
+        if(skillInfo.skillConditionalType == 3){
+            let d0 = localizationData[currentLocale].typeNames[skillInfo.skillConditionalArg];            
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["target_is"]], 
+                {
+                    "{d0}": d0,
+                }
+            );           
+        }  
+    }
+    return conditionString;
+}
+
+DexPane.prototype.resolveEffects = function(skillInfo){
+    const templateStrings = localizationData[currentLocale].autoMoveDescriptions;
+    let effectString = "";
+    if(skillInfo.skillEffectIfConditional == 3){
+        let d0 = skillInfo.skillEffectArg;
+        effectString = this.substituteTokens( 
+            templateStrings[DexPane.templateKeys["crt_rate"]], 
+            {
+                "{d0}": d0,
+            }
+        );
+    }
+    if(effectString != ""){
+        effectString+="\n";
+    }
+    return effectString;
+}
 
 DexPane.prototype.createMovesBlock = function(monInfo){
     let content = "";

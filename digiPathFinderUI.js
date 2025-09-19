@@ -1338,8 +1338,8 @@ function initPathFinder(forceReload){
 				localizationData[locale].classNames = gameData.classNames?.[locale] || {};			
 				localizationData[locale].elementNames = gameData.elementNames?.[locale] || {};			
 				localizationData[locale].buffNames = gameData.buffNames?.[locale] || {};		
-				localizationData[locale].statusNames = gameData.buffNames?.[locale] || {};	
-				
+				localizationData[locale].statusNames = gameData.statusNames?.[locale] || {};	
+				localizationData[locale].typeNames = gameData.typeNames?.[locale] || {};	
 			}	
 
 
