@@ -733,6 +733,7 @@ function GameFileManagerTS(){
 
                 // Additional properties
                 additionalProperty: parseInt(entry[skillData.headerLookup["additionalProperty"]]) || 0,    
+                additionalProperty_1: parseInt(entry[skillData.headerLookup["additionalProperty_1"]]) || 0,  
                 
                 // Target and mechanics
                 targetType: parseInt(entry[skillData.headerLookup["targetType"]]) || 0,

@@ -605,15 +605,54 @@ DexPane.templateKeys = {
     //conditional effect
     "user_is": 52,
     "target_is_affected": 53,
-    "target_is": 55,
     "state": 54,
+    "target_is": 55,
+    "target_is_element": 56,
+    "generation_is_greater": 57,
+    "generation_is_lower": 58,
+    "target_has_acted": 59,
+    "target_has_not_acted": 60,
+    "target_is_above_HP": 61,
+    "target_is_below_HP": 62,
+    "target_is_above_SP": 63,
+    "target_is_below_SP": 64,
+    "target_is_KOed": 65,
+
+    "damage_bonus": 66,
+    "increased_damage": 67,
+    "crit_rate": 68,
+    "recover_HP": 69,
+    "recover_SP": 70,
+    "recover_HP_SP": 71,
+    "reduce_target_SP": 72,
+    "chance_apply_status": 73,
+    "chance_of_effect": 74,
+    "effect": 75,
+    "removes_status": 76,
+
+    
     "boost_to": 88,
+    "reduction_to": 89,
     "crt_rate": 68,
 
     //additional properties
-    "nullify_compat": 45,
-    "consume_all_SP": 49,
+    "low_greater": 35,
+    "all_low_greater": 36,
+    "low_lower": 37,
+    "all_low_lower": 38,
+    "more_KO_greater": 39,
+    "ally_KO_greater": 40,
+    "more_use_greater": 41,
+    "more_rounds_greater": 42,
+    "more_buffs_greater": 42,
 
+    "nullify_compat": 45,
+    "invert_buffs": 46,
+    "steal_buffs": 47,
+    "overheal": 48,
+    "consume_all_SP": 49,
+    "nullify_attr_compat": 50,
+    "attack_treated_as": 51,
 };
 
 //no resource found to map these strings, might just be hardcoded?
@@ -787,15 +826,114 @@ DexPane.prototype.getMoveDesc = function(skillId){
                 }                
             }
 
+            /*
+            "nullify_compat": 45,
+            "invert_buffs": 46,
+            "steal_buffs": 47,
+            "overheal": 48,
+            "consume_all_SP": 49,
+            "nullify_attr_compat": 50,
+            "attack_treated_as": 51, */
+
             if(skillInfo.additionalProperty * 1){
-                if(skillInfo.additionalProperty == 3){
-                    descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["nullify_compat"]], {}));
-                } else if(skillInfo.additionalProperty == 8){
-                    descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["consume_all_SP"]], {}));
+
+                switch(skillInfo.additionalProperty * 1){
+                    case 1: 
+                    case 2:
+                    case 4:
+                        break;
+                    case 3:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["nullify_compat"]], {}));
+                        break;
+                    case 5:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["invert_buffs"]], {}));
+                        break;
+                    case 6:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["steal_buffs"]], {}));
+                        break;   
+                    case 7:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["overheal"]], {}));
+                        break;  
+                    case 8:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["consume_all_SP"]], {}));
+                        break;   
+                    case 9:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["nullify_attr_compat"]], {}));
+                        break;       
+                    case 10:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["attack_treated_as"]], {"d0": localizationData[currentLocale].typeNames[0]}));
+                        break;      
+                    case 11:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["attack_treated_as"]], {"d0": localizationData[currentLocale].typeNames[1]}));
+                        break;        
+                    case 12:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["attack_treated_as"]], {"d0": localizationData[currentLocale].typeNames[2]}));
+                        break;     
+                    case 13:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["attack_treated_as"]], {"d0": localizationData[currentLocale].typeNames[3]}));
+                        break;      
+                    case 14:
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["attack_treated_as"]], {"d0": localizationData[currentLocale].typeNames[4]}));
+                        break;  
                 }
             }
 
-            
+            /*
+            "low_greater": 35,
+            "all_low_greater": 36,
+            "low_lower": 37,
+            "all_low_lower": 38,
+            "more_KO_greater": 39,
+            "ally_KO_greater": 40,
+            "more_use_greater": 41,
+            "more_rounds_greater": 42,
+            "more_buffs_greater": 42, */
+
+             if(skillInfo.additionalProperty_1 * 1){
+                switch(skillInfo.additionalProperty_1 * 1){
+                    case 1: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["low_greater"]], {"{d0}": "HP"}));
+                        break;    
+                    case 2: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["all_low_greater"]], {"{d0}": "HP"}));
+                        break;   
+                    case 3: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["low_lower"]], {"{d0}": "HP"}));
+                        break;    
+                    case 4: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["all_low_lower"]], {"{d0}": "HP"}));
+                        break; 
+                        
+                    case 5: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["low_greater"]], {"{d0}": "SP"}));
+                        break;    
+                    case 6: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["all_low_greater"]], {"{d0}": "SP"}));
+                        break;   
+                    case 7: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["low_lower"]], {"{d0}": "SP"}));
+                        break;    
+                    case 8: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["all_low_lower"]], {"{d0}": "SP"}));
+                        break;    
+                    
+                    case 9: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["more_KO_greater"]], {}));
+                        break;   
+                    case 10: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["ally_KO_greater"]], {}));
+                        break;     
+                    case 11: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["more_use_greater"]], {}));
+                        break;
+                    case 12: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["more_rounds_greater"]], {}));
+                        break;  
+                    case 13: 
+                        descParts.push(this.substituteTokens(templateStrings[DexPane.templateKeys["more_buffs_greater"]], {}));
+                        break;   
+                }                
+            }           
 
             if(skillInfo.HPDrain * 1 && skillInfo.SPDrain * 1 && skillInfo.HPDrain * 1 == skillInfo.SPDrain * 1){
                 let templateString = templateStrings[DexPane.templateKeys["drain_hp_sp"]];
@@ -874,6 +1012,8 @@ DexPane.prototype.resolveSkillConditionals = function(skillInfo){
     return conditionsString + " " + effectsString;
 }
 
+
+
 DexPane.prototype.resolveConditions = function(skillInfo){
     const templateStrings = localizationData[currentLocale].autoMoveDescriptions;
 
@@ -919,6 +1059,34 @@ DexPane.prototype.resolveConditions = function(skillInfo){
                 
             }
         }
+
+        if(skillInfo.skillConditionalType == 2){
+            const requiredBuffs = getRequiredBuffs();
+            if(requiredBuffs.length == 1){   
+                const buff = requiredBuffs[0];
+                let d0 = "";
+                
+                if(buff >= 33 && buff <= 40){//buffs                            
+                    d0 = localizationData[currentLocale].statusNames[buff - 31];
+
+                    d0 = this.substituteTokens( 
+                        templateStrings[DexPane.templateKeys["reduction_to"]], 
+                        {
+                            "{d0}": d0,
+                        }
+                    );
+                } 
+
+                conditionString = this.substituteTokens( 
+                    templateStrings[DexPane.templateKeys["target_is_affected"]], 
+                    {
+                        "{d0}": d0,
+                    }
+                );
+                
+                
+            }
+        }        
         
         if(skillInfo.skillConditionalType == 3){
             let d0 = localizationData[currentLocale].typeNames[skillInfo.skillConditionalArg];            
@@ -929,14 +1097,162 @@ DexPane.prototype.resolveConditions = function(skillInfo){
                     "{d0}": d0,
                 }
             );           
+        } 
+        
+        if(skillInfo.skillConditionalType == 4){
+            let d0 = localizationData[currentLocale].elementNames[skillInfo.skillConditionalArg];            
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["target_is_element"]], 
+                {
+                    "{d0}": d0,
+                }
+            );           
         }  
+
+        if(skillInfo.skillConditionalType == 5){
+            let d0 = "";        
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["generation_is_greater"]], 
+                {
+    
+                }
+            );           
+        } 
+
+        if(skillInfo.skillConditionalType == 6){
+            let d0 = "";             
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["generation_is_lower"]], 
+                {
+    
+                }
+            );           
+        } 
+
+        if(skillInfo.skillConditionalType == 7){
+            let d0 = "";             
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["target_has_acted"]], 
+                {
+    
+                }
+            );           
+        } 
+
+        if(skillInfo.skillConditionalType == 8){
+            let d0 = "";             
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["target_has_not_acted"]], 
+                {
+    
+                }
+            );           
+        } 
+
+        if(skillInfo.skillConditionalType == 9){
+            let d0 = skillInfo.skillConditionalArg;             
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["target_is_above_HP"]], 
+                {
+                    "{d0}": d0
+                }
+            );           
+        } 
+
+        if(skillInfo.skillConditionalType == 10){
+            let d0 = skillInfo.skillConditionalArg;             
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["target_is_below_HP"]], 
+                {
+                    "{d0}": d0
+                }
+            );           
+        } 
+
+        if(skillInfo.skillConditionalType == 11){
+            let d0 = skillInfo.skillConditionalArg;             
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["target_is_above_SP"]], 
+                {
+                    "{d0}": d0
+                }
+            );           
+        } 
+
+        if(skillInfo.skillConditionalType == 12){
+            let d0 = skillInfo.skillConditionalArg;             
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["target_is_below_SP"]], 
+                {
+                    "{d0}": d0
+                }
+            );           
+        } 
+
+        if(skillInfo.skillConditionalType == 13){
+            let d0 = "";             
+           
+            conditionString = this.substituteTokens( 
+                templateStrings[DexPane.templateKeys["target_is_KOed"]], 
+                {
+    
+                }
+            );           
+        } 
     }
     return conditionString;
 }
 
+
+/*
+
+
+    "damage_bonus": 66,
+    "increased_damage": 67,
+    "crit_rate": 68,
+    "recover_HP": 69,
+    "recover_SP": 70,
+    "recover_HP_SP": 71,
+    "reduce_target_SP": 72,
+    "chance_apply_status": 73,
+    "chance_of_effect": 74,
+    "effect": 75,
+    "removes_status": 76, 
+*/
+
 DexPane.prototype.resolveEffects = function(skillInfo){
     const templateStrings = localizationData[currentLocale].autoMoveDescriptions;
     let effectString = "";
+
+    if(skillInfo.skillEffectIfConditional == 1){
+        let d0 = skillInfo.skillEffectArg;
+        effectString = this.substituteTokens( 
+            templateStrings[DexPane.templateKeys["damage_bonus"]], 
+            {
+                "{d0}": d0,
+            }
+        );
+    }
+
+    if(skillInfo.skillEffectIfConditional == 2){
+        let d0 = "";
+        effectString = this.substituteTokens( 
+            templateStrings[DexPane.templateKeys["increased_damage"]], 
+            {
+                "{d0}": d0,
+            }
+        );
+    }
+
     if(skillInfo.skillEffectIfConditional == 3){
         let d0 = skillInfo.skillEffectArg;
         effectString = this.substituteTokens( 
@@ -946,6 +1262,48 @@ DexPane.prototype.resolveEffects = function(skillInfo){
             }
         );
     }
+
+    if(skillInfo.skillEffectIfConditional == 5){
+        let d0 = skillInfo.skillEffectArg;
+        effectString = this.substituteTokens( 
+            templateStrings[DexPane.templateKeys["recover_HP"]], 
+            {
+                "{d0}": d0,
+            }
+        );
+    }
+
+    if(skillInfo.skillEffectIfConditional == 6){
+        let d0 = skillInfo.skillEffectArg;
+        effectString = this.substituteTokens( 
+            templateStrings[DexPane.templateKeys["recover_SP"]], 
+            {
+                "{d0}": d0,
+            }
+        );
+    }
+
+    if(skillInfo.skillEffectIfConditional == 7){
+        let d0 = skillInfo.skillEffectArg;
+        effectString = this.substituteTokens( 
+            templateStrings[DexPane.templateKeys["recover_HP_SP"]], 
+            {
+                "{d0}": d0,
+            }
+        );
+    }
+
+    if(skillInfo.skillEffectIfConditional == 8){
+        let d0 = skillInfo.skillEffectArg;
+        effectString = this.substituteTokens( 
+            templateStrings[DexPane.templateKeys["reduce_target_SP"]], 
+            {
+                "{d0}": d0,
+            }
+        );
+    }
+
+
     if(effectString != ""){
         effectString+="\n";
     }
