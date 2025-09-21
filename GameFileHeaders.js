@@ -370,20 +370,31 @@ const hardDefinedHeaders = {
     },   
     "main/battle_skill.mbe/00_battle_skill_list.csv": {
       "skillId": 0,
+      "nameId": 4,
+      
       "skillFixedDescId": 5,
+      "bool_7": 7,
+      "bool_8": 8,
       "effectId": 16,
+      "unk_0": 21,
       "dmgType": 22,//?? 0:none/self, 1: physical, 2: magic, 4: fixed damage at, 5:fixed %, 6: buff, 11: 'Major Damage'
       "power": 23,
-      "increasedDamageParam": 26,//???
+      "additionalProperty_1": 26,//???
       "additionalProperty": 27,
       "element": 28,
       "increasedDmgAgainstClass": 29,
+      "unusued_0": 30, //always -1
+      "unusued_1": 31, //always -1
+      "menu_icon": 32, //-1: damage elem, 11: heal, 12: buff, 13: debuff
       "targetType": 33,
       "minHits": 34,
       "maxHits": 35,
+      "SPCost": 36,
+      "unk_1": 37,
+      "unk_2": 38,
       "alwaysHits": 39,
       "accuracy": 40,
-      "???_0": 41,//1-0
+      "unk_3": 41,//1-0
       "critRate": 42,
       "HPDrain": 43,
       "SPDrain": 44,//??
@@ -404,12 +415,91 @@ const hardDefinedHeaders = {
 
     /*
     =============================================================
-      #additionalProperty
+      # (int 26) additionalProperty_1 
+      Note: 1-13, fields not listed are currently only used on enemy skills?
+      ## 1
+      The lower the user's HP, the higher the damage.
+
+      ## 2
+      The lower all allies' HP, the greater the damage.
+
+      ## 3
+      The lower the user's HP, the lower the damage
+
+      ## 4
+      The lower all allies' HP, the lower the damage.
+
+      ## 5 
+      The lower the user's SP, the greater the damage.
+
+      ## 6
+      The lower all allies' SP, the greater the damage.
+
+      ## 7
+      The lower the user's SP, the lower the damage.
+
+      ## 8
+      The lower all allies' SP, the lower the damage.
+
+      ## 9
+      The more battle members are KO'd, the greater the damage.
+
+      ## 10
+      The more allies are KO'd, the greater the damage.
+
+      ## 11
+      The more it is used, the greater the damage.
+
+      ## 12
+      The more rounds have passed, the greater the damage.
+
+      ## 13
+      The greater the user's stat buffs, the greater the damage.
+
+    =============================================================
+      # (int 27) additionalProperty
+
+      ##1
+      No Effect described
+      
+      ## 2
+      No Effect described
+
       ## 3
       Nullifies unfavorable compatibility
 
+      ## 4
+      No effect described
+
+      ## 5        
+      Inverts all stat changes of the target.
+
+      ## 6
+      Steals all stat changes from the target.
+
+      ## 7
+      Recovers beyond the target's Max HP.
+
       ## 8
       Consumes all SP.
+
+      ## 9
+      Nullifies unfavorable attribute compatibility
+
+      ## 10
+      Attack treated as Vaccine.
+
+      ## 11
+      Attack treated as Data
+
+      ## 12
+      Attack treated as Virus
+
+      ## 13
+      Attack treated as Free
+
+      ## 14
+      Attack treated as Variable
 
       Other indices seem to be one enemy only skills mostly
 
@@ -431,8 +521,8 @@ const hardDefinedHeaders = {
       skillConditionalArg: which attribute
 
       ## 4
-      Unusued
-      skillConditionalArg: ???
+      If target is of element
+      skillConditionalArg: elment
 
       ## 5
       If target's Generation is greater than user's
@@ -455,13 +545,16 @@ const hardDefinedHeaders = {
       skillConditionalArg: none
 
       ## 10
-      Unknown, currently only on Magnakidmon, can't verify with demo
+      If target's HP is X% or less
+      skillConditionalArg: HP Percent
 
       ## 11
-      Unknown, unusued?
+      If target's SP is X% or higher
+      skillConditionalArg: SP Percent
 
       ## 12
-      Unknown, unusued?
+      If target's SP is X% or less
+      skillConditionalArg: SP Percent
 
       ## 13
       If target is KO'd
@@ -473,8 +566,8 @@ const hardDefinedHeaders = {
       None      
       
       ## 1
-      Unknown, only on enemy skill
-      skillEffectArg: unknown
+      +X% damage
+      skillEffectArg: increase percent
 
       ## 2
       Increased Damage
@@ -485,22 +578,24 @@ const hardDefinedHeaders = {
       skillEffectArg: percent
 
       ## 4
-      None?
+      None
       skillEffectArg: none
-      Effect seems buffset dependent?
 
       ## 5
       Restore HP
       skillEffectArg: percent restored
 
       ## 6
-      Unknown, only on Forbidden Trident
+      Restore SP
+      skillEffectArg: percent restored
 
       ## 7
-      Unknown, only on God Flame
+      Restore SP/HP
+      skillEffectArg: percent restored
 
       ## 8
-      Unknown, unusued?
+      Reduce Target's SP by X%
+      skillEffectArg: percent reduced
 
     */
 
