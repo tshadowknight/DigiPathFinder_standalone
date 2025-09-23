@@ -1,5 +1,5 @@
 
-var versionId = "4.0b.0";
+var versionId = "4.0b.1";
 
 var resourceProvider = ""; //https://tshadowknight.github.io/DigiPathFinder_standalone/
 
@@ -245,20 +245,13 @@ function showRoute(route){
 	$(".set_start_button").on("click", function(){		
 		var source = $(this).data("id");
 		$("#start_digi").val(source);
-		$("#start_digi").trigger("change");
-		if(pathFinder.currentLookupMode == "digi"){
-			findDigiRoute();
-		} else {
-			findSkillRoute(source);
-		}				
+		$("#start_digi").trigger("change");		
+		findSkillRoute(source);
+						
 	});
 	$(".set_banned_button").on("click", function(){		
-		pathFinder.bannedDigis[$(this).data("id")] = 1;
-		if(pathFinder.currentLookupMode == "digi"){
-			findDigiRoute();
-		} else {
-			findSkillRoute();
-		}
+		pathFinder.bannedDigis[$(this).data("id")] = 1;		
+		findSkillRoute();		
 		showBans();
 		updateBanListButton();
 	});

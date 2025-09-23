@@ -699,19 +699,23 @@ DexPane.prototype.substituteTokens = function(templateString, tokens){
     return result;
 }
 
-DexPane.prototype.getMoveDesc = function(skillId){
+DexPane.prototype.getMoveDesc = function(skillId, other){
     const skillTextId = getSkillTextIdInfo()[skillId]
     if(!isTSMode()){
         return localizationData[currentLocale].moveDesc[skillTextId];
     } else {
 
-        
+        let jogressString = "";
+        if(other){
+            jogressString = "[" + localizationData[currentLocale].app.DEX_require_DNA +" " + localizationData[currentLocale].digimon[other] + "]";
+        }
         
         const skillInfo = cachedGameData.skillData[skillId];
         if(skillInfo.skillFixedDescId * 1){
-            return localizationData[currentLocale].moveDesc[skillInfo.skillFixedDescId].replace(/[(\r\n]/g, "<br>").replace(/(<br\s*\/?>){2,}/gi, '<br>');;
+            return jogressString + "<br>" + localizationData[currentLocale].moveDesc[skillInfo.skillFixedDescId].replace(/[(\r\n]/g, "<br>").replace(/(<br\s*\/?>){2,}/gi, '<br>');;
         } else {
             let descParts = [];
+            descParts.push(jogressString);
             const templateStrings = localizationData[currentLocale].autoMoveDescriptions;
             const targetType  = templateStrings[skillInfo.targetType];
             descParts.push(targetType);
@@ -1349,6 +1353,13 @@ DexPane.prototype.createMovesBlock = function(monInfo){
     for(let entry of sortedSigMoves){
         let nameContent = "<div class='skill_entry'>" + localizationData[currentLocale].sigMoves[getSkillTextIdInfo()[entry.id]] + "</div>";
         tableContent.push([nameContent, this.getMoveDesc(entry.id) || "---"]);
+    }
+
+    let jogressMoves = monInfo.moves.jogress;
+    for(let id in jogressMoves){
+        const entry = jogressMoves[id];
+        let nameContent = "<div class='skill_entry'>" + localizationData[currentLocale].sigMoves[getSkillTextIdInfo()[id]] + "</div>";
+        tableContent.push([nameContent, this.getMoveDesc(id, entry.other) || "---"]);
     }
 
     content+=this.arrayToTableContent(tableContent);

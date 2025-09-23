@@ -407,6 +407,7 @@ function GameFileManagerTS(){
         let buffNames = {};
         let statusNames = {};
         let typeNames = {};
+        let jogressSkills = {};
 
         function substituteDescriptionText(txt){
             return txt.replace(/\{.*?\}/g, "");
@@ -538,6 +539,108 @@ function GameFileManagerTS(){
             
         }
 
+        
+        const skillData = await this.parseGameFile("main/battle_skill.mbe/00_battle_skill_list");
+
+        let skillDataLookup = {};
+
+        const buffSetData =  await this.parseGameFile("main/battle_skill.mbe/02_buff_set");
+        const buffSetLookup = {};
+        for(let entry of buffSetData.data){
+            const id = escapeHTML(entry[buffSetData.headerLookup["setId"]]);
+            buffSetLookup[id] = [];
+            for(let i = 0; i <=10; i++){
+                buffSetLookup[id].push({
+                    effect: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_eff"]]) * 1,
+                    rate: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_rate"]]) * 1,
+                    changePercent: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_changePercent"]]) * 1,
+                    turnOverride: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_turnOverride"]]) * 1,
+                });
+            }
+        }
+
+        function retrieveBuffset(id){
+            if(id == 0){
+                return null;
+            }
+            return buffSetLookup[id];
+        }
+
+        for(let entry of skillData.data){
+            const skillId = escapeHTML(entry[skillData.headerLookup["skillId"]]);
+            
+            skillDataLookup[skillId] = {
+                // Core skill properties
+                skillId: parseInt(entry[skillData.headerLookup["skillId"]]) || 0,
+                skillFixedDescId: parseInt(entry[skillData.headerLookup["skillFixedDescId"]]) || 0,
+                effectId: parseInt(entry[skillData.headerLookup["effectId"]]) || 0,
+                
+                // Damage properties
+                dmgType: parseInt(entry[skillData.headerLookup["dmgType"]]) || 0, // 0:none/self, 1: physical, 2: magic, 4: fixed damage, 5:fixed %, 11: 'Major Damage'
+                power: parseInt(entry[skillData.headerLookup["power"]]) || 0,
+                element: parseInt(entry[skillData.headerLookup["element"]]) || 0,
+                increasedDmgAgainstClass: parseInt(entry[skillData.headerLookup["increasedDmgAgainstClass"]]) || 0,
+
+                // Additional properties
+                additionalProperty: parseInt(entry[skillData.headerLookup["additionalProperty"]]) || 0,    
+                additionalProperty_1: parseInt(entry[skillData.headerLookup["additionalProperty_1"]]) || 0,  
+                
+                // Target and mechanics
+                targetType: parseInt(entry[skillData.headerLookup["targetType"]]) || 0,
+                minHits: parseInt(entry[skillData.headerLookup["minHits"]]) || 1,
+                maxHits: parseInt(entry[skillData.headerLookup["maxHits"]]) || 1,
+                accuracy: parseFloat(entry[skillData.headerLookup["accuracy"]]) || 100,
+                
+                // Critical and special effects
+                alwaysHits: parseInt(entry[skillData.headerLookup["alwaysHits"]]) || 0,
+                critRate: parseInt(entry[skillData.headerLookup["critRate"]]) || 0,
+                HPDrain: parseInt(entry[skillData.headerLookup["HPDrain"]]) || 0,
+                SPDrain: parseInt(entry[skillData.headerLookup["SPDrain"]]) || 0,
+                recoil: parseInt(entry[skillData.headerLookup["recoil"]]) || 0,
+                
+                // Conditional modifiers
+                skillConditionalType: parseInt(entry[skillData.headerLookup["skillConditionalType"]]) || 0, 
+                skillEffectIfConditional: parseInt(entry[skillData.headerLookup["skillEffectIfConditional"]]) || 0,
+                skillConditionalArg: parseInt(entry[skillData.headerLookup["skillConditionalArg"]]) || 0,
+                skillEffectArg: parseInt(entry[skillData.headerLookup["skillEffectArg"]]) || 0,
+                
+                // Unknown/reserved fields
+                unknown_0: entry[skillData.headerLookup["???_0"]] || 0, // 1-0 range
+                unknown_1: entry[skillData.headerLookup["???_1"]] || 0,
+                
+                // Empty/reserved slots
+                empty_0: entry[skillData.headerLookup["empty_0"]] || null,
+                empty_1: entry[skillData.headerLookup["empty_1"]] || null,
+
+                buffset_0: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_0"]]) || 0),
+                buffset_1: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_1"]]) || 0),
+                buffset_2: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_2"]]) || 0),
+                buffset_3: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_3"]]) || 0),
+                buffset_4: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_4"]]) || 0),
+            };
+            
+            let jogressIdA = parseInt(entry[skillData.headerLookup["jogressIdA"]]) || 0;
+            let jogressIdB = parseInt(entry[skillData.headerLookup["jogressIdB"]]) || 0;
+            if(jogressIdA != -1 && jogressIdB != -1){
+                if(!jogressSkills[jogressIdA]){
+                    jogressSkills[jogressIdA] = [];
+                }
+                jogressSkills[jogressIdA].push({
+                    skillId: parseInt(entry[skillData.headerLookup["skillId"]]) || 0,
+                    other: jogressIdB
+                });
+
+                if(!jogressSkills[jogressIdB]){
+                    jogressSkills[jogressIdB] = [];
+                }
+                jogressSkills[jogressIdB].push({
+                    skillId: parseInt(entry[skillData.headerLookup["skillId"]]) || 0,
+                    other: jogressIdA
+                });
+            }            
+           
+        }   
+
         let movesLearned = {};
         let movesLearnedDetail = {};
         let sigMoves = {};
@@ -545,6 +648,7 @@ function GameFileManagerTS(){
         let evoConditions = {};
         let traits = {};
         let resistances = {};
+        
 
         for(let entry of digimonListData.data){
             const dbId = entry[digimonListData.headerLookup["id"]];
@@ -563,21 +667,17 @@ function GameFileManagerTS(){
             if(!movesLearnedDetail[dbId]){
                 movesLearnedDetail[dbId] = {
                     inherited: {},
-                    signature: {}
+                    signature: {},
+                    jogress: {}
                 };
             }
 
-            const signatureMoveId =  entry[digimonListData.headerLookup["signatureSkillId"]];
-            if(signatureMoveId != 0){
-                movesLearnedDetail[dbId].signature[signatureMoveId] = {level: 1};
+            for(let i = 1; i <= 12; i++){
+                const signatureMoveId =  entry[digimonListData.headerLookup["signatureSkillId" + i]];
+                if(signatureMoveId != 0){
+                    movesLearnedDetail[dbId].signature[signatureMoveId] = {level: 1};
+                }
             }
-            
-
-            const signatureMoveId2 =  entry[digimonListData.headerLookup["signatureSkillId2"]];
-            if(signatureMoveId2 != 0){
-                movesLearnedDetail[dbId].signature[signatureMoveId2] = {level: 1};
-            }  
-        
  
             for(let i = 0; i < 4; i++){
                 const moveId = entry[digimonListData.headerLookup["gSkill"+(i+1)+"Id"]];
@@ -586,6 +686,13 @@ function GameFileManagerTS(){
                     movesLearnedDetail[dbId].inherited[moveId] = {level: learnLevel};
                     movesLearned[dbId].push(moveId);
                 }                
+            }
+
+            const monJogressSkills = jogressSkills[dbId];
+            if(monJogressSkills){
+                for(let entry of monJogressSkills){
+                     movesLearnedDetail[dbId].jogress[entry.skillId] = {level: 1, other: entry.other};
+                }
             }
                
             if(!baseStats[dbId]){
@@ -690,87 +797,7 @@ function GameFileManagerTS(){
             evoConditions[dbId].jogressPersonalityB = escapeHTML(entry[evolutionConditionData.headerLookup["jogressPersonalityB"]]);
         }
 
-        const skillData = await this.parseGameFile("main/battle_skill.mbe/00_battle_skill_list");
-
-        let skillDataLookup = {};
-
-        const buffSetData =  await this.parseGameFile("main/battle_skill.mbe/02_buff_set");
-        const buffSetLookup = {};
-        for(let entry of buffSetData.data){
-            const id = escapeHTML(entry[buffSetData.headerLookup["setId"]]);
-            buffSetLookup[id] = [];
-            for(let i = 0; i <=10; i++){
-                buffSetLookup[id].push({
-                    effect: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_eff"]]) * 1,
-                    rate: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_rate"]]) * 1,
-                    changePercent: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_changePercent"]]) * 1,
-                    turnOverride: escapeHTML(entry[buffSetData.headerLookup["buff"+i+"_turnOverride"]]) * 1,
-                });
-            }
-        }
-
-        function retrieveBuffset(id){
-            if(id == 0){
-                return null;
-            }
-            return buffSetLookup[id];
-        }
-
-        for(let entry of skillData.data){
-            const skillId = escapeHTML(entry[skillData.headerLookup["skillId"]]);
-            
-            skillDataLookup[skillId] = {
-                // Core skill properties
-                skillId: parseInt(entry[skillData.headerLookup["skillId"]]) || 0,
-                skillFixedDescId: parseInt(entry[skillData.headerLookup["skillFixedDescId"]]) || 0,
-                effectId: parseInt(entry[skillData.headerLookup["effectId"]]) || 0,
-                
-                // Damage properties
-                dmgType: parseInt(entry[skillData.headerLookup["dmgType"]]) || 0, // 0:none/self, 1: physical, 2: magic, 4: fixed damage, 5:fixed %, 11: 'Major Damage'
-                power: parseInt(entry[skillData.headerLookup["power"]]) || 0,
-                element: parseInt(entry[skillData.headerLookup["element"]]) || 0,
-                increasedDmgAgainstClass: parseInt(entry[skillData.headerLookup["increasedDmgAgainstClass"]]) || 0,
-
-                // Additional properties
-                additionalProperty: parseInt(entry[skillData.headerLookup["additionalProperty"]]) || 0,    
-                additionalProperty_1: parseInt(entry[skillData.headerLookup["additionalProperty_1"]]) || 0,  
-                
-                // Target and mechanics
-                targetType: parseInt(entry[skillData.headerLookup["targetType"]]) || 0,
-                minHits: parseInt(entry[skillData.headerLookup["minHits"]]) || 1,
-                maxHits: parseInt(entry[skillData.headerLookup["maxHits"]]) || 1,
-                accuracy: parseFloat(entry[skillData.headerLookup["accuracy"]]) || 100,
-                
-                // Critical and special effects
-                alwaysHits: parseInt(entry[skillData.headerLookup["alwaysHits"]]) || 0,
-                critRate: parseInt(entry[skillData.headerLookup["critRate"]]) || 0,
-                HPDrain: parseInt(entry[skillData.headerLookup["HPDrain"]]) || 0,
-                SPDrain: parseInt(entry[skillData.headerLookup["SPDrain"]]) || 0,
-                recoil: parseInt(entry[skillData.headerLookup["recoil"]]) || 0,
-                
-                // Conditional modifiers
-                skillConditionalType: parseInt(entry[skillData.headerLookup["skillConditionalType"]]) || 0, 
-                skillEffectIfConditional: parseInt(entry[skillData.headerLookup["skillEffectIfConditional"]]) || 0,
-                skillConditionalArg: parseInt(entry[skillData.headerLookup["skillConditionalArg"]]) || 0,
-                skillEffectArg: parseInt(entry[skillData.headerLookup["skillEffectArg"]]) || 0,
-                
-                // Unknown/reserved fields
-                unknown_0: entry[skillData.headerLookup["???_0"]] || 0, // 1-0 range
-                unknown_1: entry[skillData.headerLookup["???_1"]] || 0,
-                
-                // Empty/reserved slots
-                empty_0: entry[skillData.headerLookup["empty_0"]] || null,
-                empty_1: entry[skillData.headerLookup["empty_1"]] || null,
-
-                buffset_0: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_0"]]) || 0),
-                buffset_1: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_1"]]) || 0),
-                buffset_2: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_2"]]) || 0),
-                buffset_3: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_3"]]) || 0),
-                buffset_4: retrieveBuffset(parseInt(entry[skillData.headerLookup["buffSet_4"]]) || 0),
-            };
-
-           
-        }   
+        
     
 
         let digimonToEncounters = {};
@@ -823,7 +850,8 @@ function GameFileManagerTS(){
             elementNames: elementNames,
             buffNames: buffNames,
             statusNames: statusNames,
-            typeNames: typeNames
+            typeNames: typeNames,
+            jogressSkills: jogressSkills
         };
 
         fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/unpacked", "digi_data.json"), JSON.stringify(cacheData));

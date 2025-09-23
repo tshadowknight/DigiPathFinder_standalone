@@ -302,8 +302,30 @@ const hardDefinedHeaders = {
       "id": 0,
       "strKey": 2,
       //signature skills
-      "signatureSkillId": 72,
+      "signatureSkillId1": 72,
+      "signatureSkillSlot1": 74,
       "signatureSkillId2": 75,
+      "signatureSkillSlot2": 77,
+      "signatureSkillId3": 78,
+      "signatureSkillSlot3": 80,
+      "signatureSkillId4": 81,
+      "signatureSkillSlot4": 83,
+      "signatureSkillId5": 84,
+      "signatureSkillSlot5": 86,
+      "signatureSkillId6": 87,
+      "signatureSkillSlot6": 89,
+      "signatureSkillId7": 90,
+      "signatureSkillSlot7": 92,
+      "signatureSkillId8": 93,
+      "signatureSkillSlot8": 95,
+      "signatureSkillId9": 96,
+      "signatureSkillSlot9": 98,
+      "signatureSkillId10": 99,
+      "signatureSkillSlot10": 101,
+      "signatureSkillId11": 102,
+      "signatureSkillSlot11": 104,
+      "signatureSkillId12": 105,
+      "signatureSkillSlot12": 107,
       //generic skills
       "gSkill1Id": 108,
       "gSkill1Level": 110,
@@ -410,6 +432,8 @@ const hardDefinedHeaders = {
       "buffSet_2": 56, //id into main\battle_skill.mbe\02_buff_set.csv
       "buffSet_3": 58, //id into main\battle_skill.mbe\02_buff_set.csv
       "buffSet_4": 60, //id into main\battle_skill.mbe\02_buff_set.csv
+      "jogressIdA": 64,
+      "jogressIdB": 66,
       //remaing fields are anim/etc related?
     },   
 
