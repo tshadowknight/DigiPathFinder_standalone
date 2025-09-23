@@ -246,6 +246,9 @@ function showRoute(route){
 		var source = $(this).data("id");
 		$("#start_digi").val(source);
 		$("#start_digi").trigger("change");		
+		if(startDigiSelectorInfo){
+			startDigiSelectorInfo.updateFunc(source);
+		}
 		findSkillRoute(source);
 						
 	});
@@ -407,6 +410,8 @@ async function setDDSImage(elem, digimonId){
 	
 }
 
+let startDigiSelectorInfo;
+
 function createControls(){
 	var content = "";
 	
@@ -504,7 +509,7 @@ function createControls(){
 	//populateMoveList();
 	populateSkillList("skill");
 	populateBanList("bans");
-	populateDigimonList("start_digi_btn", "start_digi", true);
+	startDigiSelectorInfo = populateDigimonList("start_digi_btn", "start_digi", true);
 	populateDigimonList("end_digi_btn", "end_digi");
 	//secondary control pane
 	content = "";
@@ -593,7 +598,7 @@ function populateDigimonList(btnTarget, target, prepopulate){
 	
 	const btn = document.querySelector("#"+btnTarget);
 	
-	function updateSelection(monId){
+	const updateFunc = function updateSelection(monId){
 		setDDSImage(btn.closest(".control_block").querySelector(".digi_icon"), monId);
 		btn.innerHTML = digimonNames[monId];
 		const link = btn.closest(".control_block").querySelector(".db_link");
@@ -607,7 +612,7 @@ function populateDigimonList(btnTarget, target, prepopulate){
 
 	let selector = new MonSelector(target, {
 		selected: function(monId){
-			updateSelection(monId);
+			updateFunc(monId);
 		}
 	}, getFullDigiData());
 
@@ -616,7 +621,12 @@ function populateDigimonList(btnTarget, target, prepopulate){
 	});
 
 	if(prepopulate){
-		updateSelection(selector.getSortedIds()[0]);
+		updateFunc(selector.getSortedIds()[0]);
+	}
+
+	return {
+		selector: selector,
+		updateFunc: updateFunc
 	}
 }
 
