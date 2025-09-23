@@ -1051,6 +1051,19 @@ function createOptions(){
 	content+="</div>"
 	content+="</div>"
 
+	content+="<div class='row locale'>";
+	content+="<div class='label'>";
+	content+=localizationData[currentLocale].app.label_background_anim;
+	content+="</div>"
+	content+="<div class='value'>";
+	const hideBackground = (localStorage.getItem("DigiPathFinder_hide_background") || 0) * 1;
+	content+="<input id='backgroundAnim' type=checkbox "+(hideBackground ? "" : "checked")+">";
+
+	content+="</input>";
+	
+	content+="</div>"
+	content+="</div>"
+
 	/*
 	content+="<div class='row locale'>";
 	content+="<div class='label'>";
@@ -1196,8 +1209,24 @@ function createOptions(){
 		location.reload();
 	});	
 
+	elem.querySelector("#backgroundAnim").addEventListener("change", function(){
+		localStorage.setItem("DigiPathFinder_hide_background", this.checked ? 0 : 1);
+		updateBackgroundAnimVisibility();
+	});
 	
 	
+}
+
+function updateBackgroundAnimVisibility(){
+	const hide = localStorage.getItem("DigiPathFinder_hide_background") * 1;
+	if(hide){
+		document.querySelector("#particles").style.display = "none";
+	} else {
+		document.querySelector("#particles").style.display = "block";	
+		particlesJS.load('particles', 'particles.json', function() {
+			console.log('callback - particles.js config loaded');
+		});	
+	}
 }
 
 function refreshWarnings(){
@@ -1354,6 +1383,7 @@ function initPathFinder(forceReload){
 }
 
 document.addEventListener("DOMContentLoaded", async function(){
+	updateBackgroundAnimVisibility();
 	createPortraitModeWarning();
 	$("#options").on("click", function(){
 		toggleOptions();
