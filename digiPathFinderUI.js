@@ -1439,6 +1439,10 @@ function initPathFinder(forceReload){
 			setPathConfig();
 
 			hideGameFileLoader();
+
+			if(pathConfig.start != -1 && pathConfig.end != -1  && pathConfig.end != null){
+				findSkillRoute();
+			}
 			$("#worker_cancel").on("click", function(){	
 				if(digiWorker){
 					digiWorker.terminate();			
