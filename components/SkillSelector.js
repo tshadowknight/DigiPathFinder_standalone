@@ -22,6 +22,10 @@ function SkillSelector(containerId, callbacks){
     });
 }
 
+SkillSelector.prototype.setSelection = function(selection){
+    this._currentSelection = structuredClone(selection);
+}
+
 SkillSelector.prototype.toggle = function(selectedId){
     const contentContainer = document.getElementById(this._containerId);
     const selectorElem = contentContainer.querySelector(".mon_selector");

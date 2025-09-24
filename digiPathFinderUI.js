@@ -49,6 +49,40 @@ if(typeof process != 'undefined' && process.versions.hasOwnProperty('electron'))
 	});
 }
 
+let pathConfig = {};
+
+if(!isElectron()){
+	pathConfig = {};
+	const urlParams = new URLSearchParams(window.location.search);
+	let gameMode = urlParams.get('gameMode');
+	let start = urlParams.get('start');
+	let end = urlParams.get('end');
+	let skills = (urlParams.get('skills') || "").split(",").filter(x => x != "").map(x => x * 1);
+	let bans = (urlParams.get('bans') || "").split(",").filter(x => x != "").map(x => x * 1);
+
+	pathConfig = {
+		gameMode: gameMode,
+		start: start,
+		end: end,
+		skills: skills,
+		bans: bans
+	};
+}
+
+function clearPathConfig(){
+	window.history.replaceState(null, '', `${window.location.pathname}`);
+}
+
+function setPathConfig(){
+	const params = new URLSearchParams();
+	params.append("gameMode", currentGameVersion);
+	params.append("start", currentPathSelections["start_digi"]);
+	params.append("end", currentPathSelections["end_digi"] || -1);
+	params.append("skills", Object.keys(pathFinder.wantedSkills).sort().join(","));
+	params.append("bans", Object.keys(pathFinder.bannedDigis).sort().join(","));
+
+	window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+}
 
 function getResourcesFolder(){
 	if(__dirname.match(/.*\.asar$/)){
@@ -411,6 +445,7 @@ async function setDDSImage(elem, digimonId){
 }
 
 let startDigiSelectorInfo;
+let endDigiSelectInfo;
 
 function createControls(){
 	var content = "";
@@ -510,7 +545,14 @@ function createControls(){
 	populateSkillList("skill");
 	populateBanList("bans");
 	startDigiSelectorInfo = populateDigimonList("start_digi_btn", "start_digi", true);
-	populateDigimonList("end_digi_btn", "end_digi");
+	endDigiSelectInfo = populateDigimonList("end_digi_btn", "end_digi");
+
+	if(pathConfig.start){
+		startDigiSelectorInfo.updateFunc(pathConfig.start);
+	}
+	if(pathConfig.end){
+		endDigiSelectInfo.updateFunc(pathConfig.end);	
+	}
 	//secondary control pane
 	content = "";
 	
@@ -606,6 +648,7 @@ function populateDigimonList(btnTarget, target, prepopulate){
 		link.style.display = "inline";
 		selector.hide()
 		currentPathSelections[target] = monId
+		setPathConfig();
 	}
 
 	
@@ -640,7 +683,7 @@ function updateSkillListButton(){
 	} else{
 		btn.innerHTML = skillCount + " Skills Selected";
 	}		
-	
+	setPathConfig();
 }
 
 function populateSkillList(target){
@@ -657,6 +700,7 @@ function populateSkillList(target){
 
 	const btn = document.querySelector("#skill_btn");
 	btn.addEventListener("click", function(){
+		selector.setSelection(pathFinder.wantedSkills);
 		selector.toggle(currentPathSelections[target]);
 	});
 	
@@ -673,7 +717,7 @@ function updateBanListButton(){
 	} else{
 		btn.innerHTML = skillCount + " Bans";
 	}		
-	
+	setPathConfig();
 }
 
 function populateBanList(target){
@@ -817,12 +861,16 @@ function initGameMangagers(){
 
 initGameMangagers();
 
-if(preferredGameVersion == null){
+if(pathConfig && pathConfig.gameMode != null){
+	currentGameVersion = pathConfig.gameMode;
+	if(currentGameVersion > 1){
+		currentGameVersion = 1;
+	}
+} else if(preferredGameVersion == null){
 	currentGameVersion = 1;
 } else {
 	currentGameVersion = preferredGameVersion;
 }
-
 
 
 function isTSMode(){
@@ -1209,6 +1257,7 @@ function createOptions(){
 		} else {
 			activeGameFileManager = gameFileManagerTS;
 		}
+		clearPathConfig();
 		location.reload();
 	});	
 
@@ -1372,6 +1421,22 @@ function initPathFinder(forceReload){
 
 
 			pathFinder.init(gameData, createControls);	
+
+			if(pathConfig.bans){
+				for(let entry of pathConfig.bans){
+					pathFinder.bannedDigis[entry] = true;
+				}
+			}
+			updateBanListButton();
+			showBans();
+			if(pathConfig.skills){
+				for(let entry of pathConfig.skills){
+					pathFinder.wantedSkills[entry] = true;
+				}
+			}
+			updateSkillListButton();
+			showSkills();
+			setPathConfig();
 
 			hideGameFileLoader();
 			$("#worker_cancel").on("click", function(){	

@@ -15,6 +15,11 @@ Works for both unmodded and modded games.
 
 # Usage
 
+## Online
+[Visit here to view the latest preview build](http://www.tshadowknight.com/pathfinder%204.0/index.html)
+
+## Offline
+
 * Open the extracted folder and run DigiPathFinder.exe  
 * Confirm the spoiler warning and choose the initial game mode. It will only ask once, you can change the game mode from the options menu.
 * Pick a start and end Digimon and hit Calculate Path 
