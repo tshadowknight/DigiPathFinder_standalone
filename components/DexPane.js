@@ -1479,39 +1479,46 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
     let requirements = monInfo.evosReqs;
     let row = [];
     for(let condition of condList){
-        content+="<div class='block'>"
-        content+="<div class='label condition'>"
-        content+=labels[condition];
-        content+="</div>";
+        let blockContent = "";
+        let hasContent = true;
+        blockContent+="<div class='block'>"
+        blockContent+="<div class='label condition'>"
+        blockContent+=labels[condition];
+        blockContent+="</div>";
         let errorClass = "";
         if(maxStats){
             if(maxStats[condition] < requirements[condition]){
                 errorClass = "difficult";
             }
         }
-        content+="<div class='value "+errorClass+"'>"
+        blockContent+="<div class='value "+errorClass+"'>"
         if(condition == "jogress"){
             if(requirements.jogressIdA * 1 && requirements.jogressIdB * 1){
-                content+=localizationData[currentLocale].digimon[requirements.jogressIdA] + " ("+localizationData[currentLocale].personalityNames[requirements.jogressPersonalityA]+")" + " + " + localizationData[currentLocale].digimon[requirements.jogressIdB]  + " ("+localizationData[currentLocale].personalityNames[requirements.jogressPersonalityB]+")" ;
+                blockContent+=localizationData[currentLocale].digimon[requirements.jogressIdA] + " ("+localizationData[currentLocale].personalityNames[requirements.jogressPersonalityA]+")" + "<br>" + localizationData[currentLocale].digimon[requirements.jogressIdB]  + " ("+localizationData[currentLocale].personalityNames[requirements.jogressPersonalityB]+")" ;
             } else {
-                content+=("-");
+                hasContent = false;
+                blockContent+=("-");
             }
          } else {                
             if(requirements[condition] * 1){
                 if(condition == "needsItem"){    
-                     content+=localizationData[currentLocale].itemNames[requirements.needsItem] || "???";
+                     blockContent+=localizationData[currentLocale].itemNames[requirements.needsItem] || "???";
                 } else if(condition == "Other"){
-                    content+= (localizationData[currentLocale].app.DEX_evos_label_has_additional) || "???";
+                    blockContent+= (localizationData[currentLocale].app.DEX_evos_label_has_additional) || "???";
                 } else {
-                    content+=(requirements[condition]) || "???";
+                    blockContent+=(requirements[condition]) || "???";
                 }
                 
             } else {
-                content+=("-");
+                hasContent = false;
+                blockContent+=("-");
             }
         }
-        content+="</div>";
-        content+="</div>";
+        blockContent+="</div>";
+        blockContent+="</div>";
+        if(hasContent){
+            content+=blockContent;
+        }
     }
 
     content+="</div>";
@@ -1549,100 +1556,107 @@ DexPane.prototype.createEvosBlock = function(monInfo){
     content+="</div>";
 
     content+="<div class='row evos_summary'>";
-    content+="<div class='section_prev'>";
 
-    content+="<div class='section_sub_header'>";
-    
-    content+=localizationData[currentLocale].app.DEX_header_evos_previous;
-    content+="</div>";
+    if( monInfo.neighBours.prev.length){    
+        content+="<div class='section_prev'>";
 
-    content+="<div class='evo_entries'>";
-    for(let monId of monInfo.neighBours.prev){
-        let targetMonInfo = this.getMonInfo(monId)
-        content+="<div class='evo_entry'>";
-
-        content+="<div class='row'>";
-        content+="<div class='icon dex_img_container'>";
-        content+="<img data-id='"+monId+"' class='dex_img "+(isTSMode() ? "TS" : "")+"'/>";
-        content+="</div>";
+        content+="<div class='section_sub_header'>";
         
-        content+="<div class='name'>";
-        content+=targetMonInfo.name;
-
-        content+="<div data-id='"+monId+"' class='db_link flex-item'>";
-        content+="<i class='fa fa-external-link' aria-hidden='true'></i>";
+        content+=localizationData[currentLocale].app.DEX_header_evos_previous;
         content+="</div>";
 
-        content+="</div>";
-        content+="</div>";
+        content+="<div class='evo_entries'>";
+        for(let monId of monInfo.neighBours.prev){
+            let targetMonInfo = this.getMonInfo(monId)
+            content+="<div class='evo_entry'>";
 
-        if(isTSMode()){
-           // content+="<table id='evo_reqs_table' class='stats'>";  
-
-            content+="<div class='evo_reqs_flex previous'>";
-
-            let requirements = monInfo.evosReqs;
-            let row = [];
-          
-            content+="<div class='block'>"
-            content+="<div class='label condition'>"
-            content+=localizationData[currentLocale].app.DEX_general_default_pers;
+            content+="<div class='row'>";
+            content+="<div class='icon dex_img_container'>";
+            content+="<img data-id='"+monId+"' class='dex_img "+(isTSMode() ? "TS" : "")+"'/>";
             content+="</div>";
             
-            content+="<div class='value'>"
-            content+=localizationData[currentLocale].personalityNames[targetMonInfo.baseStats.basePersonality];
+            content+="<div class='name'>";
+            content+=targetMonInfo.name;
+
+            content+="<div data-id='"+monId+"' class='db_link flex-item'>";
+            content+="<i class='fa fa-external-link' aria-hidden='true'></i>";
             content+="</div>";
-            content+="</div>";
-            
 
             content+="</div>";
-        
-         //   content+="</table>";
+            content+="</div>";
+
+            if(isTSMode()){
+            // content+="<table id='evo_reqs_table' class='stats'>";  
+
+                content+="<div class='evo_reqs_flex previous'>";
+
+                let requirements = monInfo.evosReqs;
+                let row = [];
+            
+                content+="<div class='block'>"
+                content+="<div class='label condition'>"
+                content+=localizationData[currentLocale].app.DEX_general_default_pers;
+                content+="</div>";
+                
+                content+="<div class='value'>"
+                content+=localizationData[currentLocale].personalityNames[targetMonInfo.baseStats.basePersonality];
+                content+="</div>";
+                content+="</div>";
+                
+
+                content+="</div>";
+            
+            //   content+="</table>";
+            }
+            
+            content+="</div>";
         }
-        
+        content+="</div>";
+
         content+="</div>";
     }
-    content+="</div>";
 
-    content+="</div>";
-
-    content+="<div class='section_next'>";
-    content+="<div class='section_sub_header'>";
-    
-    content+=localizationData[currentLocale].app.DEX_header_evos_next;
-    content+="</div>";
-
-    content+="<div class='evo_entries'>";
-    for(let monId of monInfo.neighBours.next){
-        let targetMonInfo = this.getMonInfo(monId)
-        content+="<div class='evo_entry'>";
-
-        content+="<div class='row'>";
-        content+="<div class='icon dex_img_container'>";
-        content+="<img data-id='"+monId+"' class='dex_img "+(isTSMode() ? "TS" : "")+"'/>";
-        content+="</div>";
+    if( monInfo.neighBours.next.length){    
+        content+="<div class='section_next'>";
+        content+="<div class='section_sub_header'>";
         
-        content+="<div class='name'>";
-        content+=targetMonInfo.name;
-
-        content+="<div data-id='"+monId+"'  class='db_link flex-item'>";
-        content+="<i class='fa fa-external-link' aria-hidden='true'></i>";
+        content+=localizationData[currentLocale].app.DEX_header_evos_next;
         content+="</div>";
 
-        content+="</div>";
+        content+="<div class='evo_entries'>";
+        for(let monId of monInfo.neighBours.next){
+            let targetMonInfo = this.getMonInfo(monId)
+            content+="<div class='evo_entry'>";
+
+            content+="<div class='row'>";
+            content+="<div class='icon dex_img_container'>";
+            content+="<img data-id='"+monId+"' class='dex_img "+(isTSMode() ? "TS" : "")+"'/>";
+            content+="</div>";
+            
+            content+="<div class='name'>";
+            content+=targetMonInfo.name;
+
+            content+="<div data-id='"+monId+"'  class='db_link flex-item'>";
+            content+="<i class='fa fa-external-link' aria-hidden='true'></i>";
+            content+="</div>";
+
+            content+="</div>";
+            
+            content+="</div>";
+
         
+
+            content+=this.createEvoReqs(targetMonInfo, getDigiData(monInfo.id).maxBaseStats);
+        
+        
+            content+="</div>";
+        }
         content+="</div>";
-
-      
-
-        content+=this.createEvoReqs(targetMonInfo, getDigiData(monInfo.id).maxBaseStats);
-    
-       
+        content+="</div>";
         content+="</div>";
     }
-    content+="</div>";
-    content+="</div>";
-    content+="</div>";
+
+
     content+="</div>";
 
     return content;
