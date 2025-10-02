@@ -298,7 +298,7 @@ const hardDefinedHeaders = {
   }
 
   const hardDefinedHeadersTS = {
-    "main/digimon_status.mbe/00_digimon_status_data.csv": {
+    "main/digimon_status.mbe/000_digimon_status_data.csv": {
       "id": 0,
       "strKey": 2,
       //signature skills
@@ -363,12 +363,12 @@ const hardDefinedHeaders = {
       "fieldGuideId": 131,
       "scriptId": 132
     },
-    "main/evolution.mbe/01_evolution_to.csv": {
+    "main/evolution.mbe/001_evolution_to.csv": {
       "idx": 0,
       "idFrom": 1,
       "idTo": 3
     },
-    "main/evolution.mbe/00_evolution_condition.csv": {
+    "main/evolution.mbe/000_evolution_condition.csv": {
       "dbId": 0,
       "tamerLevel": 2,
       "HP": 4,
@@ -390,7 +390,7 @@ const hardDefinedHeaders = {
       "jogressDbIdB": 27,
       "jogressPersonalityB": 29
     },   
-    "main/battle_skill.mbe/00_battle_skill_list.csv": {
+    "main/battle_skill.mbe/000_battle_skill_list.csv": {
       "skillId": 0,
       "nameId": 4,
       
@@ -623,7 +623,7 @@ const hardDefinedHeaders = {
 
     */
 
-    "main/battle_skill.mbe/02_buff_set.csv": {
+    "main/battle_skill.mbe/002_buff_set.csv": {
       "setId": 0,
       "unk0": 1,
       "unk1": 2,
@@ -683,21 +683,21 @@ const hardDefinedHeaders = {
   ]
 
   const localizedStringFiles = [
-    "/jogress_skill_name.mbe/00_Sheet1.csv",
-    "/skill_explanation.mbe/00_Sheet1.csv",
-    "/skill_auto_explanation.mbe/00_Sheet1.csv",
-    "/generation_name.mbe/00_Sheet1.csv",
-    "/digimon_type.mbe/00_Sheet1.csv",
-    "/element.mbe/00_Sheet1.csv",
-    "/personality_name.mbe/00_Sheet1.csv",
-    "/item_name.mbe/00_Sheet1.csv",
-    "/belong.mbe/00_Sheet1.csv",
-    "/digimon_class_name.mbe/00_Sheet1.csv",
-    "/char_name.mbe/00_Sheet1.csv",
-    "/digimon_profile.mbe/00_Sheet1.csv",
-    "/skill_name.mbe/00_Sheet1.csv",
-    "/buff_name.mbe/00_Sheet1.csv",
-    "/status_name.mbe/00_Sheet1.csv"
+    "/jogress_skill_name.mbe/000_Sheet1.csv",
+    "/skill_explanation.mbe/000_Sheet1.csv",
+    "/skill_auto_explanation.mbe/000_Sheet1.csv",
+    "/generation_name.mbe/000_Sheet1.csv",
+    "/digimon_type.mbe/000_Sheet1.csv",
+    "/element.mbe/000_Sheet1.csv",
+    "/personality_name.mbe/000_Sheet1.csv",
+    "/item_name.mbe/000_Sheet1.csv",
+    "/belong.mbe/000_Sheet1.csv",
+    "/digimon_class_name.mbe/000_Sheet1.csv",
+    "/char_name.mbe/000_Sheet1.csv",
+    "/digimon_profile.mbe/000_Sheet1.csv",
+    "/skill_name.mbe/000_Sheet1.csv",
+    "/buff_name.mbe/000_Sheet1.csv",
+    "/status_name.mbe/000_Sheet1.csv"
   ]
 
 for(let locale of locales){

@@ -26,44 +26,44 @@ function GameFileManagerTS(){
 
     const requiredFiles = [
         // Evolution info
-        "main/evolution.mbe/01_evolution_to.csv",
-        "main/evolution.mbe/00_evolution_condition.csv",
+        "main/evolution.mbe/001_evolution_to.csv",
+        "main/evolution.mbe/000_evolution_condition.csv",
         
         // Main monster database
-        "main/digimon_status.mbe/00_digimon_status_data.csv",
+        "main/digimon_status.mbe/000_digimon_status_data.csv",
         
         // Battle skills
-        "main/battle_skill.mbe/00_battle_skill_list.csv",
+        "main/battle_skill.mbe/000_battle_skill_list.csv",
         
         // Japanese text files
-        "txt_jpn/digimon_profile.mbe/00_Sheet1.csv",
-        "txt_jpn/char_name.mbe/00_Sheet1.csv",
-        "txt_jpn/skill_name.mbe/00_Sheet1.csv",
-        "txt_jpn/jogress_skill_name.mbe/00_Sheet1.csv",
-        "txt_jpn/skill_explanation.mbe/00_Sheet1.csv",
-        "txt_jpn/skill_auto_explanation.mbe/00_Sheet1.csv",
-        "txt_jpn/generation_name.mbe/00_Sheet1.csv",
-        "txt_jpn/digimon_type.mbe/00_Sheet1.csv",
-        "txt_jpn/element.mbe/00_Sheet1.csv",
-        "txt_jpn/personality_name.mbe/00_Sheet1.csv",
-        "txt_jpn/item_name.mbe/00_Sheet1.csv",
-        "txt_jpn/belong.mbe/00_Sheet1.csv",
-        "txt_jpn/digimon_class_name.mbe/00_Sheet1.csv",
+        "txt_jpn/digimon_profile.mbe/000_Sheet1.csv",
+        "txt_jpn/char_name.mbe/000_Sheet1.csv",
+        "txt_jpn/skill_name.mbe/000_Sheet1.csv",
+        "txt_jpn/jogress_skill_name.mbe/000_Sheet1.csv",
+        "txt_jpn/skill_explanation.mbe/000_Sheet1.csv",
+        "txt_jpn/skill_auto_explanation.mbe/000_Sheet1.csv",
+        "txt_jpn/generation_name.mbe/000_Sheet1.csv",
+        "txt_jpn/digimon_type.mbe0/00_Sheet1.csv",
+        "txt_jpn/element.mbe/000_Sheet1.csv",
+        "txt_jpn/personality_name.mbe/000_Sheet1.csv",
+        "txt_jpn/item_name.mbe/000_Sheet1.csv",
+        "txt_jpn/belong.mbe/000_Sheet1.csv",
+        "txt_jpn/digimon_class_name.mbe/000_Sheet1.csv",
         
         // English text files
-        "txt_eng/digimon_profile.mbe/00_Sheet1.csv",
-        "txt_eng/char_name.mbe/00_Sheet1.csv",
-        "txt_eng/skill_name.mbe/00_Sheet1.csv",
-        "txt_eng/jogress_skill_name.mbe/00_Sheet1.csv",
-        "txt_eng/skill_explanation.mbe/00_Sheet1.csv",
-        "txt_eng/skill_auto_explanation.mbe/00_Sheet1.csv",
-        "txt_eng/generation_name.mbe/00_Sheet1.csv",
-        "txt_eng/digimon_type.mbe/00_Sheet1.csv",
-        "txt_eng/element.mbe/00_Sheet1.csv",
-        "txt_eng/personality_name.mbe/00_Sheet1.csv",
-        "txt_eng/item_name.mbe/00_Sheet1.csv",
-        "txt_eng/belong.mbe/00_Sheet1.csv",
-        "txt_eng/digimon_class_name.mbe/00_Sheet1.csv"
+        "txt_eng/digimon_profile.mbe/000_Sheet1.csv",
+        "txt_eng/char_name.mbe/000_Sheet1.csv",
+        "txt_eng/skill_name.mbe/000_Sheet1.csv",
+        "txt_eng/jogress_skill_name.mbe/000_Sheet1.csv",
+        "txt_eng/skill_explanation.mbe/000_Sheet1.csv",
+        "txt_eng/skill_auto_explanation.mbe/000_Sheet1.csv",
+        "txt_eng/generation_name.mbe/000_Sheet1.csv",
+        "txt_eng/digimon_type.mbe/000_Sheet1.csv",
+        "txt_eng/element.mbe/000_Sheet1.csv",
+        "txt_eng/personality_name.mbe/000_Sheet1.csv",
+        "txt_eng/item_name.mbe/000_Sheet1.csv",
+        "txt_eng/belong.mbe/000_Sheet1.csv",
+        "txt_eng/digimon_class_name.mbe/000_Sheet1.csv"
     ];
     GameFileManagerTS.prototype.hasGameFiles = function(){
         let isKitValid = true;
@@ -165,7 +165,7 @@ function GameFileManagerTS(){
                 let cmdDir = pathLib.join(this.getResourcesFolder(), toolsFolder, "/win");
                 cmd = "\""+this.getResourcesFolder()+""+'\\'+toolsFolder+'\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
 
-                const exetractorPath = pathLib.join(this.getResourcesFolder(), toolsFolder, '/win/DSCSToolsCLI.exe');
+                const exetractorPath = pathLib.join(this.getResourcesFolder(), toolsFolder, '/win/DSTSToolsCLI.exe');
                 const dbFilePaths = [
                     {in: pathLib.join(this.gameFilesPath, 'gamedata/app_0.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main') , unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/main')},
                     {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/txt_jpn'), unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/txt_jpn')},
@@ -242,7 +242,7 @@ function GameFileManagerTS(){
         if(!fs.existsSync(convertedDir)){
             fs.mkdirSync(convertedDir);
         }
-        const digimonListData = await this.parseGameFile("main/digimon_status.mbe/00_digimon_status_data");
+        const digimonListData = await this.parseGameFile("main/digimon_status.mbe/000_digimon_status_data");
         DDSCache = {};
         for(let entry of digimonListData.data){
             const digimonId = entry[digimonListData.headerLookup["id"]];
@@ -325,43 +325,43 @@ function GameFileManagerTS(){
         let sigMoveNames = {};
         let moveDescriptions = {};
         let autoMoveDescriptions = {};
-        const digimonListData = await this.parseGameFile("main/digimon_status.mbe/00_digimon_status_data");
+        const digimonListData = await this.parseGameFile("main/digimon_status.mbe/000_digimon_status_data");
         let validDigimon = {};
 
         const localizedStrings = [
             {
                 locale: "English", 
-                names: await this.parseGameFile("txt_eng/char_name.mbe/00_Sheet1"), 
-                descriptions: await this.parseGameFile("txt_eng/digimon_profile.mbe/00_Sheet1"), 
-                moveNames: await this.parseGameFile("txt_eng/skill_name.mbe/00_Sheet1"), 
-                jogressMoveNames: await this.parseGameFile("txt_eng/jogress_skill_name.mbe/00_Sheet1"), 
-                moveDescriptions: await this.parseGameFile("txt_eng/skill_explanation.mbe/00_Sheet1"), 
-                autoMoveDescriptions: await this.parseGameFile("txt_eng/skill_auto_explanation.mbe/00_Sheet1"),  
-                personalityNames: await this.parseGameFile("txt_eng/personality_name.mbe/00_Sheet1"),  
-                itemNames: await this.parseGameFile("txt_eng/item_name.mbe/00_Sheet1"),  
-                categoryNames: await this.parseGameFile("txt_eng/belong.mbe/00_Sheet1"),  
-                classNames: await this.parseGameFile("txt_eng/digimon_class_name.mbe/00_Sheet1"),  
-                elementNames: await this.parseGameFile("txt_eng/element.mbe/00_Sheet1"),  
-                buffNames: await this.parseGameFile("txt_eng/buff_name.mbe/00_Sheet1"),  
-                statusNames: await this.parseGameFile("txt_eng/status_name.mbe/00_Sheet1"),  
-                typeNames: await this.parseGameFile("txt_eng/digimon_type.mbe/00_Sheet1"),  
+                names: await this.parseGameFile("txt_eng/char_name.mbe/000_Sheet1"), 
+                descriptions: await this.parseGameFile("txt_eng/digimon_profile.mbe/000_Sheet1"), 
+                moveNames: await this.parseGameFile("txt_eng/skill_name.mbe/000_Sheet1"), 
+                jogressMoveNames: await this.parseGameFile("txt_eng/jogress_skill_name.mbe/000_Sheet1"), 
+                moveDescriptions: await this.parseGameFile("txt_eng/skill_explanation.mbe/000_Sheet1"), 
+                autoMoveDescriptions: await this.parseGameFile("txt_eng/skill_auto_explanation.mbe/000_Sheet1"),  
+                personalityNames: await this.parseGameFile("txt_eng/personality_name.mbe/000_Sheet1"),  
+                itemNames: await this.parseGameFile("txt_eng/item_name.mbe/000_Sheet1"),  
+                categoryNames: await this.parseGameFile("txt_eng/belong.mbe/000_Sheet1"),  
+                classNames: await this.parseGameFile("txt_eng/digimon_class_name.mbe/000_Sheet1"),  
+                elementNames: await this.parseGameFile("txt_eng/element.mbe/000_Sheet1"),  
+                buffNames: await this.parseGameFile("txt_eng/buff_name.mbe/000_Sheet1"),  
+                statusNames: await this.parseGameFile("txt_eng/status_name.mbe/000_Sheet1"),  
+                typeNames: await this.parseGameFile("txt_eng/digimon_type.mbe/000_Sheet1"),  
             },
             {
                 locale: "Japanese", 
-                names: await this.parseGameFile("txt_jpn/char_name.mbe/00_Sheet1"),
-                descriptions: await this.parseGameFile("txt_jpn/digimon_profile.mbe/00_Sheet1"), 
-                moveNames: await this.parseGameFile("txt_jpn/skill_name.mbe/00_Sheet1"), 
-                jogressMoveNames: await this.parseGameFile("txt_jpn/jogress_skill_name.mbe/00_Sheet1"), 
-                moveDescriptions: await this.parseGameFile("txt_jpn/skill_explanation.mbe/00_Sheet1"), 
-                autoMoveDescriptions: await this.parseGameFile("txt_jpn/skill_auto_explanation.mbe/00_Sheet1"),   
-                personalityNames: await this.parseGameFile("txt_jpn/personality_name.mbe/00_Sheet1"),  
-                itemNames: await this.parseGameFile("txt_jpn/item_name.mbe/00_Sheet1"),  
-                categoryNames: await this.parseGameFile("txt_jpn/belong.mbe/00_Sheet1"),  
-                classNames: await this.parseGameFile("txt_jpn/digimon_class_name.mbe/00_Sheet1"),  
-                elementNames: await this.parseGameFile("txt_jpn/element.mbe/00_Sheet1"),
-                buffNames: await this.parseGameFile("txt_jpn/buff_name.mbe/00_Sheet1"),  
-                statusNames: await this.parseGameFile("txt_eng/status_name.mbe/00_Sheet1"),  
-                typeNames: await this.parseGameFile("txt_eng/digimon_type.mbe/00_Sheet1"),  
+                names: await this.parseGameFile("txt_jpn/char_name.mbe/000_Sheet1"),
+                descriptions: await this.parseGameFile("txt_jpn/digimon_profile.mbe/000_Sheet1"), 
+                moveNames: await this.parseGameFile("txt_jpn/skill_name.mbe/000_Sheet1"), 
+                jogressMoveNames: await this.parseGameFile("txt_jpn/jogress_skill_name.mbe/000_Sheet1"), 
+                moveDescriptions: await this.parseGameFile("txt_jpn/skill_explanation.mbe/000_Sheet1"), 
+                autoMoveDescriptions: await this.parseGameFile("txt_jpn/skill_auto_explanation.mbe/000_Sheet1"),   
+                personalityNames: await this.parseGameFile("txt_jpn/personality_name.mbe/000_Sheet1"),  
+                itemNames: await this.parseGameFile("txt_jpn/item_name.mbe/000_Sheet1"),  
+                categoryNames: await this.parseGameFile("txt_jpn/belong.mbe/000_Sheet1"),  
+                classNames: await this.parseGameFile("txt_jpn/digimon_class_name.mbe/000_Sheet1"),  
+                elementNames: await this.parseGameFile("txt_jpn/element.mbe/000_Sheet1"),
+                buffNames: await this.parseGameFile("txt_jpn/buff_name.mbe/000_Sheet1"),  
+                statusNames: await this.parseGameFile("txt_eng/status_name.mbe/000_Sheet1"),  
+                typeNames: await this.parseGameFile("txt_eng/digimon_type.mbe/000_Sheet1"),  
             }
         ];
         
@@ -376,7 +376,7 @@ function GameFileManagerTS(){
         
 
         let evolutions = {};
-        const evolutionData = await this.parseGameFile("main/evolution.mbe/01_evolution_to");
+        const evolutionData = await this.parseGameFile("main/evolution.mbe/001_evolution_to");
         for(let entry of evolutionData.data){
             const fromId = escapeHTML(entry[evolutionData.headerLookup["idFrom"]]);
             const toId = escapeHTML(entry[evolutionData.headerLookup["idTo"]]);
@@ -540,11 +540,11 @@ function GameFileManagerTS(){
         }
 
         
-        const skillData = await this.parseGameFile("main/battle_skill.mbe/00_battle_skill_list");
+        const skillData = await this.parseGameFile("main/battle_skill.mbe/000_battle_skill_list");
 
         let skillDataLookup = {};
 
-        const buffSetData =  await this.parseGameFile("main/battle_skill.mbe/02_buff_set");
+        const buffSetData =  await this.parseGameFile("main/battle_skill.mbe/002_buff_set");
         const buffSetLookup = {};
         for(let entry of buffSetData.data){
             const id = escapeHTML(entry[buffSetData.headerLookup["setId"]]);
@@ -768,7 +768,7 @@ function GameFileManagerTS(){
 
         }
 
-        const evolutionConditionData = await this.parseGameFile("main/evolution.mbe/00_evolution_condition");
+        const evolutionConditionData = await this.parseGameFile("main/evolution.mbe/000_evolution_condition");
         for(let entry of evolutionConditionData.data){
             const dbId = entry[evolutionConditionData.headerLookup["dbId"]];
             if(!evoConditions[dbId]){
