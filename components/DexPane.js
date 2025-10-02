@@ -653,6 +653,8 @@ DexPane.templateKeys = {
     "consume_all_SP": 49,
     "nullify_attr_compat": 50,
     "attack_treated_as": 51,
+
+    "remove": 76
 };
 
 //no resource found to map these strings, might just be hardcoded?
@@ -682,9 +684,14 @@ DexPane.prototype.getBuffAutoDescriptionTemplate = function(buffId){
          return "{d1}";    
     }
 
-    if(buffId >= 85 && buffId <= 105){//effect application
+    if(buffId >= 85 && buffId <= 103){//effect application
          return templateStrings[DexPane.templateKeys["chance_apply"]];    
     }
+
+    if(buffId >= 112 && buffId <= 116){//effect removal
+         return templateStrings[DexPane.templateKeys["remove"]];    
+    }
+
 
     return "UNMAPPED_EFFECT {d1} at rate {d2}";
 }

@@ -603,8 +603,12 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 
 .digi_name {
 	text-align: left;
-	font-size: 20px;
-	margin-left: 35px;
+    font-size: 20px;
+    margin-left: 35px;
+    max-width: 55%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .flex-container {

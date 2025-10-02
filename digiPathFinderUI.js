@@ -1,5 +1,5 @@
 
-var versionId = "4.0b.1";
+
 
 var resourceProvider = ""; //https://tshadowknight.github.io/DigiPathFinder_standalone/
 
@@ -216,7 +216,7 @@ function showRoute(route){
 			pathContent+="<div class='path_img_container'>";
 			pathContent+="<img class='path_img "+(isTSMode() ? "TS" : "")+"' class='flex-item' data-digimonid='"+route[i]+"'/>";
 			pathContent+="</div>";
-			pathContent+="<div data-digimonid='"+route[i]+"' class='flex-item digi_name digi_name_placeholder'>";
+			pathContent+="<div data-digimonid='"+route[i]+"' class='digi_name digi_name_placeholder'>";
 			//pathContent+=pathFinder.digiData[route[i]].name;
 			pathContent+="</div>";
 			pathContent+="<div data-target='"+route[i]+"' class='db_link flex-item'>";
@@ -240,10 +240,24 @@ function showRoute(route){
 					let maxStats = getDigiData(route[i]).maxBaseStats;
 					let reqs =  getDigiData(route[i + 1]).conditions;
 					for(let condType in reqs){
-						if(reqs[condType]){
+						if(reqs[condType] * 1){
 							if(condType == "Other"){
 								warnings.push(localizationData[currentLocale].app.warn_special_evo);
 								//warn_difficult_evo
+							}  else if(condType == "needsItem"){
+								warnings.push(localizationData[currentLocale].app.warn_needs_item.replace("{param}", localizationData[currentLocale].itemNames[reqs[condType]]));
+							}  else if(condType == "jogressIdA"){
+								let jogressString = localizationData[currentLocale].digimon[reqs["jogressIdA"]] + " ("+localizationData[currentLocale].personalityNames[reqs["jogressPersonalityA"]]+")" + " + " + localizationData[currentLocale].digimon[reqs["jogressIdB"]]  + " ("+localizationData[currentLocale].personalityNames[reqs["jogressPersonalityB"]]+")" ;
+           
+								warnings.push(localizationData[currentLocale].app.warn_needs_jogress.replace("{param}", jogressString));
+							}	else if(condType == "skillCountAmicable"){
+								warnings.push(localizationData[currentLocale].app.warn_needs_amicable.replace("{param}", reqs[condType]));
+							} else if(condType == "skillCountPhilantropy"){
+								warnings.push(localizationData[currentLocale].app.warn_needs_philanthropy.replace("{param}", reqs[condType]));
+							} else if(condType == "skillCountValor"){
+								warnings.push(localizationData[currentLocale].app.warn_needs_valor.replace("{param}", reqs[condType]));
+							} else if(condType == "skillCountWisdom"){
+								warnings.push(localizationData[currentLocale].app.warn_needs_wisdom.replace("{param}", reqs[condType]));
 							} else if(["LVL", "CAM", "ABI"].indexOf(condType) == -1){
 								if(maxStats && maxStats[condType] < reqs[condType]){
 									warnings.push(localizationData[currentLocale].app.warn_difficult_evo+condType+"!");

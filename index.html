@@ -6,16 +6,20 @@
 	<script type="text/javascript" src='particles.js'></script>
 	<script type="text/javascript" src='utils.js'></script>	
 	<script type="text/javascript" src="jquery.min.js" onload="if(isElectron()){window.$ = window.jQuery = module.exports;}"></script>
-	<script type="text/javascript" src='digiPathWorker.js'></script>
-	<script type="text/javascript" src='digiPathFinder.js'></script>
-	<script type="text/javascript" src='components/DexPane.js'></script>	
-	<script type="text/javascript" src='components/MonSelector.js'></script>	
-	<script type="text/javascript" src='components/SkillSelector.js'></script>
-	<script type="text/javascript" src='components/BanSelector.js'></script>
-	<script type="text/javascript" src='digiPathFinderUI.js'></script>	
-	<script type="text/javascript" src='GameFileHeaders.js'></script>	
-	<script type="text/javascript" src='GameFileManager.js'></script>	
-	<script type="text/javascript" src='GameFileManagerTS.js'></script>	
+
+	<script>
+		window.versionId = "4.0b.3";
+		document.write('<script type="text/javascript" src="digiPathWorker.js?v=' + versionId + '"><\/script>');
+		document.write('<script type="text/javascript" src="digiPathFinder.js?v=' + versionId + '"><\/script>');
+		document.write('<script type="text/javascript" src="components/DexPane.js?v=' + versionId + '"><\/script>');
+		document.write('<script type="text/javascript" src="components/MonSelector.js?v=' + versionId + '"><\/script>');
+		document.write('<script type="text/javascript" src="components/SkillSelector.js?v=' + versionId + '"><\/script>');
+		document.write('<script type="text/javascript" src="components/BanSelector.js?v=' + versionId + '"><\/script>');
+		document.write('<script type="text/javascript" src="digiPathFinderUI.js?v=' + versionId + '"><\/script>');
+		document.write('<script type="text/javascript" src="GameFileHeaders.js?v=' + versionId + '"><\/script>');
+		document.write('<script type="text/javascript" src="GameFileManager.js?v=' + versionId + '"><\/script>');
+		document.write('<script type="text/javascript" src="GameFileManagerTS.js?v=' + versionId + '"><\/script>');
+	</script>
 	
 	
 	
