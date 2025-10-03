@@ -38,34 +38,34 @@ function GameFileManagerTS(){
         "main/battle_skill.mbe/000_battle_skill_list.csv",
         
         // Japanese text files
-        "txt_jpn/digimon_profile.mbe/000_Sheet1.csv",
-        "txt_jpn/char_name.mbe/000_Sheet1.csv",
-        "txt_jpn/skill_name.mbe/000_Sheet1.csv",
-        "txt_jpn/jogress_skill_name.mbe/000_Sheet1.csv",
-        "txt_jpn/skill_explanation.mbe/000_Sheet1.csv",
-        "txt_jpn/skill_auto_explanation.mbe/000_Sheet1.csv",
-        "txt_jpn/generation_name.mbe/000_Sheet1.csv",
-        "txt_jpn/digimon_type.mbe0/00_Sheet1.csv",
-        "txt_jpn/element.mbe/000_Sheet1.csv",
-        "txt_jpn/personality_name.mbe/000_Sheet1.csv",
-        "txt_jpn/item_name.mbe/000_Sheet1.csv",
-        "txt_jpn/belong.mbe/000_Sheet1.csv",
-        "txt_jpn/digimon_class_name.mbe/000_Sheet1.csv",
+        "main/txt_jpn/digimon_profile.mbe/000_Sheet1.csv",
+        "main/txt_jpn/char_name.mbe/000_Sheet1.csv",
+        "main/txt_jpn/skill_name.mbe/000_Sheet1.csv",
+        "main/txt_jpn/jogress_skill_name.mbe/000_Sheet1.csv",
+        "main/txt_jpn/skill_explanation.mbe/000_Sheet1.csv",
+        "main/txt_jpn/skill_auto_explanation.mbe/000_Sheet1.csv",
+        "main/txt_jpn/generation_name.mbe/000_Sheet1.csv",
+        "main/txt_jpn/digimon_type.mbe/000_Sheet1.csv",
+        "main/txt_jpn/element.mbe/000_Sheet1.csv",
+        "main/txt_jpn/personality_name.mbe/000_Sheet1.csv",
+        "main/txt_jpn/item_name.mbe/000_Sheet1.csv",
+        "main/txt_jpn/belong.mbe/000_Sheet1.csv",
+        "main/txt_jpn/digimon_class_name.mbe/000_Sheet1.csv",
         
         // English text files
-        "txt_eng/digimon_profile.mbe/000_Sheet1.csv",
-        "txt_eng/char_name.mbe/000_Sheet1.csv",
-        "txt_eng/skill_name.mbe/000_Sheet1.csv",
-        "txt_eng/jogress_skill_name.mbe/000_Sheet1.csv",
-        "txt_eng/skill_explanation.mbe/000_Sheet1.csv",
-        "txt_eng/skill_auto_explanation.mbe/000_Sheet1.csv",
-        "txt_eng/generation_name.mbe/000_Sheet1.csv",
-        "txt_eng/digimon_type.mbe/000_Sheet1.csv",
-        "txt_eng/element.mbe/000_Sheet1.csv",
-        "txt_eng/personality_name.mbe/000_Sheet1.csv",
-        "txt_eng/item_name.mbe/000_Sheet1.csv",
-        "txt_eng/belong.mbe/000_Sheet1.csv",
-        "txt_eng/digimon_class_name.mbe/000_Sheet1.csv"
+        "main/txt_eng/digimon_profile.mbe/000_Sheet1.csv",
+        "main/txt_eng/char_name.mbe/000_Sheet1.csv",
+        "main/txt_eng/skill_name.mbe/000_Sheet1.csv",
+        "main/txt_eng/jogress_skill_name.mbe/000_Sheet1.csv",
+        "main/txt_eng/skill_explanation.mbe/000_Sheet1.csv",
+        "main/txt_eng/skill_auto_explanation.mbe/000_Sheet1.csv",
+        "main/txt_eng/generation_name.mbe/000_Sheet1.csv",
+        "main/txt_eng/digimon_type.mbe/000_Sheet1.csv",
+        "main/txt_eng/element.mbe/000_Sheet1.csv",
+        "main/txt_eng/personality_name.mbe/000_Sheet1.csv",
+        "main/txt_eng/item_name.mbe/000_Sheet1.csv",
+        "main/txt_eng/belong.mbe/000_Sheet1.csv",
+        "main/txt_eng/digimon_class_name.mbe/000_Sheet1.csv"
     ];
     GameFileManagerTS.prototype.hasGameFiles = function(){
         let isKitValid = true;
@@ -953,11 +953,14 @@ function GameFileManagerTS(){
             evoConditions[dbId].DEF = escapeHTML(entry[evolutionConditionData.headerLookup["DEF"]]);
             evoConditions[dbId].INT = escapeHTML(entry[evolutionConditionData.headerLookup["INT"]]);
             evoConditions[dbId].SPD = escapeHTML(entry[evolutionConditionData.headerLookup["SPD"]]);
+            evoConditions[dbId].SPI = escapeHTML(entry[evolutionConditionData.headerLookup["SPI"]]);
 
             evoConditions[dbId].skillCountValor = escapeHTML(entry[evolutionConditionData.headerLookup["skillCountValor"]]);
             evoConditions[dbId].skillCountPhilantropy = escapeHTML(entry[evolutionConditionData.headerLookup["skillCountPhilantropy"]]);
             evoConditions[dbId].skillCountAmicable = escapeHTML(entry[evolutionConditionData.headerLookup["skillCountAmicable"]]);
             evoConditions[dbId].skillCountWisdom = escapeHTML(entry[evolutionConditionData.headerLookup["skillCountWisdom"]]);
+
+            evoConditions[dbId].talent = escapeHTML(entry[evolutionConditionData.headerLookup["talent"]]);
 
             evoConditions[dbId].needsItem = escapeHTML(entry[evolutionConditionData.headerLookup["needsItem"]]);
 

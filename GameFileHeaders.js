@@ -378,7 +378,7 @@ const hardDefinedHeaders = {
       "INT": 8,
       "SPI": 9,
       "SPD": 10,
-      "unknown1": 11,
+      "talent": 11,
       "skillCountValor": 13,
       "skillCountPhilantropy": 14,
       "skillCountAmicable": 15,

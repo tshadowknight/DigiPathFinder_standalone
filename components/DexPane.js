@@ -1438,6 +1438,7 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
         condList.push("skillCountPhilantropy");
         condList.push("skillCountAmicable");
         condList.push("skillCountWisdom");
+        condList.push("talent");
         condList.push("needsItem");
         condList.push("jogress");
     } else {
@@ -1477,6 +1478,7 @@ DexPane.prototype.createEvoReqs = function(monInfo, maxStats){
             "needsItem": localizationData[currentLocale].app.DEX_evos_label_item,
             "jogress": localizationData[currentLocale].app.DEX_evos_label_jogress,
             "TRank": localizationData[currentLocale].app.DEX_evos_label_t_rank,
+            "talent": localizationData[currentLocale].app.DEV_evos_label_talent,
         }
 
         
