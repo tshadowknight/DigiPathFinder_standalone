@@ -369,7 +369,7 @@ const hardDefinedHeaders = {
       "idTo": 3
     },
     "main/evolution.mbe/000_evolution_condition.csv": {
-      "dbId": 0,
+      "dbId": 0, 
       "tamerLevel": 2,
       "HP": 4,
       "SP": 5,

@@ -933,6 +933,9 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
 	padding: 10px;
 }
 
+.dex_pane .name_overflow {
+	display: inline-block;
+}
 
 .dex_pane .row.name_info {
 	padding: 0;
@@ -1364,6 +1367,9 @@ box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75);
     text-align: center;
     top: 36px;
     left: 3px;
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .digi_btn:hover {

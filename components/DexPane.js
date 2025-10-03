@@ -1583,7 +1583,9 @@ DexPane.prototype.createEvosBlock = function(monInfo){
             content+="</div>";
             
             content+="<div class='name'>";
+            content+="<div class='name_overflow'>";
             content+=targetMonInfo.name;
+            content+="</div>";
 
             content+="<div data-id='"+monId+"' class='db_link flex-item'>";
             content+="<i class='fa fa-external-link' aria-hidden='true'></i>";
@@ -1641,7 +1643,9 @@ DexPane.prototype.createEvosBlock = function(monInfo){
             content+="</div>";
             
             content+="<div class='name'>";
+            content+="<div class='name_overflow'>";
             content+=targetMonInfo.name;
+            content+="</div>";
 
             content+="<div data-id='"+monId+"'  class='db_link flex-item'>";
             content+="<i class='fa fa-external-link' aria-hidden='true'></i>";

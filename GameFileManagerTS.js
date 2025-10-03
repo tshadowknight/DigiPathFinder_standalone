@@ -24,6 +24,8 @@ function GameFileManagerTS(){
         }
     }
 
+    const DLCIds = ["06", "17"];
+
     const requiredFiles = [
         // Evolution info
         "main/evolution.mbe/001_evolution_to.csv",
@@ -108,12 +110,12 @@ function GameFileManagerTS(){
         }
     }
 
-    var defaultGamePath = "C:/Program Files (x86)/Steam/steamapps/common/Digimon Story Time Stranger Demo";
-    GameFileManagerTS.prototype.gameFilesPath = localStorage.getItem("DigiPathFinder_game_file_path_TS") || defaultGamePath;
+    var defaultGamePath = "C:/Program Files (x86)/Steam/steamapps/common/Digimon Story Time Stranger";
+    GameFileManagerTS.prototype.gameFilesPath = localStorage.getItem("DigiPathFinder_game_file_path_TS_release") || defaultGamePath;
 
     GameFileManagerTS.prototype.updateGameFilesPath = function(path){
         this.gameFilesPath = path || defaultGamePath;
-		localStorage.setItem("DigiPathFinder_game_file_path_TS", path || this.gameFilesPath);
+		localStorage.setItem("DigiPathFinder_game_file_path_TS_release", path || this.gameFilesPath);
     }
 
     var potentialLoadError = false;
@@ -162,16 +164,26 @@ function GameFileManagerTS(){
             
 
             if(os.platform() === "win32"){
-                let cmdDir = pathLib.join(this.getResourcesFolder(), toolsFolder, "/win");
-                cmd = "\""+this.getResourcesFolder()+""+'\\'+toolsFolder+'\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
+                //let cmdDir = pathLib.join(this.getResourcesFolder(), toolsFolder, "/win");
+                //cmd = "\""+this.getResourcesFolder()+""+'\\'+toolsFolder+'\\win\\unpack_game_files.bat\" \"'+cmdDir+'\"  ';
 
                 const exetractorPath = pathLib.join(this.getResourcesFolder(), toolsFolder, '/win/DSTSToolsCLI.exe');
                 const dbFilePaths = [
                     {in: pathLib.join(this.gameFilesPath, 'gamedata/app_0.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main') , unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/main')},
-                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/txt_jpn'), unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/txt_jpn')},
-                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text01.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/txt_eng'), unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/txt_eng')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/patch.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/patch') , unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/patch')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/patch_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/patch/txt_jpn') , unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/patch/txt_jpn')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/patch_text01.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/patch/txt_eng') , unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/patch/txt_eng')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/txt_jpn'), unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/main/txt_jpn')},
+                    {in: pathLib.join(this.gameFilesPath, 'gamedata/app_text01.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/txt_eng'), unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/main/txt_eng')},
                 ]
-              
+
+             
+                for(let id of DLCIds){
+                    dbFilePaths.push({in: pathLib.join(this.gameFilesPath, 'gamedata/addcont_'+id+'.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/addcont_'+id+'') , unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/addcont_'+id+'')});
+                    dbFilePaths.push({in: pathLib.join(this.gameFilesPath, 'gamedata/addcont_'+id+'_text00.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/addcont_'+id+'/txt_jpn') , unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/addcont_'+id+'/txt_jpn')});
+                    dbFilePaths.push({in: pathLib.join(this.gameFilesPath, 'gamedata/addcont_'+id+'_text01.dx11.mvgl'), out:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/addcont_'+id+'/txt_eng') , unpacked:pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/addcont_'+id+'/txt_eng')});
+                }
+                
                 
                 for(let pathInfo of dbFilePaths){
                     if(!fs.existsSync(pathInfo.unpacked)){
@@ -186,8 +198,13 @@ function GameFileManagerTS(){
                     pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/data/'),
                     pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/images/'),
                     pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/shaders/'),
-                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua/')
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/main/lua/'),
+                    pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/patch/data/'),
                 ];
+
+                for(let id of DLCIds){
+                    requiredFiles.push(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/addcont_'+id+'/data'));
+                }
 
                 showGameFileLoader("Verifying unpack...");
 
@@ -218,7 +235,71 @@ function GameFileManagerTS(){
                     throw("Failed extract. Could not find '"+missingFiles.join(', ')+"' after extract.");
                 }
                 
-                let result = await this.runCmd(cmd);
+                //let result = await this.runCmd(cmd);
+
+                let regularSets = ["main", "patch"];
+                let cmdParts = [];
+
+                for(let entry of regularSets){
+                    
+                    cmdParts.push('"'+exetractorPath+'" --mbeextract "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', entry, 'data', 'evolution.mbe') + '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/', entry) + '"');
+                    cmdParts.push('"'+exetractorPath+'" --mbeextract "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', entry, 'data','digimon_status.mbe') + '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/', entry) + '"');
+                    cmdParts.push('"'+exetractorPath+'" --mbeextract "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', entry, 'data','battle_skill.mbe') + '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/', entry) + '"');
+                    cmdParts.push('"'+exetractorPath+'" --mbeextract "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', entry, 'data','battle_buff.mbe') + '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/', entry) + '"');
+                    cmdParts.push('xcopy /s /Y "'+pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', entry, 'ui_chara*')+ '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/') + '\\"');
+                    addExtractTextArchiveCommands(entry);
+                }
+
+                for(let entry of DLCIds){
+                    cmdParts.push('"'+exetractorPath+'" --mbeextract "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', "addcont_"+entry, 'data','evolution_dlc'+entry+'.mbe') + '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/', "addcont_"+entry) + '"');
+                    cmdParts.push('"'+exetractorPath+'" --mbeextract "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', "addcont_"+entry, 'data', 'digimon_status_dlc'+entry+'.mbe') + '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/', "addcont_"+entry) + '"');
+                    cmdParts.push('"'+exetractorPath+'" --mbeextract "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', "addcont_"+entry, 'data', 'battle_skill_dlc'+entry+'.mbe') + '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/', "addcont_"+entry + '"'));
+                    cmdParts.push('"'+exetractorPath+'" --mbeextract "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', "addcont_"+entry, 'data', 'battle_buff_dlc'+entry+'.mbe') + '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/', "addcont_"+entry) + '"');
+                    cmdParts.push('xcopy /s /Y "'+pathLib.join(this.getResourcesFolder(), gameDataFolder, '/packed/', "addcont_"+entry, 'ui_chara*')+ '" "' + pathLib.join(this.getResourcesFolder(), gameDataFolder, '/unpacked/') + '\\"');
+                    addExtractTextArchiveCommands('addcont_' + entry, "_dlc" + entry);
+                }
+                
+                function addExtractTextArchiveCommands(set, mbeSuffix){                
+                    if(!mbeSuffix){
+                        mbeSuffix = "";
+                    }
+                    const locales = ["txt_jpn", "txt_eng"]
+                    const mbeFiles = [
+                        'digimon_profile',
+                        'char_name',
+                        'skill_name',
+                        'jogress_skill_name',
+                        'skill_explanation',
+                        'skill_auto_explanation',
+                        'generation_name',
+                        'digimon_type',
+                        'element',
+                        'personality_name',
+                        'item_name',
+                        'belong',
+                        'digimon_class_name',
+                        'buff_name',
+                        'status_name'
+                    ];
+
+                    for(let locale of locales){ 
+                        for(let mbeFile of mbeFiles){
+                            cmdParts.push(
+                                '"' + exetractorPath + '" --mbeextract "' + 
+                                pathLib.join(this.getResourcesFolder(), gameDataFolder, 'packed', set, locale, 'text', mbeFile + mbeSuffix + ".mbe") + 
+                                '" "' + 
+                                pathLib.join(this.getResourcesFolder(), gameDataFolder, 'unpacked', set, locale) + '"'
+                            );
+                        }
+                    }
+                    
+                }
+
+                for(let cmd of cmdParts){
+                    console.log("!!" + cmd);
+                    await this.runCmd(cmd);
+                }
+                
             } else if(os.platform() === "linux"){
                 //let cmdDir = pathLib.join(this.getResourcesFolder(), toolsFolder, "/linux")
                 //cmd =  "\""+this.getResourcesFolder()+""+'\\DSCSTools\\linux\\unpack_game_files.bat\"  \"'+cmdDir+'\" \"'+this.gameFilesPath+'/resources/DSDBP.steam.mvgl'+'\" ';
@@ -232,7 +313,7 @@ function GameFileManagerTS(){
             showGameFileLoader("Cleaning up unpack...");
             fs.rm(pathLib.join(this.getResourcesFolder(), gameDataFolder, "/packed"), { recursive: true, force: true });
             showGameFileLoader("Processing images...");
-            await this.cachceDDSImages();    
+            await this.cachceDDSImages();  
             showGameFileLoader("Done!");
         
     }
@@ -242,10 +323,11 @@ function GameFileManagerTS(){
         if(!fs.existsSync(convertedDir)){
             fs.mkdirSync(convertedDir);
         }
+        
         const digimonListData = await this.parseGameFile("main/digimon_status.mbe/000_digimon_status_data");
         DDSCache = {};
         for(let entry of digimonListData.data){
-            const digimonId = entry[digimonListData.headerLookup["id"]];
+            const digimonId = entry[digimonListData.headerLookup["scriptId"]];
             const data = await convertDDSImage(digimonId);//prepopulate cache
             const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
             fs.writeFileSync(pathLib.join(convertedDir, "/ui_chara_icon_"+imgId+".png"), data);
@@ -253,36 +335,118 @@ function GameFileManagerTS(){
        //fs.writeFileSync(pathLib.join(this.getResourcesFolder(), gameDataFolder, '/dds_cache.json'), JSON.stringify(DDSCacheTS));
     }
 
-    GameFileManagerTS.prototype.parseGameFile = function(file){
+    GameFileManagerTS.prototype.parseGameFile = async function(file){
+        const _this = this;
+
+            let defaultFileData;
+           
+            let fileInfo = {
+                mbe: null, 
+                resouceFile: null,
+                localeId: ""
+            };
+           
+            let fileParts = file.split("/");
+            if(file.match(/^txt_*/)){
+               fileInfo.localeId = fileParts[0];
+               defaultFileData = await this.parseGameFileDirect("main/"+file, file);
+            } else {
+                defaultFileData = await this.parseGameFileDirect(file, file);
+            }
+            fileInfo.resouceFile = fileParts[2];
+            fileInfo.mbe = fileParts[1].replace(".mbe", "");
+
+            let normalSets = ["main", "patch"];
+
+            let orderedDataSets = [];
+
+            for(let entry of normalSets){
+                try {
+                    const data = (await this.parseGameFileDirect(entry+"/"+ (fileInfo.localeId ? fileInfo.localeId + "/" : "") +fileInfo.mbe+".mbe"+"/"+fileInfo.resouceFile)).data;
+                    orderedDataSets.push(data);
+                } catch(e){
+                    console.log("Could not get file content: " + (e.message|| e))
+                }                
+            }
+
+            for(let entry of DLCIds){
+                try {
+                    const data = (await this.parseGameFileDirect("addcont_"+entry+"/"+ (fileInfo.localeId ? fileInfo.localeId + "/" : "") +fileInfo.mbe+"_dlc"+entry+".mbe"+"/"+fileInfo.resouceFile)).data;
+                    orderedDataSets.push(data);
+                } catch(e){
+                    console.log("Could not get file content: " + (e.message|| e))
+                }
+            }
+
+            let mergedData = [];
+
+            if(isNaN(orderedDataSets[0][0][0])){
+                //string key data
+                let lookup = {};
+                for(let set of orderedDataSets){
+                    for(let row of set){
+                        const id = row[0];    
+                        lookup[id] = row;
+                    }
+                }
+                mergedData = Object.values(lookup);
+            } else {
+                //int key data
+                for(let set of orderedDataSets){
+                    for(let row of set){
+                        const idx = row[0];
+                        mergedData[idx] = row;
+                    }
+                }
+
+                mergedData = mergedData.filter(x => x);
+            }
+            
+           
+            return {headerLookup: defaultFileData.headerLookup, data: mergedData};
+    }   
+
+    GameFileManagerTS.prototype.parseGameFileDirect = function(file, headerRef){
         const _this = this;
         return new Promise(function(resolve, reject){
-        
-            
             const { parse } = require('csv-parse');
             const records = [];
 
             var csvData=[];
-            fs.createReadStream(pathLib.join(_this.getResourcesFolder(), gameDataFolder, "/unpacked/"+file+".csv"))
-                .pipe(parse({delimiter: ','}))
-                .on('data', function(csvrow) {
-                    //console.log(csvrow);
-                    //do something with csvrow
-                    records.push(csvrow);        
-                })
-                .on('end',function() {
-                //do something with csvData
-                    let headers = records.shift();
-                    let headerLookup;
-                    let fileKey = file+".csv";
-                    if(hardDefinedHeadersTS[fileKey] && Object.keys(hardDefinedHeadersTS[fileKey]).length){
-                        headerLookup = hardDefinedHeadersTS[fileKey]
-                    } else {
-                        throw "No header information for " + fileKey;
-                    }
-
-                    resolve({headerLookup: headerLookup, data: records});
+            try {
+                const stream = fs.createReadStream(pathLib.join(_this.getResourcesFolder(), gameDataFolder, "/unpacked/"+file+".csv"));
+            
+                // Add error handler for the stream
+                stream.on('error', function(error) {
+                    reject(error);
                 });
-        });	
+
+                stream
+                    .pipe(parse({delimiter: ','}))
+                    .on('data', function(csvrow) {
+                        //console.log(csvrow);
+                        //do something with csvrow
+                        records.push(csvrow);        
+                    })
+                    .on('end',function() {  
+                    //do something with csvData
+                        let headers = records.shift();
+                        let headerLookup;
+                        if(headerRef){                        
+                            let fileKey = headerRef+".csv";
+                            if(hardDefinedHeadersTS[fileKey] && Object.keys(hardDefinedHeadersTS[fileKey]).length){
+                                headerLookup = hardDefinedHeadersTS[fileKey]
+                            } else {
+                                throw "No header information for " + fileKey;
+                            }
+                        }                    
+
+                        resolve({headerLookup: headerLookup, data: records});
+                    });
+            } catch(e){
+                reject(e);
+            }           
+        });	 
     }
 
     GameFileManagerTS.prototype.generateHeaders = async function(){
@@ -370,7 +534,10 @@ function GameFileManagerTS(){
         for(let entry of digimonListData.data){
             const dbId = entry[digimonListData.headerLookup["id"]];
             const strKey = entry[digimonListData.headerLookup["strKey"]];
-            strKeyLookup[strKey] = dbId;
+            if(!strKeyLookup[strKey]){
+                strKeyLookup[strKey] = [];
+            }
+            strKeyLookup[strKey].push(dbId);
             placeHolderNameLookup[dbId] = strKey;
         }
         
@@ -420,8 +587,12 @@ function GameFileManagerTS(){
             }
             for(let row of entry.names.data){
                 const strKey = row[entry.names.headerLookup["id"]];      
-                const dbId = strKeyLookup[strKey];          
-                digimonNames[locale][dbId] = escapeHTML(row[entry.names.headerLookup["value"]]);		
+                const dbIds = strKeyLookup[strKey];       
+                if(dbIds){
+                    for(let dbId of dbIds){
+                        digimonNames[locale][dbId] = escapeHTML(row[entry.names.headerLookup["value"]]);	
+                    } 
+                }                                 	
             }
 
             if(!digimonDescriptions[locale]){
@@ -722,7 +893,7 @@ function GameFileManagerTS(){
 
             const traitsBaseIdx = digimonListData.headerLookup["traitsBaseIdx"];
             for(let i = 0; i < 41; i++){
-                const hasTrait = entry[traitsBaseIdx + i] * 1;
+                const hasTrait = entry[traitsBaseIdx + i] == "true" ? true : false;
                 if(hasTrait){
                     traits[dbId].push(i);
                 }

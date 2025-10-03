@@ -440,9 +440,15 @@ async function getDDSPath(digimonId){
 			
 		
 	}
-	const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
-	return targetPath+"/ui_chara_icon_"+imgId+".png";
-}
+	if(isTSMode()){
+		let scriptId = getDigiData(digimonId)?.baseStats?.scriptId;
+		const imgId = String(scriptId).padStart(4, '0').replace(/^0/, 1);
+		return targetPath+"/ui_chara_icon_"+imgId+".png";
+	} else {
+		const imgId = String(digimonId).padStart(4, '0').replace(/^0/, 1);
+		return targetPath+"/ui_chara_icon_"+imgId+".png";
+	}
+}	
 
 async function setDDSImage(elem, digimonId){
 	//in electron context convert the DDS image from the game files
